@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Cloud Foundry中DEA与warden通信完成应用端口监听</title>
+  <meta name="author" content="孙宏亮" />
+  
+  
+  
+  
+  <meta name="keywords" content="dea, cloudfoundry">
+  
+  
+  <meta name="description" content="">
+
+  <meta name="generator" content="Hugo 0.74.2" />
+
+  
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="/css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+  
+  <link href="/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+
+  
+  <link href="/css/owl.carousel.css" rel="stylesheet">
+  <link href="/css/owl.theme.css" rel="stylesheet">
+
+  
+  <link rel="alternate" href="https://Rachel-Shao.github.io/index.xml" type="application/rss+xml" title="浙大SEL实验室">
+
+  
+  
+  
+  
+  
+  
+  <meta property="og:updated_time" content="2014-12-02T16:55:44Z">
+  
+    
+    
+    <meta property="article:section" content="cloudfoundry">
+    <meta property="article:tag" content="dea">
+    <meta property="article:tag" content="cloudfoundry">
+    
+    
+    <meta property="article:published_time" content="2014-12-02T16:55:44Z">
+    <meta property="article:modified_time" content="2014-12-02T16:55:44Z">
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Cloud Foundry中DEA与warden通信完成应用端口监听">
+  
+  <meta name="twitter:description" content="">
+  
+
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header class="navbar-affixed-top" data-spy="affix" data-offset-top="62">
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar" style="background-color:white;">    
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="/">
+                    <img src="/img/sel.png" alt="Cloud Foundry中DEA与warden通信完成应用端口监听" class="hidden-xs hidden-sm img-responsive">
+                    
+                    <span class="sr-only">Cloud Foundry中DEA与warden通信完成应用端口监听 - </span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only"></span>
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+
+                  <li class="dropdown">
+                    
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">社区 <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    
+                      <li><a href="https://www.servicemesher.com/">ServiceMesh社区</a></li>
+                    
+                      <li><a href="">kubeedge社区</a></li>
+
+                      <li><a href="http://www.icsoft.zju.edu.cn/index.php">浙江大学智能计算与软件中心</a></li>
+                    
+                  </ul>
+
+                  <li class="dropdown">
+                    
+                    <a href="/archives/">归档</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">关于</a>
+                    
+                  </li>
+                  
+                </li>
+
+                
+                
+
+                
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">    
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fas fa-search"></i></button>
+                </span>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
+    
+</header>
+
+
+
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Cloud Foundry中DEA与warden通信完成应用端口监听</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        
+                          <p class="text-muted text-uppercase mb-small text-right">
+                             <a href="#">孙宏亮</a>
+                             | 
+                            2014-12-02
+                          </p>
+                        
+
+                        <div id="post-content">
+                          <p>在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。 本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。</p>
+<p>DEA在执行启动一个应用的时候，主要做到以下这些部分：promise_droplet, promise_container, 其中这两个部分并发完成；promise_extract_droplet, promise_exec_hook_script(“before_start”), promise_start等。代码如下：</p>
+<pre><code>\[  
+  promise\_droplet,  
+  promise\_container  
+\].each(&amp;:run).each(&amp;:resolve)  
+
+\[  
+  promise\_extract\_droplet,  
+  promise\_exec\_hook\_script('before\_start'),  
+  promise\_start  
+\].each(&amp;:resolve)  
+</code></pre>
+<h1 id="promise_droplet"><strong>promise_droplet:</strong></h1>
+<p>在这一个环节，DEA主要做的工作是将droplet下载本机，通过droplet_uri,其中基本的路径在/config/dea.yml中，为base_dir: /tmp/dea_ng, 因此最终DEA下载到的droplet存放于DEA组件所在的宿主机上。</p>
+<h1 id="promise_container"><strong>promise_container:</strong></h1>
+<p>该环节的工作主要完成创建一个warden container，随后可以为应用的运行提供一个合适的环境。promise_container的源码实现如下：</p>
+<pre><code>def promise\_container  
+    Promise.new do |p|
+    bind\_mounts = \[{'src\_path' =&gt; droplet.droplet\_dirname, 'dst\_path' =&gt; droplet.droplet\_dirname}\]  
+    with\_network = true  
+    container.create\_container(  
+        bind\_mounts: bind\_mounts + config\['bind\_mounts'\],  
+        limit\_cpu: config\['instance'\]\['cpu\_limit\_shares'\],  
+        byte: disk\_limit\_in\_bytes,  
+        inode: config.instance\_disk\_inode\_limit,  
+        limit\_memory: memory\_limit\_in\_bytes,  
+        setup\_network: with\_network)  
+    attributes\['warden\_handle'\] = container.handle  
+    promise\_setup\_def create\_container(params)  
+    \[:bind\_mounts, :limit\_cpu, :byte, :inode, :limit\_memory, :setup\_network\].each do |param|  
+    raise ArgumentError, &quot;expecting #{param.to\_s} parameter to create container&quot; if params\[param\].nil?  
+end  
+
+with\_em do  
+    new\_container\_with\_bind\_mounts(params\[:bind\_mounts\])  
+    limit\_cpu(params\[:limit\_cpu\])  
+    limit\_disk(byte: params\[:byte\], inode: params\[:inode\])  
+    limit\_memory(params\[:limit\_memory\])  
+    setup\_network if params\[:setup\_network\]  
+end  
+endenvironment.resolve  
+    p.deliver  
+    end  
+end  
+</code></pre>
+<p>可以看到传入的参数主要有：</p>
+<ul>
+<li>bind_mounts：完成宿主机文件目录的路径mount到container内部；</li>
+<li>limit_cpu：用于限制container的CPU资源分配；</li>
+<li>byte：磁盘限额；</li>
+<li>innode：磁盘的innode的限制</li>
+<li>limit_memory：内存限额；</li>
+<li>setup_network：网络的配置项。</li>
+</ul>
+<p>其中setup_network一直设置为true。 在container.create_container的方法实现中，有以下的方法，如下：</p>
+<pre><code>def create\_container(params)  
+    \[:bind\_mounts, :limit\_cpu, :byte, :inode, :limit\_memory, :setup\_network\].each do |param|  
+      raise ArgumentError, &quot;expecting #{param.to\_s} parameter to createdef create\_container(params)  
+    \[:bind\_mounts, :limit\_cpu, :byte, :inode, :limit\_memory, :setup\_network\].each do |param|  
+      raise ArgumentError, &quot;expecting #{param.to\_s} parameter to create container&quot; if params\[param\].nil?  
+    end  
+
+  with\_em do  
+      new\_container\_with\_bind\_mounts(params\[:bind\_mounts\])  
+      limit\_cpu(params\[:limit\_cpu\])  
+      limit\_disk(byte: params\[:byte\], inode: params\[:inode\])  
+      limit\_memory(params\[:limit\_memory\])  
+      setup\_network if params\[:setup\_network\]  
+  end  
+end container&quot; if params\[param\].nil?  
+  end  
+
+  with\_em do  
+    new\_container\_with\_bind\_mounts(params\[:bind\_mounts\])  
+    limit\_cpu(params\[:limit\_cpu\])  
+    limit\_disk(byte: params\[:byte\], inode: params\[:inode\])  
+    limit\_memory(params\[:limit\_memory\])  
+    setup\_network if params\[:setup\_network\]  
+  end  
+end  
+</code></pre>
+<p>主要关注一下setup_network方法，如下：</p>
+<pre><code>def setup\_network  
+    request = ::Warden::Protocol::NetInRequest.new(handle: handle)  
+    response = call(:app, request)  
+    network\_ports\['host\_port'\] = response.host\_port  
+    network\_ports\['container\_port'\] = response.container\_port  
+
+    request = ::Warden::Protocol::NetInRequest.new(handle: handle)  
+    response = call(:app, request)  
+    network\_ports\['console\_host\_port'\] = response.host\_port  
+    network\_ports\['console\_container\_port'\] = response.container\_port 
+
+end  
+</code></pre>
+<p>从代码中可以看到，在setup_network中，主要完成了两次NetIn操作。对于NetIn操作，需要说明的是，完成的工作是将host主机上的端口映射到container内部的端口。换言之，将host_ip:port1映射到container_ip:port2，也就是说如果container在container_ip上监听的是端口port2，则host机器外部的请求访问host机器，并且端口为port1的时候，host的内核网络栈，会将请求转发给container的port2端口，其中使用的协议为DNAT协议。 因此，在以上的代码中实现了两次NetIn操作，也就是说将container的两个端口映射到了host宿主机，第一个端口用于container内应用的正常占用端口，第二个端口是用来为应用的console功能做服务。虽然container也分配了第二个端口，但是在而后的应用启动等中，该console_port都没有使用过，可见Cloud Foundry在这里只是预留了接口，但是没有真正利用起来。 以上主要描述了NetIn的功能，以下进入NetIn操作的源码实现。NetIn的源码实现，主要为warden server的部分。其中，是由DEA进程通过warden.sock和warden server建立通信，随后DEA进程发送NetIn请求给warden server，warden server最终处理该请求。 现在进入warden范畴，研究warden如何接收请求，并实现端口的映射。 在warden/lib/warden/server.rb中，大部分代码都是为了完成warden server的运行，在run！方法中，可以看到warden server另外还启动了一个unix domain server，代码如下：</p>
+<pre><code>server = ::EM.start\_unix\_domain\_server(unix\_domain\_path, ClientConnection)  
+</code></pre>
+<p>也就是说，warden server会通过整个unix domain server接收从DEA进程发送来的关于warden container的一系列请求，在ClientConnection类中定义，关于这部分请求如何处理的方法。 当unix domain server中ClientConnection类通过receive_data（data）方法来实现接收请求，代码如下：</p>
+<pre><code>def receive\_data(data)  
+  @buffer &lt;&lt; data  
+  @buffer.each\_request do |request|  
+    begin  
+        receive\_request(request)  
+    rescue =&gt; e  
+        close\_connection\_after\_writing  
+        logger.warn(&quot;Disconnected client after error&quot;)  
+        logger.log\_exception(e)  
+    end  
+  end  
+end  
+</code></pre>
+<p>从代码中可以看到，当buffer中有请求的时候，通过receive_request（request）方法来进一步提取请求。再进入receive_request(request)方法中，可以看到通过process（request）来处理请求。 接着进入真正请求处理的部分，也就时process（request）的实现：</p>
+<pre><code>def process(request)  
+    case request  
+    when Protocol::PingRequest  
+      response = request.create\_response  
+      send\_response(response)  
+
+    when Protocol::ListRequest  
+      response = request.create\_response  
+      response.handles = Server.container\_klass.registry.keys.map(&amp;:to\_s)  
+      send\_response(response)  
+
+    when Protocol::EchoRequest  
+      response = request.create\_response  
+      response.message = request.message  
+      send\_response(response)  
+
+    when Protocol::CreateRequest  
+      container = Server.container\_klass.new  
+      container.register\_connection(self)  
+      response = container.dispatch(request)  
+      send\_response(response)  
+
+    else  
+      if request.respond\_to?(:handle)  
+        container = find\_container(request.handle)  
+        process\_container\_request(request, container)  
+      else  
+        raise WardenError.new(&quot;Unknown request: #{request.class.name.split(&quot;::&quot;).last}&quot;)  
+      end  
+    end  
+rescue WardenError =&gt; e  
+    send\_error(e)  
+rescue =&gt; e  
+    logger.log\_exception(e)  
+    send\_error(e)  
+end  
+</code></pre>
+<p>可见，在warden server中，请求类型可以简单分为5种：PingRequest, ListRequest, EchoRequest, CreateRequest和其他请求，像NetIn请求则属于其他请求中的一种，程序执行进入case语句块的else分支，也就是：</p>
+<pre><code>if request.respond\_to?(:handle)  
+  container = find\_container(request.handle)  
+  process\_container\_request(request, container)  
+else  
+  raise WardenError.new(&quot;Unknown request: #{request.class.name.split(&quot;::&quot;).last}&quot;)  
+end
+</code></pre>
+<p>代码清晰可见，warden server首先通过handle找到具体是给哪一个warden container发送请求，然后调用process_container_request(request, container)方法。进入process_container_request(request, container)方法可以看到：加入请求类型不为StopRequest以及StreamRequest，则进入case语句块的else分支，执行代码：</p>
+<pre><code>response = container.dispatch(request)  
+     send\_response(response)  
+</code></pre>
+<p>可以看到，是调用了container.dispatch（request）方法才返回了response。 以下进入warden/lib/warden/container/base.rb文件中，该文件的dispatch方法主要实现了warden server接收到请求并预处理之后，如何分发执行具体的请求，代码如下：</p>
+<pre><code>def dispatch(request, &amp;blk)  
+    klass\_name = request.class.name.split(&quot;::&quot;).last  
+    klass\_name = klass\_name.gsub(/Request$/, &quot;&quot;)  
+    klass\_name = klass\_name.gsub(/(.)(\[A-Z\])/) { |m| &quot;#{m\[0\]}\_#{m\[1\]}&quot; }  
+    klass\_name = klass\_name.downcase  
+
+    response = request.create\_response  
+
+    t1 = Time.now  
+
+    before\_method = &quot;before\_%s&quot; % klass\_name  
+    hook(before\_method, request, response)  
+    emit(before\_method.to\_sym)  
+
+    around\_method = &quot;around\_%s&quot; % klass\_name  
+    hook(around\_method, request, response) do  
+        do\_method = &quot;do\_%s&quot; % klass\_name  
+    send(do\_method, request, response, &amp;blk)  
+    end  
+
+    after\_method = &quot;after\_%s&quot; % klass\_name  
+    emit(after\_method.to\_sym)  
+    hook(after\_method, request, response)  
+
+    t2 = Time.ndef dispatch(request, &amp;blk)  
+    klass\_name = request.class.name.split(&quot;::&quot;).last  
+    klass\_name = klass\_name.gsub(/Request$/, &quot;&quot;)  
+    klass\_name = klass\_name.gsub(/(.)(\[A-Z\])/) { |m| &quot;#{m\[0\]}\_#{m\[1\]}&quot; }  
+    klass\_name = klass\_name.downcase  
+
+    response = request.create\_response  
+
+    t1 = Time.now  
+
+    before\_method = &quot;before\_%s&quot; % klass\_name  
+    hook(before\_method, request, response)  
+    emit(before\_method.to\_sym)  
+
+    around\_method = &quot;around\_%s&quot; % klass\_name  
+    hook(around\_method, request, response) do  
+        do\_method = &quot;do\_%s&quot; % klass\_name  
+        send(do\_method, request, response, &amp;blk)  
+    end  
+
+    after\_method = &quot;after\_%s&quot; % klass\_name  
+    emit(after\_method.to\_sym)  
+    hook(after\_method, request, response)  
+
+    t2 = Time.now  
+
+    logger.info(&quot;%s (took %.6f)&quot; % \[klass\_name, t2 - t1\],  
+        :request =&gt; request.to\_hash,  
+        :response =&gt; response.to\_hash)  
+
+    response  
+ endow  
+
+    logger.info(&quot;%s (took %.6f)&quot; % \[klass\_name, t2 - t1\],  
+        :request =&gt; request.to\_hash,  
+        :response =&gt; response.to\_hash)  
+
+    response  
+end  
+</code></pre>
+<p>首先提取出请求的类型名，如果是NetIn请求的话，提取出来的请求的类型名称为net_in，随后构建出方法明do_method，也就是do_net_in，接着就通过send(do_method, request, response, &amp;blk)方法，将参数发送给do_net_in方法。 现在就是进入warden/lib/warden/container/features/net.rb文件中, do_net_in方法实现如下：</p>
+<pre><code>def do\_net\_in(request, response)  
+    if request.host\_port.nil?  
+      host\_port = self.class.port\_pool.acquire  
+
+      #Use same port on the container side as the host side if unspecified  
+      container\_port = request.container\_port || host\_port  
+
+      # Port may be re-used after this container has been destroyed  
+      @resources\[&quot;ports&quot;\] &lt;&lt; host\_port  
+      @acquired\[&quot;ports&quot;\] &lt;&lt; host\_port  
+    else  
+      host\_port = request.host\_port  
+      container\_port = request.container\_port || host\_port  
+    end  
+
+    \_net\_in(host\_port, container\_port)  
+
+    @resources\[&quot;net\_in&quot;\] ||= \[\]  
+    @resources\[&quot;net\_in&quot;\] &lt;&lt; \[host\_port, container\_port\]  
+
+    response.host\_port      = host\_port  
+    response.container\_port = container\_port  
+rescue WardenError  
+  self.class.port\_pool.release(host\_port) unless request.host\_port  
+  raise  
+end  
+</code></pre>
+<p>可见，如果请求端口没有指定的话，那么就使用代码host_port = self.class.port_pool.acquire来获取端口号，默认情况下，container端口号与host端口号保持一致，有了这两个端口号之后，执行代码_net_in(host_port, container_port)， 真正实现端口映射，如下：</p>
+<pre><code>def \_net\_in(host\_port, container\_port)  
+  sh File.join(container\_path, &quot;net.sh&quot;), &quot;in&quot;, :env =&gt; {  
+    &quot;HOST\_PORT&quot;      =&gt; host\_port,  
+    &quot;CONTAINER\_PORT&quot; =&gt; container\_port,  
+  }  
+end  
+</code></pre>
+<p>可以清晰的看到是，使用了容器内部的net.sh脚本来实现端口映射。现在进入warden/root/linux/skeleton/net.sh脚本，进入参数为in的执行部分：</p>
+<pre><code>&quot;in&quot;)  
+    if \[ -z &quot;${HOST\_PORT:-}&quot; \]; then  
+        echo &quot;Please specify HOST\_PORT...&quot; 1&gt;&amp;2  
+        exit 1  
+    fi  
+    if \[ -z &quot;${CONTAINER\_PORT:-}&quot; \]; then  
+      echo &quot;Please specify CONTAINER\_PORT...&quot; 1&gt;&amp;2  
+      exit 1  
+    fi  
+    iptables -t nat -A ${nat\_instance\_chain} \\  
+      --protocol tcp \\  
+      --destination &quot;${external\_ip}&quot; \\  
+      --destination-port &quot;${HOST\_PORT}&quot; \\  
+      --jump DNAT \\  
+      --to-destination &quot;${network\_container\_ip}:${CONTAINER\_PORT}&quot;  
+    ;;  
+</code></pre>
+<p>可见，该脚本这部分的功能是在host主机创建一条DNAT规则，使得host主机上所有HOST_PORT端口上的网络请求，都转发至network_container_ip:CONTAINER_PORT上，也就是完成了目标地址IP转变。</p>
+<h1 id="promise_extract_droplet"><strong>promise_extract_droplet:</strong></h1>
+<p>该环节主要完成的是让container运行脚本，使得container容器将位于host主机的droplet文件，解压至container内部，代码内容如下：</p>
+<pre><code>def promise\_extract\_droplet  
+    Promise.new do |p|  
+      script = &quot;cd /home/vcap/ &amp;&amp; tar zxf #{droplet.droplet\_path}&quot;  
+      container.run\_script(:app, script)  
+      p.deliver  
+    end  
+end  
+</code></pre>
+<h1 id="promise_exec_hook_scriptbefore_start"><strong>promise_exec_hook_script(&lsquo;before_start&rsquo;)：</strong></h1>
+<p>这部分主要完成的功能是让容器运行名为before_start的脚本，在老的版本中，该部分的设置默认为空。</p>
+<h1 id="promise_start"><strong>promise_start:</strong></h1>
+<p>这部分主要完成的是应用的启动。其中创建容器的时候，返回的端口号，会被DEA保存。最终，当DEA启动应用的时候，由于DEA会将端口号作为参数传递给应用程序的启动脚本，因此当应用启动时会自动去监听已经为它设置的端口，即完成端口监听。</p>
+<h2 id="转载请注明出处"><strong>转载请注明出处。</strong></h2>
+<p>这篇文档更多出于我本人的理解，肯定在一些地方存在不足和错误。希望本文能够对接触Cloud Foundry v2中warden模块以及应用端口映射的人有些帮助，如果你对这方面感兴趣，并有更好的想法和建议，也请联系我。</p>
+
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        <div id="SOHUCS"></div>
+                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        <script type="text/javascript">
+                          window.changyan.api.config({
+                          appid: 'cyuX8hDAj',
+                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
+                          });
+                        </script>
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索栏</h3>
+      
+    </div>
+
+    <div class="panel-body">
+        
+        <div class="search" id="search">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="请输入文章标题或摘要..." id="search-key">
+                <input type="hidden" name="sitesearch" value="https://Rachel-Shao.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main" onclick="search()"><i class="fas fa-search"></i></button>
+                </span>
+            </div>
+            <h1 id="search-tip" style="color: red;text-align: center;display: none;font-size: medium;">搜索中，请稍后 ...</h1>
+        </div>
+        <script type="text/javascript">
+            
+            window.onload = function() {
+                      document.onkeydown = function(ev) {
+                        var event = ev || event
+                        if (event.keyCode == 13) {
+                          search()
+                        }
+                      }
+                    }
+            
+            function search() {
+                      key = document.getElementById("search-key").value;
+                      if (key === "") {
+                        
+                        return;
+                      }
+                      document.getElementById("search-key").value = "";
+                  
+                      
+                      document.getElementById("search-tip").innerText = "搜索中，请稍后 ...";
+                      document.getElementById("search-tip").style.display = "block";
+                  
+                      
+                      var el = document.getElementById('blog-listing-medium');
+                      var childs = el.childNodes;
+                      for (var i = childs.length - 1; i >= 0; i--) {
+                        el.removeChild(childs[i]);
+                      }
+                  
+                      
+                      xmltext = new XMLHttpRequest;
+                      xmltext.open("GET", "/index.xml", false);
+                      xmltext.send();
+                      resp = xmltext.responseXML;
+                      items = resp.getElementsByTagName("item");
+                      
+                      var i = 0;
+                      haveResult = false;
+                      while (i < items.length) {
+                        txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        if (txt.indexOf(key) > -1) {
+                          haveResult = true;
+                          title = items[i].getElementsByTagName("title")[0].innerHTML;
+                          link = items[i].getElementsByTagName("link")[0].innerHTML;
+                          time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
+                          mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          addItem(title, link, time, mark)
+                        }
+                        i++;
+                      }
+                      if (!haveResult) {
+                        document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
+                        document.getElementById("search-tip").style.display = "block";
+                      }
+                    }
+                  
+                    
+                    function addItem(title, link, time, mark) {
+                      document.getElementById("search-tip").style.display = "none";
+                      tmpl = "<article class=\"post\" style=\"border-bottom: 1px solid #e6e6e6;\" >" +
+                        "<header class=\"post-header\">" +
+                        "<h1 class=\"post-title\"><a class=\"post-link\" href=\"" + link + "\" target=\"_blank\">" + title + "</a></h1>" +
+                        "<div class=\"post-meta\">" +
+                        " <span class=\"post-time\">" + time + "</span>" +
+                        "</div>" +
+                        " </header>" +
+                        "<div class=\"post-content\">" +
+                        "<div class=\"post-summary\">" + mark + "</div>" +
+                        "<div class=\"read-more\">" +
+                        "<a href=" + link + " class=\"read-more-link\" target=\"_blank\">阅读更多</a>" +
+                        "</div>" +
+                        " </div>" +
+                        "</article>"
+                      div = document.createElement("div")
+                      div.innerHTML = tmpl;
+                      document.getElementById('blog-listing-medium').appendChild(div)
+                    }
+
+        </script>
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">归档栏</h3>
+        
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            
+            <li>
+                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/contaienrd">contaienrd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (12)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/network">network (1)</a>
+            </li>
+            
+        </ul>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">标签栏</h3>
+        
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            
+            <li>
+                <a href="/tags/agent"><i class="fas fa-tags"></i> agent</a>
+            </li>
+            
+            <li>
+                <a href="/tags/apiserver"><i class="fas fa-tags"></i> apiserver</a>
+            </li>
+            
+            <li>
+                <a href="/tags/books"><i class="fas fa-tags"></i> books</a>
+            </li>
+            
+            <li>
+                <a href="/tags/bosh"><i class="fas fa-tags"></i> bosh</a>
+            </li>
+            
+            <li>
+                <a href="/tags/ccng"><i class="fas fa-tags"></i> ccng</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cf-release"><i class="fas fa-tags"></i> cf-release</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cloudfoundry"><i class="fas fa-tags"></i> cloudfoundry</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cloudnative"><i class="fas fa-tags"></i> cloudnative</a>
+            </li>
+            
+            <li>
+                <a href="/tags/collector"><i class="fas fa-tags"></i> collector</a>
+            </li>
+            
+            <li>
+                <a href="/tags/containerd"><i class="fas fa-tags"></i> containerd</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cri"><i class="fas fa-tags"></i> cri</a>
+            </li>
+            
+            <li>
+                <a href="/tags/dea"><i class="fas fa-tags"></i> dea</a>
+            </li>
+            
+            <li>
+                <a href="/tags/docker"><i class="fas fa-tags"></i> docker</a>
+            </li>
+            
+            <li>
+                <a href="/tags/docker-network"><i class="fas fa-tags"></i> docker-network</a>
+            </li>
+            
+            <li>
+                <a href="/tags/edgecomputing"><i class="fas fa-tags"></i> edgecomputing</a>
+            </li>
+            
+            <li>
+                <a href="/tags/etcd"><i class="fas fa-tags"></i> etcd</a>
+            </li>
+            
+            <li>
+                <a href="/tags/gorouter"><i class="fas fa-tags"></i> gorouter</a>
+            </li>
+            
+            <li>
+                <a href="/tags/haproxy"><i class="fas fa-tags"></i> haproxy</a>
+            </li>
+            
+            <li>
+                <a href="/tags/healthmanager"><i class="fas fa-tags"></i> healthmanager</a>
+            </li>
+            
+            <li>
+                <a href="/tags/istio"><i class="fas fa-tags"></i> istio</a>
+            </li>
+            
+            <li>
+                <a href="/tags/kubeedge"><i class="fas fa-tags"></i> kubeedge</a>
+            </li>
+            
+            <li>
+                <a href="/tags/kubelet"><i class="fas fa-tags"></i> kubelet</a>
+            </li>
+            
+            <li>
+                <a href="/tags/kubernetes"><i class="fas fa-tags"></i> kubernetes</a>
+            </li>
+            
+            <li>
+                <a href="/tags/libcontainer"><i class="fas fa-tags"></i> libcontainer</a>
+            </li>
+            
+            <li>
+                <a href="/tags/micro-service"><i class="fas fa-tags"></i> micro-service</a>
+            </li>
+            
+            <li>
+                <a href="/tags/namespace"><i class="fas fa-tags"></i> namespace</a>
+            </li>
+            
+            <li>
+                <a href="/tags/nats"><i class="fas fa-tags"></i> nats</a>
+            </li>
+            
+            <li>
+                <a href="/tags/news"><i class="fas fa-tags"></i> news</a>
+            </li>
+            
+            <li>
+                <a href="/tags/pipework"><i class="fas fa-tags"></i> pipework</a>
+            </li>
+            
+            <li>
+                <a href="/tags/pouch"><i class="fas fa-tags"></i> pouch</a>
+            </li>
+            
+            <li>
+                <a href="/tags/runc"><i class="fas fa-tags"></i> runc</a>
+            </li>
+            
+            <li>
+                <a href="/tags/runtime"><i class="fas fa-tags"></i> runtime</a>
+            </li>
+            
+            <li>
+                <a href="/tags/security"><i class="fas fa-tags"></i> security</a>
+            </li>
+            
+            <li>
+                <a href="/tags/serverless"><i class="fas fa-tags"></i> serverless</a>
+            </li>
+            
+            <li>
+                <a href="/tags/service-mesh"><i class="fas fa-tags"></i> service-mesh</a>
+            </li>
+            
+            <li>
+                <a href="/tags/syslog_aggregator"><i class="fas fa-tags"></i> syslog_aggregator</a>
+            </li>
+            
+        </ul>
+    </div>
+
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4></h4>
+
+            <p><strong>关于我们：<strong> <p>浙大SEL实验室</p><p>地址：杭州市浙大路38号曹光彪西楼405室</p><p><strong></strong>
+            <a href="/contact" class="btn btn-small btn-template-main" >跳转到关于</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+            
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
+                          
+                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">kubeedge源码分析系列一：总体架构分析</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+                          
+                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">knative serving开发环境搭建</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                          
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4></h4>
+
+            <p><strong>联系我们: 
+                                    <p>团队负责人：丁轶群 yiqunding@zju.edu.cn</p>
+                                    <p>网站维护人：冯志凌 502361391@qq.com</p>                
+    </strong>
+
+            
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2020 SEL Laboratory , ZJ University all rights reserved.</p>
+            
+            <p class="pull-right">
+               <a href="https://bootstrapious.com/p/universal-business-e-commerce-template">Bootstrapious</a>.
+              
+
+               <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    
+<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+
+<script src="/js/front.js"></script>
+
+
+<script src="/js/owl.carousel.min.js"></script>
+
+
+
+  </body>
+</html>

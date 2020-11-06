@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kubernetes on 浙大SEL实验室</title>
+    <link>https://Rachel-Shao.github.io/tags/kubernetes/</link>
+    <description>Recent content in Kubernetes on 浙大SEL实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 29 Nov 2018 16:55:37 +0000</lastBuildDate>
+    
+	<atom:link href="https://Rachel-Shao.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>kubeedge源码分析系列一：总体架构分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/</link>
+      <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/</guid>
+      <description>kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。 SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.</description>
+    </item>
+    
+    <item>
+      <title>knative serving开发环境搭建</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+      <pubDate>Thu, 11 Oct 2018 20:11:02 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</guid>
+      <description>本文基官方knative serving的开发环境搭建文档，加自己的实践，给出以下knative serving开发环境的搭建方案。</description>
+    </item>
+    
+    <item>
+      <title>Service Mesh深度学习系列（三）| xds协议解密</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</link>
+      <pubDate>Fri, 27 Jul 2018 14:28:25 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</guid>
+      <description>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</description>
+    </item>
+    
+    <item>
+      <title>Service Mesh深度学习系列（二）| istio pilot模块分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</link>
+      <pubDate>Fri, 13 Jul 2018 14:15:16 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</guid>
+      <description>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</description>
+    </item>
+    
+    <item>
+      <title>Service Mesh深度学习系列（一）| istio pilot-agent模块分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 26 Jun 2018 14:29:18 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</guid>
+      <description>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</description>
+    </item>
+    
+    <item>
+      <title>PouchContainer CRI的设计与实现</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 29 May 2018 10:35:04 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
+      <description>1. CRI简介 在每个Kubernetes节点的最底层都有一个程序负责具体的容器创建删除工作，Kubernetes会对其接口进行调用，从而完成容器的编排调度。我们将这一层软件称之为容器运行时（Container Runtime），大名鼎鼎的Docker就是其中的代表。 当然，容器运行时并非只有Docker一种，包括CoreOS的rkt，hyper.</description>
+    </item>
+    
+    <item>
+      <title>技术干货|深入理解flannel</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/03/14/%E6%8A%80%E6%9C%AF%E5%B9%B2%E8%B4%A7%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3flannel/</link>
+      <pubDate>Wed, 14 Mar 2018 11:23:35 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/03/14/%E6%8A%80%E6%9C%AF%E5%B9%B2%E8%B4%A7%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3flannel/</guid>
+      <description>根据官网的描述，flannel是一个专为kubernetes定制的三层网络解决方案，主要用于解决容器的跨主机通信问题。</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes全球代码贡献量排行，浙江大学第六</title>
+      <link>https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/</link>
+      <pubDate>Wed, 30 Nov 2016 18:12:46 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/</guid>
+      <description>全球企业Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图。  从全球企业的贡献排名来看，排名状况基本变化不大，仍然是Google独占鳌头。令人欣喜的是，浙江大学SEL实验室排名又上升了一位，代码贡献量近24万行，总排名超越CoreOS达到世界第六位。这无疑是振奋人心的事情，这意味着越来越多的年轻学术人员投入Kubernetes开源社区建设，这将近一步提高中国在容器云社区的地位。 Kubernetes是当前容器集群编排3大开源方案中社区活跃度最高的。虽然现在正值入冬，但仍然挡不住 Kubernetes掀起全球关注的热潮。Kubernetes体现了Google对海量容器集群管理的经验和精华，这让Kubernetes在容器云计算框架横行天下的年代游刃有余，已经逐步成为了容器云框架中的佼佼者。从Kubernetes开放、自由、持续发展生态圈兼容的态度能看出，Kubernetes正变得越来越自信。 下图为Kubernetes模块代码贡献分析图：  从图中可知：Kubernetes运维和生态圈组件模块代码贡献直追核心模块kubernetes，排名2-4位的模块分别是Kubernetes生态圈、操作和界面。Kubernetes使用者越来越关心容器云框架落地而非仅仅将其作为空中楼阁远观而止。 Kubernetes在国内发展已经超过了3年的时间，但是遗憾的一点，尽管我们拥有世界上最多的开发人员，但是我们常常对社区没有话语权，国内的用户的需求无法对社区上游形 成影响，导致很多本地化定制的需求无法真正的在社区版本代码得到体现。所以如何让中国的声音出现在社区，是我们所有容器云计算人需要思考的问题。更希望越来越多的国内传统IT巨头能够意识到这个问题，投身于开源的事业中。</description>
+    </item>
+    
+    <item>
+      <title>《Docker容器与容器云》第2版推荐</title>
+      <link>https://Rachel-Shao.github.io/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Wed, 30 Nov 2016 17:41:43 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/</guid>
+      <description>自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。</description>
+    </item>
+    
+    <item>
+      <title>《Docker容器与容器云》推荐</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/10/21/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E6%8E%A8%E8%8D%90/</link>
+      <pubDate>Wed, 21 Oct 2015 20:26:10 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/10/21/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E6%8E%A8%E8%8D%90/</guid>
+      <description>《Docker容器与容器云》是Kubernetes社区核心开发者张磊博士及其技术团队近年来PaaS方面积累，全书不仅描述了容器与容器云技术，还融入了实验室四年来对云计算各个层面的理解。该书是国内第一本对Docker原理进行深度解析的书籍，也是第一本结合PaaS对各类容器云进行深度剖析，并着重深入分析Kubernetes原理的书籍。</description>
+    </item>
+    
+    <item>
+      <title>kubernetes apiserver源码分析——api请求的认证过程</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/</link>
+      <pubDate>Sun, 09 Aug 2015 11:25:44 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/</guid>
+      <description>解决什么问题 笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。 于是我们就回到最初的需求，到底需要解决什么问题，第一个问题就是，apiserver启动的时候，使用secure模式，参数应该如何设置，相关的机制又是怎样？ 这一部分的issue很多，如果不从源码来分析的话，就只能黑盒化的去尝试各种参数搭配，费时费力，也不确定是否正确，之前就是这样，这几个issue可以供参考： https://github.</description>
+    </item>
+    
+    <item>
+      <title>kubernetes node components - kubelet</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/08/07/kubernetes-node-components-kubelet/</link>
+      <pubDate>Fri, 07 Aug 2015 19:46:42 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/08/07/kubernetes-node-components-kubelet/</guid>
+      <description>kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</description>
+    </item>
+    
+    <item>
+      <title>详解k8s中的&#39;4S&#39;: Services Account, Secret, Security Context and Security in Kubernetes</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/</link>
+      <pubDate>Thu, 30 Jul 2015 13:41:07 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/</guid>
+      <description>Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes代码走读之Minion Node 组件 kube-proxy</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/01/22/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-kube-proxy-%E7%BB%84%E4%BB%B6/</link>
+      <pubDate>Thu, 22 Jan 2015 14:16:32 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/01/22/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-kube-proxy-%E7%BB%84%E4%BB%B6/</guid>
+      <description>Kube-proxy是kubernetes 里运行在minion节点上的一个组件, 它起的作用是一个服务代理的角色.</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes Minion Node 组件 之 Kubelet</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/01/13/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-%E4%B9%8B-kubelet/</link>
+      <pubDate>Tue, 13 Jan 2015 15:50:51 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/01/13/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-%E4%B9%8B-kubelet/</guid>
+      <description>Kubelet是Google Kubernetes 集群minion工作节点上的一个重要组件.</description>
+    </item>
+    
+    <item>
+      <title>Google Kubernetes设计文档之Volumes</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/</link>
+      <pubDate>Fri, 02 Jan 2015 10:56:38 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/</guid>
+      <description>摘要：</description>
+    </item>
+    
+    <item>
+      <title>Google Kubernetes设计文档之网络篇</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/29/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E7%BD%91%E7%BB%9C%E7%AF%87/</link>
+      <pubDate>Mon, 29 Dec 2014 15:32:24 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/29/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E7%BD%91%E7%BB%9C%E7%AF%87/</guid>
+      <description>摘要： Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。其从Docker默认网络模型中独立出来形成了一套自己的网络模型，本文将详细介绍。</description>
+    </item>
+    
+    <item>
+      <title>Google Kubernetes设计文档之服务篇</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/23/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E6%9C%8D%E5%8A%A1%E7%AF%87/</link>
+      <pubDate>Tue, 23 Dec 2014 10:20:47 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/23/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E6%9C%8D%E5%8A%A1%E7%AF%87/</guid>
+      <description>摘要：</description>
+    </item>
+    
+    <item>
+      <title>Google Kubernetes设计文档之Pod篇</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/19/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bpod%E7%AF%87/</link>
+      <pubDate>Fri, 19 Dec 2014 10:46:07 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/19/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bpod%E7%AF%87/</guid>
+      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。</description>
+    </item>
+    
+    <item>
+      <title>Google Kubernetes设计文档之安全篇</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/11/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E5%AE%89%E5%85%A8%E7%AF%87/</link>
+      <pubDate>Thu, 11 Dec 2014 21:04:21 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/11/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E5%AE%89%E5%85%A8%E7%AF%87/</guid>
+      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文为其设计文档系列的第一篇：安全。</description>
+    </item>
+    
+  </channel>
+</rss>

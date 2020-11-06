@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>pouch on 浙大SEL实验室</title>
+    <link>https://Rachel-Shao.github.io/tags/pouch/</link>
+    <description>Recent content in pouch on 浙大SEL实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 29 May 2018 10:35:04 +0000</lastBuildDate>
+    
+	<atom:link href="https://Rachel-Shao.github.io/tags/pouch/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PouchContainer CRI的设计与实现</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 29 May 2018 10:35:04 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
+      <description>1. CRI简介 在每个Kubernetes节点的最底层都有一个程序负责具体的容器创建删除工作，Kubernetes会对其接口进行调用，从而完成容器的编排调度。我们将这一层软件称之为容器运行时（Container Runtime），大名鼎鼎的Docker就是其中的代表。 当然，容器运行时并非只有Docker一种，包括CoreOS的rkt，hyper.</description>
+    </item>
+    
+  </channel>
+</rss>

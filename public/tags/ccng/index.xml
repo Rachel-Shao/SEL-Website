@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ccng on 浙大SEL实验室</title>
+    <link>https://Rachel-Shao.github.io/tags/ccng/</link>
+    <description>Recent content in ccng on 浙大SEL实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 03 Apr 2014 14:15:12 +0000</lastBuildDate>
+    
+	<atom:link href="https://Rachel-Shao.github.io/tags/ccng/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Cloud_Controller_NG源码阅读记录</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Thu, 03 Apr 2014 14:15:12 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/</guid>
+      <description>Cloud_Controller_NG就是cloud controller next generation的意思。即Cloud Foundry 平台用来管理控制应用和服务的组件。 官方文档是这么解释CCNG的作用的： * 维护一个包含应用、服务、配置信息的数据库(CCDB)。 * 在blobstore中存储应用的packages和droplets。 * 通过NATS和其他组件进行通信，包括Droplet Execution Agents (DEAs)、Service Gateways、和 Health Manager（HM）。 * 其他供用户调用的后端API。 阅读该组件源码，有助于从应用管理的视角理解cloudfoundry的运行过程。 说明： 1.</description>
+    </item>
+    
+  </channel>
+</rss>

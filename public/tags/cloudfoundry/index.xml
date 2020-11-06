@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cloudfoundry on 浙大SEL实验室</title>
+    <link>https://Rachel-Shao.github.io/tags/cloudfoundry/</link>
+    <description>Recent content in cloudfoundry on 浙大SEL实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 17 Dec 2014 16:03:01 +0000</lastBuildDate>
+    
+	<atom:link href="https://Rachel-Shao.github.io/tags/cloudfoundry/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>cf-release结构解析</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Wed, 17 Dec 2014 16:03:01 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</guid>
+      <description>1. 制作时的cf-release结构解析 此处指的release统一为CloudFoundry官方给出的cf-release，不做修改。</description>
+    </item>
+    
+    <item>
+      <title>Blue-Green Deployments on Cloud Foundry (利用CloudFoundry实现蓝绿发布)</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/blue-green-deployments-on-cloud-foundry-%E5%88%A9%E7%94%A8cloudfoundry%E5%AE%9E%E7%8E%B0%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83/</link>
+      <pubDate>Tue, 02 Dec 2014 19:25:20 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/blue-green-deployments-on-cloud-foundry-%E5%88%A9%E7%94%A8cloudfoundry%E5%AE%9E%E7%8E%B0%E8%93%9D%E7%BB%BF%E5%8F%91%E5%B8%83/</guid>
+      <description>前言 原文地址：Blue-Green Deployments on Cloud Foundry</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry’s 新容器技术： A Garden Overview</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundrys-%E6%96%B0%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF-a-garden-overview/</link>
+      <pubDate>Tue, 02 Dec 2014 18:52:46 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundrys-%E6%96%B0%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF-a-garden-overview/</guid>
+      <description>CloudFoundry（CF）中很早就使用了VMware研发的Warden容器来负责应用的资源分配隔离和实例调度。可惜的是，这一本来可以成为业界标准和并掀起一阵革命的容器PaaS技术却因为Pivotal的方针路线上的种种原因被后来居上Docker吊打至今。最近CFer有醒悟的迹象，在Warden上进行了大量改进和升级，本文就来一窥CF新容器技术的一些要点。</description>
+    </item>
+    
+    <item>
+      <title>在生产中使用金丝雀部署来进行测试</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/%E5%9C%A8%E7%94%9F%E4%BA%A7%E4%B8%AD%E4%BD%BF%E7%94%A8%E9%87%91%E4%B8%9D%E9%9B%80%E9%83%A8%E7%BD%B2%E6%9D%A5%E8%BF%9B%E8%A1%8C%E6%B5%8B%E8%AF%95/</link>
+      <pubDate>Tue, 02 Dec 2014 17:26:05 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/%E5%9C%A8%E7%94%9F%E4%BA%A7%E4%B8%AD%E4%BD%BF%E7%94%A8%E9%87%91%E4%B8%9D%E9%9B%80%E9%83%A8%E7%BD%B2%E6%9D%A5%E8%BF%9B%E8%A1%8C%E6%B5%8B%E8%AF%95/</guid>
+      <description>根据Nolio发布的DevOps最佳实践系列中的第一个demo，很多公司通过路由策略选择性地对部分用户发布新功能从而使用 “金丝雀部署（Canary Deployments）”来测试生产中的软件，并将这一方式作为其可持续交付的一部分。“金丝雀部署”是增量发布的一种类型，它的执行方式是在原有软件生产版本可用的情况下，同时部署一个新的版本。同时运行同一个软件产品的多个版本需要软件针对配置和完美自动化部署进行特别设计。</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中warden的架构与实现</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundry%E4%B8%ADwarden%E7%9A%84%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 02 Dec 2014 17:19:09 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundry%E4%B8%ADwarden%E7%9A%84%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
+      <description>在Cloud Foundry中，当应用开发者的应用由Cloud Foundry的组件DEA来运行时，应用的资源隔离与控制显得尤为重要，而warden的存在很好得解决了这个问题。 Cloud Foundry中warden项目的首要目的是提供一套简易的接口来管理隔离的环境，这些隔离的环境可以被称为“容器”，他们可以在CPU使用，内存使用，磁盘使用以及设备访问权限方面做相应的限制。</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中DEA与warden通信完成应用端口监听</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundry%E4%B8%ADdea%E4%B8%8Ewarden%E9%80%9A%E4%BF%A1%E5%AE%8C%E6%88%90%E5%BA%94%E7%94%A8%E7%AB%AF%E5%8F%A3%E7%9B%91%E5%90%AC/</link>
+      <pubDate>Tue, 02 Dec 2014 16:55:44 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundry%E4%B8%ADdea%E4%B8%8Ewarden%E9%80%9A%E4%BF%A1%E5%AE%8C%E6%88%90%E5%BA%94%E7%94%A8%E7%AB%AF%E5%8F%A3%E7%9B%91%E5%90%AC/</guid>
+      <description>在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。 本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中gorouter对StickySession的支持</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/11/21/cloud-foundry%E4%B8%ADgorouter%E5%AF%B9stickysession%E7%9A%84%E6%94%AF%E6%8C%81/</link>
+      <pubDate>Fri, 21 Nov 2014 13:04:13 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/11/21/cloud-foundry%E4%B8%ADgorouter%E5%AF%B9stickysession%E7%9A%84%E6%94%AF%E6%8C%81/</guid>
+      <description>本文即分析Cloud Foundry中gorouter关于StickySession的实现方式。 该部分内容需要对gorouter有一定的了解，可以参见笔者之前的博文：Cloud Foundry中gorouter源码分析 关于StickySession的信息，gorouter所做的工作，主要分为两个部分：如何给HTTP请求添加StickySession、如何通过StickySession辨别应用的具体实例。</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中DEA启动应用实例时环境变量的使用</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/11/20/cloud-foundry%E4%B8%ADdea%E5%90%AF%E5%8A%A8%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B%E6%97%B6%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Thu, 20 Nov 2014 13:03:30 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/11/20/cloud-foundry%E4%B8%ADdea%E5%90%AF%E5%8A%A8%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B%E6%97%B6%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>在Cloud Foundry v2中，当应用用户需要启动应用的实例时，用户通过cf CLI向cloud controller发送请求，而cloud controller通过NATS向DEA转发启动请求。真正执行启动事宜的是DEA，DEA主要做的工作为启动一个warden container, 并将droplet等内容拷贝进入container内部，最后配置完指定的环境变量，在这些环境变量下启动应用的启动脚本。 本文将从阐述Cloud Foundry中DEA如何为应用实例的启动配置环境变量。</description>
+    </item>
+    
+    <item>
+      <title>Haproxy端口映射（client头中URL/HOST修改后转发）</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/10/28/haproxy%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84client%E5%A4%B4%E4%B8%ADurlhost%E4%BF%AE%E6%94%B9%E5%90%8E%E8%BD%AC%E5%8F%91/</link>
+      <pubDate>Tue, 28 Oct 2014 17:02:26 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/10/28/haproxy%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84client%E5%A4%B4%E4%B8%ADurlhost%E4%BF%AE%E6%94%B9%E5%90%8E%E8%BD%AC%E5%8F%91/</guid>
+      <description>CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP+端口”的形式，在公网访问CF集群上部署的APP。</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中gorouter源码分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADgorouter%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Wed, 07 May 2014 10:20:09 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADgorouter%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>在Cloud Foundry v1版本中，router作为路由节点，转发所有进入Cloud Foundry的请求。由于开发语言为ruby，故router接受并处理并发请求的能力受到语言层的限制。虽然在v1版本中，router曾经有过一定的优化，采用lua脚本代替原先的ruby脚本，由lua来分析请求，使得一部分请求不再经过ruby代码，而直接去DEA访问应用，但是，一旦router暴露在大量的访问请求下，性能依旧是不尽如人意.</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中collector组件的源码分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADcollector%E7%BB%84%E4%BB%B6%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Wed, 07 May 2014 10:19:45 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADcollector%E7%BB%84%E4%BB%B6%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。 本文从collector的功能出发，主要讲述以上两个功能的源码实现。</description>
+    </item>
+    
+    <item>
+      <title>Cloud Foundry中syslog_aggregator的实现分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADsyslog-aggregator%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</link>
+      <pubDate>Wed, 07 May 2014 10:19:32 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADsyslog-aggregator%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</guid>
+      <description>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</description>
+    </item>
+    
+    <item>
+      <title>Health_Manager2.0源码分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 15 Apr 2014 15:14:56 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。 笔者写这篇文档之前，在Github上，Health_Manager_next作为一个单独的项目，存在于Cloud Foundry之下；然而在笔者写这篇文档的时候，Health_Manager_next项目在Cloud Foundry下已经不复存在，然而进入原先的Health_Manager项目，可以发现，Health_Manager项目的项目说明已经成为HealthManager 2.</description>
+    </item>
+    
+    <item>
+      <title>[James Bayer]Cloud Foundry和BOSH部分遭受OpenSSL漏洞影响</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/</link>
+      <pubDate>Fri, 11 Apr 2014 10:49:01 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/</guid>
+      <description>James Bayer jbayer@gopivotal.</description>
+    </item>
+    
+    <item>
+      <title>Cloud_Controller_NG源码阅读记录</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/</link>
+      <pubDate>Thu, 03 Apr 2014 14:15:12 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/</guid>
+      <description>Cloud_Controller_NG就是cloud controller next generation的意思。即Cloud Foundry 平台用来管理控制应用和服务的组件。 官方文档是这么解释CCNG的作用的： * 维护一个包含应用、服务、配置信息的数据库(CCDB)。 * 在blobstore中存储应用的packages和droplets。 * 通过NATS和其他组件进行通信，包括Droplet Execution Agents (DEAs)、Service Gateways、和 Health Manager（HM）。 * 其他供用户调用的后端API。 阅读该组件源码，有助于从应用管理的视角理解cloudfoundry的运行过程。 说明： 1.</description>
+    </item>
+    
+    <item>
+      <title>以NATS为主线的CloudFoundry原理</title>
+      <link>https://Rachel-Shao.github.io/blog/2013/12/02/%E4%BB%A5nats%E4%B8%BA%E4%B8%BB%E7%BA%BF%E7%9A%84cloudfoundry%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Mon, 02 Dec 2013 13:04:57 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2013/12/02/%E4%BB%A5nats%E4%B8%BA%E4%B8%BB%E7%BA%BF%E7%9A%84cloudfoundry%E5%8E%9F%E7%90%86/</guid>
+      <description>本文将试图以CloudFoundry中的消息组件NATS为主要线索，以在CF中广泛使用的并发和网络编程框架EventMachine为侧重，来串联整个CF主线功能的工作原理，力求能用简单直接的方式描述出较多的架构细节和系统设计。 需要准备的知识： EventMachine(EM)的基础知识和使用方法，可以参考不久前的介绍：Research on EventMachine 关于NATS源码级别的介绍，可以参考我们之前的这篇文章：Research on NATS</description>
+    </item>
+    
+  </channel>
+</rss>

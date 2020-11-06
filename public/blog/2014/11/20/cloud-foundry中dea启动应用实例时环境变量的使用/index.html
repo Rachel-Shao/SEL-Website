@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+  <head>
+  <meta charset="utf-8">
+  <meta name="robots" content="all,follow">
+  <meta name="googlebot" content="index,follow,snippet,archive">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <title>Cloud Foundry中DEA启动应用实例时环境变量的使用</title>
+  <meta name="author" content="孙宏亮" />
+  
+  
+  
+  
+  <meta name="keywords" content="dea, cloudfoundry">
+  
+  
+  <meta name="description" content="">
+
+  <meta name="generator" content="Hugo 0.74.2" />
+
+  
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+
+  
+  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  
+  <link href="/css/animate.css" rel="stylesheet">
+
+  
+  
+    <link href="/css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+  
+
+  
+  <link href="/css/custom.css" rel="stylesheet">
+
+  
+  
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  
+
+  
+  <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png" />
+
+  
+  <link href="/css/owl.carousel.css" rel="stylesheet">
+  <link href="/css/owl.theme.css" rel="stylesheet">
+
+  
+  <link rel="alternate" href="https://Rachel-Shao.github.io/index.xml" type="application/rss+xml" title="浙大SEL实验室">
+
+  
+  
+  
+  
+  
+  
+  <meta property="og:updated_time" content="2014-11-20T13:03:30Z">
+  
+    
+    
+    <meta property="article:section" content="cloudfoundry">
+    <meta property="article:tag" content="dea">
+    <meta property="article:tag" content="cloudfoundry">
+    
+    
+    <meta property="article:published_time" content="2014-11-20T13:03:30Z">
+    <meta property="article:modified_time" content="2014-11-20T13:03:30Z">
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Cloud Foundry中DEA启动应用实例时环境变量的使用">
+  
+  <meta name="twitter:description" content="">
+  
+
+</head>
+
+
+  <body>
+
+    <div id="all">
+
+        <header class="navbar-affixed-top" data-spy="affix" data-offset-top="62">
+    <div class="navbar navbar-default yamm" role="navigation" id="navbar" style="background-color:white;">    
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand home" href="/">
+                    <img src="/img/sel.png" alt="Cloud Foundry中DEA启动应用实例时环境变量的使用" class="hidden-xs hidden-sm img-responsive">
+                    
+                    <span class="sr-only">Cloud Foundry中DEA启动应用实例时环境变量的使用 - </span>
+                </a>
+                <div class="navbar-buttons">
+                    <button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
+                      <span class="sr-only"></span>
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            
+
+            <div class="navbar-collapse collapse" id="navigation">
+                <ul class="nav navbar-nav navbar-right">
+                  
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/">主页</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/blog/">博客</a>
+                    
+                  </li>
+
+                  <li class="dropdown">
+                    
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">社区 <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    
+                      <li><a href="https://www.servicemesher.com/">ServiceMesh社区</a></li>
+                    
+                      <li><a href="">kubeedge社区</a></li>
+
+                      <li><a href="http://www.icsoft.zju.edu.cn/index.php">浙江大学智能计算与软件中心</a></li>
+                    
+                  </ul>
+
+                  <li class="dropdown">
+                    
+                    <a href="/archives/">归档</a>
+                    
+                  </li>
+                  
+                  <li class="dropdown">
+                    
+                    <a href="/contact/">关于</a>
+                    
+                  </li>
+                  
+                </li>
+
+                
+                
+
+                
+                </ul>
+            </div>
+            
+
+            <div class="collapse clearfix" id="search">    
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main"><i class="fas fa-search"></i></button>
+                </span>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
+    
+</header>
+
+
+
+
+        <div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Cloud Foundry中DEA启动应用实例时环境变量的使用</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <div id="content">
+            <div class="container">
+
+                <div class="row">
+
+                    
+
+                    <div class="col-md-9" id="blog-post">
+
+                        
+                          <p class="text-muted text-uppercase mb-small text-right">
+                             <a href="#">孙宏亮</a>
+                             | 
+                            2014-11-20
+                          </p>
+                        
+
+                        <div id="post-content">
+                          <p>在Cloud Foundry v2中，当应用用户需要启动应用的实例时，用户通过cf CLI向cloud controller发送请求，而cloud controller通过NATS向DEA转发启动请求。真正执行启动事宜的是DEA，DEA主要做的工作为启动一个warden container, 并将droplet等内容拷贝进入container内部，最后配置完指定的环境变量，在这些环境变量下启动应用的启动脚本。 本文将从阐述Cloud Foundry中DEA如何为应用实例的启动配置环境变量。</p>
+<h1 id="dea接收应用启动请求及其执行流程"><strong>DEA接收应用启动请求及其执行流程</strong></h1>
+<p>在这部分，通过代码的形式来说明DEA对于应用启动请求的执行流程。
+1.首先DEA订阅相应主题的消息，主题为“dea.#{bootstrap.uuid}.start”，含义为“自身DEA的应用启动消息”：</p>
+<pre><code>subscribe(&quot;dea.#{bootstrap.uuid}.start&quot;) do |message|  
+    bootstrap.handle\_dea\_directed\_start(message)  
+end  
+</code></pre>
+<p>2.当收到订阅主题之后，执行bootstrap.handle_dea_directed_start(message)，含义为“通过bootstrap类实例来处理应用的启动请求”：</p>
+<pre><code>def handle\_dea\_directed\_start(message)  
+    start\_app(message.data)  
+end  
+</code></pre>
+<p>3.可以认为处理的入口，即为以上代码中的start_app方法：</p>
+<pre><code>def start\_app(data)  
+    instance = instance\_manager.create\_instance(data)  
+    return unless instance
+
+    instance.start  
+end  
+</code></pre>
+<p>4.在start_app方法中，首先通过instance_manager类实例来创建一个instance对象，通过执行instance实例的类方法start，可以看到自始至终，传递的参数的原始来源都是通过NATS消息传递来的message，也就是1中的message：</p>
+<pre><code>def start(&amp;callback)  
+    p = Promise.new do  
+    ……  
+    \[  
+        promise\_droplet,  
+        promise\_container  
+    \].each(&amp;:run).each(&amp;:resolve)  
+    \[  
+        promise\_extract\_droplet,  
+        promise\_exec\_hook\_script('before\_start'),  
+        promise\_start  
+    \].each(&amp;:resolve)  
+    ……  
+    p.deliver  
+end  
+</code></pre>
+<p>5.其中真正关于应用启动的执行在promise_start方法中实现：</p>
+<pre><code>def promise\_start  
+  Promise.new do |p|  
+    env = Env.new(StartMessage.new(@raw\_attributes), self)  
+    if staged\_info  
+       command = start\_command || staged\_info\['start\_command'\] 
+       unless command  
+         p.fail(MissingStartCommand.new)  
+         next  
+       end  
+       start\_script = 
+         Dea::StartupScriptGenerator.new(  
+            command,  
+            env.exported\_user\_environment\_variables,  
+            env.exported\_system\_environment\_variables 
+         ).generate 
+    else  
+     start\_script = env.exported\_environment\_variables + &quot;./startup;\\nexit&quot;  
+    end  
+    response = container.spawn(start\_script, container.resource\_limits(self.file\_descriptor\_limit, NPROC\_LIMIT))  
+    attributes\['warden\_job\_id'\] = response.job\_id  
+    container.update\_path\_and\_ip  
+    bootstrap.snapshot.save 
+    p.deliver 
+  end  
+end  
+</code></pre>
+<p>可以看到在第5步中，DEA涉及到了应用的ENV环境变量等信息，最后通过container.spawn方法实现了应用的启动。</p>
+<h1 id="dea环境变量的配置"><strong>DEA环境变量的配置</strong></h1>
+<p>在以上步骤的第5步，首先创建了环境变量env = Env.new(StartMessage.new(@raw_attributes), self)，Env类的初始化方法如下：</p>
+<pre><code>def initialize(message, instance\_or\_staging\_task=nil)  
+   @strategy\_env = if message.is\_a? StagingMessage  
+     StagingEnv.new(message, instance\_or\_staging\_task)  
+   else  
+     RunningEnv.new(message, instance\_or\_staging\_task)  
+   end  
+end  
+</code></pre>
+<p>可见，实际是创建了一个RunningEnv类的实例，参数主要为cloud controller发送来的信息。 在promise_start方法中，创建env变量之后，通过判断staged_info来选择start_script变量的构建。 现在分析staged_info的代码实现：</p>
+<pre><code>def staged\_info  
+  @staged\_info ||= begin  
+    Dir.mktmpdir do |destination\_dir|  
+       staging\_file\_name = 'staging\_info.yml'  
+       copied\_file\_name = &quot;#{destination\_dir}/#{staging\_file\_name}&quot; 
+       copy\_out\_request(&quot;/home/vcap/#{staging\_file\_name}&quot;, destination\_dir)  
+       YAML.load\_file(copied\_file\_name) if File.exists?(copied\_file\_name)  
+    end  
+  end  
+end  
+</code></pre>
+<p>主要是通过指定路径，然后从路径中提取出变量。下面以一个ruby的应用为例，其staging_info.yml文件的内容为：</p>
+<pre><code>---  
+detected\_buildpack: Ruby/Rack  
+start\_command: bundle exec rackup config.ru -p $PORT  
+</code></pre>
+<p>因此，最终@staged_info的内容如上，在instance.start方法中，command为bundle exec rackup config.ru -p $PORT。有了command变量之后，接着是构建start_script变量：</p>
+<pre><code>start\_script =  
+    Dea::StartupScriptGenerator.new(  
+        command,  
+        env.exported\_user\_environment\_variables,  
+        env.exported\_system\_environment\_variables  
+    ).generate  
+</code></pre>
+<p>可以看到，DEA通过StartupScriptGenerator类来创建start_script，其中参数为三个，第一个为刚才涉及到的command，后两个均需要通过env变量来生成。 现在看exported_user_environment_variables方法的实现：</p>
+<pre><code>def exported\_user\_environment\_variables  
+    to\_export(translate\_env(message.env))  
+end  
+</code></pre>
+<p>该方法实现从message中提取中属性为env的信息，作为用户的环境变量。 进入env.exported_system_environment_variables的方法实现：</p>
+<pre><code>def exported\_system\_environment\_variables  
+    env = \[  
+        \[&quot;VCAP\_APPLICATION&quot;,  Yajl::Encoder.encode(vcap\_application)\],  
+        \[&quot;VCAP\_SERVICES&quot;, Yajl::Encoder.encode(vcap\_services)\],  
+        \[&quot;MEMORY\_LIMIT&quot;, &quot;#{message.mem\_limit}m&quot;\]  
+    \]  
+    env &lt;&lt; \[&quot;DATABASE\_URL&quot;, DatabaseUriGenerator.new(message.services).database\_uri\] if message.services.any?  
+
+    to\_export(env + strategy\_env.exported\_system\_environment\_variables)  
+end  
+</code></pre>
+<p>可见在生成系统的环境变量的时候，首先创建一个env数组变量，其中有信息VCAP_APPLICATION, VCAP_SERVICES, MEMORY_LIMIT三种，其中VCAP_APPLICATION的信息如下：</p>
+<pre><code>def vcap\_application  
+    @vcap\_application ||=  
+      begin  
+        hash = strategy\_env.vcap\_application  
+
+        hash\[&quot;limits&quot;\] = message.limits  
+        hash\[&quot;application\_version&quot;\] = message.version  
+        hash\[&quot;application\_name&quot;\] = message.name  
+        hash\[&quot;application\_uris&quot;\] = message.uris  
+        # Translate keys for backwards compatibility  
+        hash\[&quot;version&quot;\] = hash\[&quot;application\_version&quot;\]  
+        hash\[&quot;name&quot;\] = hash\[&quot;application\_name&quot;\]  
+        hash\[&quot;uris&quot;\] = hash\[&quot;application\_uris&quot;\]  
+        hash\[&quot;users&quot;\] = hash\[&quot;application\_users&quot;\]
+
+        hash  
+      end  
+end  
+</code></pre>
+<p>这部分信息中包含了应用的name，uris，users，version等一系列内容。其中需要特别注意的是代码hash = strategy_env.vcap_application，该代码的作用为调用了RunningEnv类中vcap_application方法，如下：</p>
+<pre><code>def vcap\_application  
+    hash = {}  
+    hash\[&quot;instance\_id&quot;\] = instance.attributes\[&quot;instance\_id&quot;\]  
+    hash\[&quot;instance\_index&quot;\] = message.index  
+    hash\[&quot;host&quot;\] = HOSTStartupScriptGenerator  
+    hash\[&quot;port&quot;\] = instance.instance\_container\_port  
+    started\_at = Time.at(instance.state\_starting\_timestamp)  
+    hash\[&quot;started\_at&quot;\] = started\_at  
+    hash\[&quot;started\_at\_timestamp&quot;\] = started\_at.to\_i  
+    hash\[&quot;start&quot;\] = hash\[&quot;started\_at&quot;\]  
+    hash\[&quot;state\_timestamp&quot;\] = hash\[&quot;started\_at\_timestamp&quot;\]  
+    hash  
+end  
+</code></pre>
+<p>可见在以上代码中，vcap_application信息中记录了很多关于应用实例的信息，包括instance_id, instance_index, host, port, started_at, started_at_timestamp, start, state_timestamp等。 VCAP_SERVICES的信息如下：</p>
+<pre><code>  WHITELIST\_SERVICE\_KEYS = %W\[name label tags plan plan\_option credentials syslog\_drain\_url\].freeze  
+def vcap\_services  
+   @vcap\_services ||=  
+      begin  
+         services\_hash = Hash.new { |h, k| h\[k\] = \[\] }  
+
+         message.services.each do |service|  
+            service\_hash = {}  
+            WHITELIST\_SERVICE\_KEYS.each do |key|  
+               service\_hash\[key\] = service\[key\] if service\[key\]  
+            end  
+
+            services\_hash\[service\[&quot;label&quot;\]\] &lt;&lt; service\_hash  
+         end  
+
+         services\_hash
+      end
+end  
+</code></pre>
+<p>这部分内容主要从message中寻找是否存在和WHITELIST_SERVICES_KEYS中值作为键的值，若存在的话，加入services_hash该变量。 随后，DEA在运行代码env &laquo; [&ldquo;DATABASE_URL&rdquo;, DatabaseUriGenerator.new(message.services).database_uri] if message.services.any?，该部分代码的作用主要要理解DatabaseUriGenerator的含义，这部分笔者仍不是很清楚。 再后来，DEA执行代码to_export(env + strategy_env.exported_system_environment_variables)，这部分的内容非常重要，主要要进入strategy_env对象所在的类中查看exported_system_environment_variables方法：</p>
+<pre><code>def exported\_system\_environment\_variables  
+  env = \[  
+    \[&quot;HOME&quot;, &quot;$PWD/app&quot;\],  
+    \[&quot;TMPDIR&quot;, &quot;$PWD/tmp&quot;\],  
+    \[&quot;VCAP\_APP\_HOST&quot;, HOST\],  
+    \[&quot;VCAP\_APP\_PORT&quot;, instance.instance\_container\_port\],  
+  \]  
+  env &lt;&lt; \[&quot;PORT&quot;, &quot;$VCAP\_APP\_PORT&quot;\]  
+  env  
+end  
+</code></pre>
+<p>可以看到，这里主要包含运行信息的环境变量，比如说HOME目录，TMP临时目录，应用实例运行的host地址，应用实例运行的端口号。其中最为重要的就是应用实例运行的端口号，在我的另一篇博文Cloud Foundry中DEA与warden通信完成应用端口监听 中，有涉及到如何通过warden server来开辟端口，最终为DEA所用，并通过环境变量的形式传递给应用实例的启动脚本。其中VCAP_APP_PORT和PORT都是warden container开启那个端口号。 分析完了StartupScriptGenerator的三个参数，需要进入StartupScriptGenerator类的generate方法：</p>
+<pre><code>def generate  
+    script = \[\]  
+    script &lt;&lt; &quot;umask 077&quot;  
+    script &lt;&lt; @system\_envs  
+    script &lt;&lt; EXPORT\_BUILDPACK\_ENV\_VARIABLES\_SCRIPT  
+    script &lt;&lt; @user\_envs
+    script &lt;&lt; &quot;env &gt; logs/env.log&quot;  
+    script &lt;&lt; START\_SCRIPT % @start\_command  
+    script.join(&quot;\\n&quot;)  
+end  
+</code></pre>
+<p>以上的代码即为创建启动脚本的过程。其中@system_envs为之前分析的env.exported_system_environment_variables, @user_envs为env.exported_user_environment_variables。还有两个脚本是EXPORT_BUILDPACK_ENV_VARIABLES_SCRIPT和START_SCRIPT，EXPORT_BUILDPACK_ENV_VARIABLES_SCRIPT脚本的代码如下，其意为执行某路径下的所有sh脚本：</p>
+<pre><code>EXPORT\_BUILDPACK\_ENV\_VARIABLES\_SCRIPT = strip\_heredoc(&lt;&lt;-BASH).freeze  
+   unset GEM\_PATH  
+   if \[ -d app/.profile.d \]; then  
+     for i in app/.profile.d/\*.sh; do  
+        if \[ -r $i \]; then  
+           . $i  
+        fi  
+     done  
+     unset i  
+   fi  
+BASH  
+</code></pre>
+<p>而START_SCRIPT代码如下：</p>
+<pre><code>START\_SCRIPT = strip\_heredoc(&lt;&lt;-BASH).freeze  
+   DROPLET\_BASE\_DIR=$PWD
+   cd app  
+   (%s) &gt; &gt;(tee $DROPLET\_BASE\_DIR/logs/stdout.log) 2&gt; &gt;(tee $DROPLET\_BASE\_DIR/logs/stderr.log &gt;&amp;2) &amp;  
+   STARTED=$!  
+   echo &quot;$STARTED&quot; &gt;&gt; $DROPLET\_BASE\_DIR/run.pid  
+
+   wait $STARTED  
+BASH  
+</code></pre>
+<p>以上即创建完了start_script，回到instance.rb中的promise_start方法中，即执</p>
+<pre><code>response = container.spawn(start\_script, container.resource\_limits(self.file\_descriptor\_limit, NPROC\_LIMIT))  
+</code></pre>
+<p>即完成应用实例的启动工作。详情可以进入container类中的spawn方法实现。</p>
+<h2 id="转载请注明出处"><strong>转载请注明出处。</strong></h2>
+<p>这篇文档更多出于我本人的理解，肯定在一些地方存在不足和错误。希望本文能够对接触Cloud Foundry v2中dea_ng如何启动应用实例的人有些帮助，如果你对这方面感兴趣，并有更好的想法和建议，也请联系我。</p>
+
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        <div id="SOHUCS"></div>
+                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        <script type="text/javascript">
+                          window.changyan.api.config({
+                          appid: 'cyuX8hDAj',
+                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
+                          });
+                        </script>
+
+                    </div>
+                    
+
+                    
+
+                    
+
+                    <div class="col-md-3">
+
+                        
+
+                        
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+      <h3 class="panel-title">搜索栏</h3>
+      
+    </div>
+
+    <div class="panel-body">
+        
+        <div class="search" id="search">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="请输入文章标题或摘要..." id="search-key">
+                <input type="hidden" name="sitesearch" value="https://Rachel-Shao.github.io/">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-template-main" onclick="search()"><i class="fas fa-search"></i></button>
+                </span>
+            </div>
+            <h1 id="search-tip" style="color: red;text-align: center;display: none;font-size: medium;">搜索中，请稍后 ...</h1>
+        </div>
+        <script type="text/javascript">
+            
+            window.onload = function() {
+                      document.onkeydown = function(ev) {
+                        var event = ev || event
+                        if (event.keyCode == 13) {
+                          search()
+                        }
+                      }
+                    }
+            
+            function search() {
+                      key = document.getElementById("search-key").value;
+                      if (key === "") {
+                        
+                        return;
+                      }
+                      document.getElementById("search-key").value = "";
+                  
+                      
+                      document.getElementById("search-tip").innerText = "搜索中，请稍后 ...";
+                      document.getElementById("search-tip").style.display = "block";
+                  
+                      
+                      var el = document.getElementById('blog-listing-medium');
+                      var childs = el.childNodes;
+                      for (var i = childs.length - 1; i >= 0; i--) {
+                        el.removeChild(childs[i]);
+                      }
+                  
+                      
+                      xmltext = new XMLHttpRequest;
+                      xmltext.open("GET", "/index.xml", false);
+                      xmltext.send();
+                      resp = xmltext.responseXML;
+                      items = resp.getElementsByTagName("item");
+                      
+                      var i = 0;
+                      haveResult = false;
+                      while (i < items.length) {
+                        txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        if (txt.indexOf(key) > -1) {
+                          haveResult = true;
+                          title = items[i].getElementsByTagName("title")[0].innerHTML;
+                          link = items[i].getElementsByTagName("link")[0].innerHTML;
+                          time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
+                          mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          addItem(title, link, time, mark)
+                        }
+                        i++;
+                      }
+                      if (!haveResult) {
+                        document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
+                        document.getElementById("search-tip").style.display = "block";
+                      }
+                    }
+                  
+                    
+                    function addItem(title, link, time, mark) {
+                      document.getElementById("search-tip").style.display = "none";
+                      tmpl = "<article class=\"post\" style=\"border-bottom: 1px solid #e6e6e6;\" >" +
+                        "<header class=\"post-header\">" +
+                        "<h1 class=\"post-title\"><a class=\"post-link\" href=\"" + link + "\" target=\"_blank\">" + title + "</a></h1>" +
+                        "<div class=\"post-meta\">" +
+                        " <span class=\"post-time\">" + time + "</span>" +
+                        "</div>" +
+                        " </header>" +
+                        "<div class=\"post-content\">" +
+                        "<div class=\"post-summary\">" + mark + "</div>" +
+                        "<div class=\"read-more\">" +
+                        "<a href=" + link + " class=\"read-more-link\" target=\"_blank\">阅读更多</a>" +
+                        "</div>" +
+                        " </div>" +
+                        "</article>"
+                      div = document.createElement("div")
+                      div.innerHTML = tmpl;
+                      document.getElementById('blog-listing-medium').appendChild(div)
+                    }
+
+        </script>
+        
+    </div>
+</div>
+
+
+
+
+
+
+
+<div class="panel panel-default sidebar-menu">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">归档栏</h3>
+        
+    </div>
+
+    <div class="panel-body">
+        <ul class="nav nav-pills nav-stacked">
+            
+            
+            <li>
+                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/contaienrd">contaienrd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (12)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/network">network (1)</a>
+            </li>
+            
+        </ul>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="panel sidebar-menu">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">标签栏</h3>
+        
+    </div>
+
+    <div class="panel-body">
+        <ul class="tag-cloud">
+            
+            
+            <li>
+                <a href="/tags/agent"><i class="fas fa-tags"></i> agent</a>
+            </li>
+            
+            <li>
+                <a href="/tags/apiserver"><i class="fas fa-tags"></i> apiserver</a>
+            </li>
+            
+            <li>
+                <a href="/tags/books"><i class="fas fa-tags"></i> books</a>
+            </li>
+            
+            <li>
+                <a href="/tags/bosh"><i class="fas fa-tags"></i> bosh</a>
+            </li>
+            
+            <li>
+                <a href="/tags/ccng"><i class="fas fa-tags"></i> ccng</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cf-release"><i class="fas fa-tags"></i> cf-release</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cloudfoundry"><i class="fas fa-tags"></i> cloudfoundry</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cloudnative"><i class="fas fa-tags"></i> cloudnative</a>
+            </li>
+            
+            <li>
+                <a href="/tags/collector"><i class="fas fa-tags"></i> collector</a>
+            </li>
+            
+            <li>
+                <a href="/tags/containerd"><i class="fas fa-tags"></i> containerd</a>
+            </li>
+            
+            <li>
+                <a href="/tags/cri"><i class="fas fa-tags"></i> cri</a>
+            </li>
+            
+            <li>
+                <a href="/tags/dea"><i class="fas fa-tags"></i> dea</a>
+            </li>
+            
+            <li>
+                <a href="/tags/docker"><i class="fas fa-tags"></i> docker</a>
+            </li>
+            
+            <li>
+                <a href="/tags/docker-network"><i class="fas fa-tags"></i> docker-network</a>
+            </li>
+            
+            <li>
+                <a href="/tags/edgecomputing"><i class="fas fa-tags"></i> edgecomputing</a>
+            </li>
+            
+            <li>
+                <a href="/tags/etcd"><i class="fas fa-tags"></i> etcd</a>
+            </li>
+            
+            <li>
+                <a href="/tags/gorouter"><i class="fas fa-tags"></i> gorouter</a>
+            </li>
+            
+            <li>
+                <a href="/tags/haproxy"><i class="fas fa-tags"></i> haproxy</a>
+            </li>
+            
+            <li>
+                <a href="/tags/healthmanager"><i class="fas fa-tags"></i> healthmanager</a>
+            </li>
+            
+            <li>
+                <a href="/tags/istio"><i class="fas fa-tags"></i> istio</a>
+            </li>
+            
+            <li>
+                <a href="/tags/kubeedge"><i class="fas fa-tags"></i> kubeedge</a>
+            </li>
+            
+            <li>
+                <a href="/tags/kubelet"><i class="fas fa-tags"></i> kubelet</a>
+            </li>
+            
+            <li>
+                <a href="/tags/kubernetes"><i class="fas fa-tags"></i> kubernetes</a>
+            </li>
+            
+            <li>
+                <a href="/tags/libcontainer"><i class="fas fa-tags"></i> libcontainer</a>
+            </li>
+            
+            <li>
+                <a href="/tags/micro-service"><i class="fas fa-tags"></i> micro-service</a>
+            </li>
+            
+            <li>
+                <a href="/tags/namespace"><i class="fas fa-tags"></i> namespace</a>
+            </li>
+            
+            <li>
+                <a href="/tags/nats"><i class="fas fa-tags"></i> nats</a>
+            </li>
+            
+            <li>
+                <a href="/tags/news"><i class="fas fa-tags"></i> news</a>
+            </li>
+            
+            <li>
+                <a href="/tags/pipework"><i class="fas fa-tags"></i> pipework</a>
+            </li>
+            
+            <li>
+                <a href="/tags/pouch"><i class="fas fa-tags"></i> pouch</a>
+            </li>
+            
+            <li>
+                <a href="/tags/runc"><i class="fas fa-tags"></i> runc</a>
+            </li>
+            
+            <li>
+                <a href="/tags/runtime"><i class="fas fa-tags"></i> runtime</a>
+            </li>
+            
+            <li>
+                <a href="/tags/security"><i class="fas fa-tags"></i> security</a>
+            </li>
+            
+            <li>
+                <a href="/tags/serverless"><i class="fas fa-tags"></i> serverless</a>
+            </li>
+            
+            <li>
+                <a href="/tags/service-mesh"><i class="fas fa-tags"></i> service-mesh</a>
+            </li>
+            
+            <li>
+                <a href="/tags/syslog_aggregator"><i class="fas fa-tags"></i> syslog_aggregator</a>
+            </li>
+            
+        </ul>
+    </div>
+
+</div>
+
+
+
+
+
+
+                        
+
+                    </div>
+                    
+
+                    
+
+                </div>
+                
+
+            </div>
+            
+        </div>
+        
+
+        <footer id="footer">
+    <div class="container">
+
+        
+        <div class="col-md-4 col-sm-6">
+            <h4></h4>
+
+            <p><strong>关于我们：<strong> <p>浙大SEL实验室</p><p>地址：杭州市浙大路38号曹光彪西楼405室</p><p><strong></strong>
+            <a href="/contact" class="btn btn-small btn-template-main" >跳转到关于</a>
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+        <div class="col-md-4 col-sm-6">
+
+             
+            <h4>最新博客</h4>
+            
+
+            <div class="blog-entries">
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
+                          
+                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">kubeedge源码分析系列一：总体架构分析</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+                          
+                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">knative serving开发环境搭建</a></h5>
+                    </div>
+                </div>
+                
+                <div class="item same-height-row clearfix">
+                    <div class="image same-height-always">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                          
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                          
+                        </a>
+                    </div>
+                    <div class="name same-height-always">
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                    </div>
+                </div>
+                
+            </div>
+
+            <hr class="hidden-md hidden-lg">
+             
+
+        </div>
+        
+
+        
+        <div class="col-md-4 col-sm-6">
+
+          <h4></h4>
+
+            <p><strong>联系我们: 
+                                    <p>团队负责人：丁轶群 yiqunding@zju.edu.cn</p>
+                                    <p>网站维护人：冯志凌 502361391@qq.com</p>                
+    </strong>
+
+            
+
+            <hr class="hidden-md hidden-lg hidden-sm">
+
+        </div>
+        
+        
+
+    </div>
+    
+</footer>
+
+
+
+
+
+
+
+<div id="copyright">
+    <div class="container">
+        <div class="col-md-12">
+            
+            <p class="pull-left">Copyright ©️ 2020 SEL Laboratory , ZJ University all rights reserved.</p>
+            
+            <p class="pull-right">
+               <a href="https://bootstrapious.com/p/universal-business-e-commerce-template">Bootstrapious</a>.
+              
+
+               <a href="https://github.com/devcows/hugo-universal-theme">DevCows</a>.
+            </p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    </div>
+    
+
+    
+<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/Counter-Up/1.0/jquery.counterup.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-parallax/1.1.3/jquery-parallax.js"></script>
+
+<script src="/js/front.js"></script>
+
+
+<script src="/js/owl.carousel.min.js"></script>
+
+
+
+  </body>
+</html>
