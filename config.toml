@@ -15,6 +15,7 @@ disqusShortname = ""
 # 取消默认的代码高亮，我们使用prism代码高亮
 pygmentsUseClasses = false
 pygmentCodeFences = true
+pygmentsStyle="manni"
 
 # 每页显示的文章数量用于分页
 paginate = 10
@@ -175,6 +176,13 @@ summaryLength = 1  # 摘要显示的段落数
     enable = true
     title = "最新博客"
     subtitle = "最新的开源研究和源码分析都在这里"
+
+
+[markup]
+  defaultMarkdownHandler = "blackfriday"
+
+
+
 
 
 

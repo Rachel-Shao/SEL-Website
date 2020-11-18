@@ -208,9 +208,14 @@
                         
 
                         <div id="post-content">
-                          <h1 id="前言"><strong>前言</strong></h1>
+                          
+
+<h1 id="前言"><strong>前言</strong></h1>
+
 <p>原文地址：<a href="http://www.mattstine.com/2013/07/10/blue-green-deployments-on-cloudfoundry/">Blue-Green Deployments on Cloud Foundry</a></p>
+
 <p>We’ll begin with a basic Spring application named ms-spr-demo. This app takes users to a simple web page announcing the ubiquitous “Hello World!” message. We’ll utilize the cf command-line interface to push the application:</p>
+
 <p><strong>这里先向CF PUSH一个很简单的打印“Hello World”的应用：</strong></p>
 <pre><code>$ cf push --path build/libs/cf-demo.war  
 Name&gt; ms-spr-demo  
@@ -271,17 +276,20 @@ Staging in progress...
   0/1 instances: 1 starting  
   0/1 instances: 1 starting  
   1/1 instances: 1 running  
-OK  
-</code></pre>
+OK  </code></pre>
 <p>The end result of this <code>cf push</code> event is that an application is now serving requests at <code>http://ms-spr-demo.cfapps.io</code>. The following graphic shows the state of our system, with the CF Router sending traffic to our application:</p>
+
 <p><strong>这个应用的实例将被映射到 <code>http://ms-spr-demo.cfapps.io</code> 这个域名上，如下所示：</strong></p>
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-1_kzscth.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-1_kzscth.png" alt="CF-BG-1"></a></p>
+
+<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-1_kzscth.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-1_kzscth.png" alt="CF-BG-1" /></a></p>
+
 <p>Next, we make a slight change to our application. Rather that saying “Hello World!” we decide to make it say “Goodbye World!” We build a new war file for the application. Rather than letting <code>cf</code> prompt us this time, we’ll make use of the <code>manifest.yml</code> file that we saved from our previous push. However, we’ll rename the application and provide a new route. Take a look:</p>
+
 <p><strong>接下来，我们对应用源码做了修改，使之打印“Goodbye World”，然后使用第一次部署时生成的<code>manifest.yml</code>来进行PUSH，不过，这一次我们将源码部署成一个新应用并映射了新域名：</strong></p>
 <pre><code>--- applications: - name: ms-spr-demo-green   memory: 512M   instances: 1
-url: ms-spr-demo-green.cfapps.io   path: build/libs/cf-demo.war 
-</code></pre>
+url: ms-spr-demo-green.cfapps.io   path: build/libs/cf-demo.war </code></pre>
 <p>As you can see, we’re calling our new application version <code>ms-spr-demo-green</code> and we’re mapping it to the URL <code>ms-spr-demo-green.cfapps.io</code>. Let’s push the application:</p>
+
 <p><strong>下面开始PUSH：</strong></p>
 <pre><code>Using manifest file manifest.yml  
 
@@ -322,27 +330,37 @@ Staging in progress...
   0/1 instances: 1 starting  
   0/1 instances: 1 starting  
   1/1 instances: 1 running  
-OK  
-</code></pre>
+OK  </code></pre>
 <p>We now have two instances of the application running, each of them using distinct routes:</p>
+
 <p><strong>PUSH完成之后，两个应用都运行在CF上并且按照下述方式分配域名：</strong></p>
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-2_vh2gut.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-2_vh2gut.png" alt="CF-BG-2"></a></p>
+
+<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-2_vh2gut.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-2_vh2gut.png" alt="CF-BG-2" /></a></p>
+
 <p>Now it’s time for the magic to happen. We’ll map our original URL route (<code>ms-spr-demo.cfapps.io</code>) to our “green” instance. This is accomplished very simply by using <code>cf</code>:</p>
+
 <p><strong>这时，我们将老应用（蓝色）的域名ms-spr-demo.cfapps.io同时映射到新应用（绿色）上：</strong></p>
-<pre><code> cf map --app ms-spr-demo-green --host ms-spr-demo --domain cfapps.io Binding ms-spr-demo.cfapps.io to ms-spr-demo-green... OK 
-</code></pre>
+<pre><code> cf map --app ms-spr-demo-green --host ms-spr-demo --domain cfapps.io Binding ms-spr-demo.cfapps.io to ms-spr-demo-green... OK </code></pre>
 <p>The CF router immediately begins to load balance requests between each instance of the application, as shown here:</p>
+
 <p><strong>此时的域名映射如下图所示：</strong></p>
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-31_miuoqn.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-31_miuoqn.png" alt="CF-BG-3"></a></p>
+
+<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-31_miuoqn.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-31_miuoqn.png" alt="CF-BG-3" /></a></p>
+
 <p>Now our router will send requests to <code>ms-spr-demo.cfapps.io</code> to both instances of the application, while <code>ms-spr-demo-green.cfapps.io</code> only services the “green” instance. Once we determine that all is well, it’s time to stop routing requests to the “blue” instance. This is just as simple using <code>cf</code>:</p>
+
 <p><strong>这样，ms-spr-demo.cfapps.io将流量导向了蓝绿两个应用，而ms-spr-demo-green.cfapps.io则只将流量导向新部署的绿色应用。这也是我们对绿色应用进行测试和观察的好时机（我们还可以调节蓝色和绿色应用的实例数目来进行流量分配比），一旦我们能够确定绿色应用能够正常的对外服务，接可以将蓝色应用实例切断了：</strong></p>
-<pre><code> cf unmap --url ms-spr-demo.cfapps.io --app ms-spr-demo Unbinding ms-spr-demo.cfapps.io from ms-spr-demo... OK 
-</code></pre>
+<pre><code> cf unmap --url ms-spr-demo.cfapps.io --app ms-spr-demo Unbinding ms-spr-demo.cfapps.io from ms-spr-demo... OK </code></pre>
 <p>Our “blue” instance is now no longer receiving any web traffic:</p>
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023135/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-4_aizfrv.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023135/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-4_aizfrv.png" alt="CF-BG-4"></a></p>
+
+<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023135/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-4_aizfrv.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023135/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-4_aizfrv.png" alt="CF-BG-4" /></a></p>
+
 <p>We can now decomission our “blue” instance, or we can leave it around for a period of time in case we decide we need to roll back our changes. The important thing is that our customers suffered absolutely no downtime!</p>
+
 <p><strong>这样，ms-spr-demo.cfapps.io ms-spr-demo-green.cfapps.io都将流量导向了绿色应用，我们可以删除旧的蓝色应用或者保留一段时间以防意外情况。最后，我们可以把ms-spr-demo-green.cfapps.io这个测试域名也删除。</strong> <strong>整个发布过程，用户没有感受到任何宕机或者服务重启。</strong></p>
+
 <p>附录 Martin Fowler大神提出的蓝绿发布： One particular practice associated with Continuous Delivery is <code>Blue-Green Deployments</code>. Martin Fowler describes these very well at the link provided, but I’ll summarize briefly here:</p>
+
 <ul>
 <li>Cut-over to a new software version is tricky, and must be quick in order to minimize downtime events.</li>
 <li>Blue-green deployments ensure the parallel existence of two, identical (as possible) production environments.</li>
@@ -509,7 +527,7 @@ OK
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -748,7 +766,7 @@ OK
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -761,7 +779,7 @@ OK
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

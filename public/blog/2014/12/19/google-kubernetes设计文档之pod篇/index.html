@@ -208,33 +208,52 @@
                         
 
                         <div id="post-content">
-                          <p>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。</p>
-<!-- raw HTML omitted -->
-<h1 id="1什么是pod"><strong>1.什么是Pod</strong></h1>
+                          
+
+<p>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。</p>
+
+<!-- more -->
+
+<h1 id="1-什么是pod"><strong>1.什么是Pod</strong></h1>
+
 <p>一个Pod对应于由若干容器组成的一个容器组，同个组内的容器共享一个存储卷(volume)。Pod主要是在容器化环境中建立了一个面向应用的“逻辑主机”模型，它可以包含一个或多个相互间紧密联系的容器。在没有容器化技术的场景里，同个Pod内的“容器”都在同一台物理或虚拟主机上运行。 Pod与容器一样都不是持续存在的，在容器的<a href="https://github.com/GoogleCloudPlatform/Kubernetes/blob/master/docs/pod-states.md">生命周期</a>里，每个Pod被分配到节点上运行直至运行结束或被删除。当一个节点消失时，该节点上的Pod也随之被删除。每个Pod实体只会被调度一次，不会重复分配给别的节点，由replication controller负责创建新的Pod来替代旧的（在未来也可能有新的API用于Pod迁移）。</p>
-<h1 id="2开发pod的原因"><strong>2.开发Pod的原因</strong></h1>
-<h2 id="21-资源共享和通信"><strong>2.1 资源共享和通信</strong></h2>
+
+<h1 id="2-开发pod的原因"><strong>2.开发Pod的原因</strong></h1>
+
+<h2 id="2-1-资源共享和通信"><strong>2.1 资源共享和通信</strong></h2>
+
 <p>Pod的存在使同个Pod下的容器之间能更方便的共享数据和通信。 同个Pod下的容器使用相同的网络命名空间、IP地址和端口区间，相互之间能通过localhost来发现和通信。在一个无层次的共享网络中，每个Pod都有一个IP地址用于跟别的物理主机和容器通信，Pod的名字就用作容器通信时的主机名。（有关网络的内容，我们稍后会翻译） 在同个Pod内运行的容器还共享一块存储卷空间，存储卷内的数据不会在容器重启后丢失，同时能被同Pod下别的容器读取。 未来的开发计划是使Pod共享IPC命名空间，CPU和内存。(参加Google的<a href="http://www.linuxplumbersconf.org/2013/ocw//system/presentations/1239/original/lmctfy%20(1).pdf">lmctfy</a>文档，lmctfy的意思是Let me Contain That For You)</p>
-<h2 id="22-管理"><strong>2.2 管理</strong></h2>
+
+<h2 id="2-2-管理"><strong>2.2 管理</strong></h2>
+
 <p>相比原生的容器接口，Pod通过提供更高层次的抽象，简化了应用的部署和管理。Pods就像一个管理和横向部署/和管理的单元，主机托管、资源共享、协调复制和依赖管理都可以自动处理。</p>
-<h1 id="3pod用例"><strong>3.Pod用例</strong></h1>
+
+<h1 id="3-pod用例"><strong>3.Pod用例</strong></h1>
+
 <p>Pod能应用于构建垂直集成应用栈，但它的主要为了集中管理一些辅助程序，如：</p>
+
 <ul>
 <li>内容管理系统，文件和数据载入器，本地缓存管理等； - 日志和检查点备份，压缩，轮换，快照系统等；</li>
 <li>数据变化监视，日志末端数据读取，日志和监控适配器，事件打印等；</li>
 <li>代理，桥接和适配器；</li>
 <li>控制器，管理器，配置编辑器和更新器。</li>
 </ul>
+
 <p>Pod的设计并不是为了运行同一个应用的多个实例。</p>
-<h1 id="4其他考虑因素"><strong>4.其他考虑因素</strong></h1>
+
+<h1 id="4-其他考虑因素"><strong>4.其他考虑因素</strong></h1>
+
 <p>为什么不直接在单个Docker容器中运行多个程序？主要是出于以下几个原因：</p>
+
 <ol>
 <li><strong>透明性</strong>：将Pod内的容器向基础设施可见，底层系统就能向容器提供如进程管理和资源监控等服务，这样能给用户带来极大便利；</li>
 <li><strong>解绑软件的依赖</strong>：这样单个的容器可以独立地重建和重新部署。未来有可能在Kubernetes上实现独立容器的实时更新；</li>
 <li><strong>易用性</strong>：用户不需要运行自己的进程管理器，也不需负责信号量和退出码的传递等；</li>
 <li><strong>高效性</strong>：因为底层设备负责更多了管理，容器因而能更轻量化。</li>
 </ol>
+
 <p>为什么不直接将相近的容器集中管理呢？那种方法虽然提供了集中管理的功能，但却没有Pod所拥有的大部分便利之处，如不提供资源共享和进程间通信，无法保证容器同时开始和结束，不能简化管理等。</p>
+
 <p><strong>原文链接：</strong><a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/pods.md">Pods</a>（编译/叶瑞浩 审校/孙宏亮、张磊） [simple-author-box]</p>
 
                         </div>
@@ -394,7 +413,7 @@
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -633,7 +652,7 @@
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -646,7 +665,7 @@
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

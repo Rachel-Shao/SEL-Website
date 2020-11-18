@@ -7,7 +7,7 @@
   <meta name="googlebot" content="index,follow,snippet,archive">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <title>详解k8s中的&#39;4S&amp;rsquo;: Services Account, Secret, Security Context and Security in Kubernetes</title>
+  <title>详解k8s中的&amp;rsquo;4S&amp;rsquo;: Services Account, Secret, Security Context and Security in Kubernetes</title>
   <meta name="author" content="何思玫" />
   
   
@@ -79,7 +79,7 @@
   
   <meta name="twitter:card" content="summary">
   
-  <meta name="twitter:title" content="详解k8s中的&#39;4S&amp;rsquo;: Services Account, Secret, Security Context and …">
+  <meta name="twitter:title" content="详解k8s中的&amp;rsquo;4S&amp;rsquo;: Services Account, Secret, Security Context …">
   
   <meta name="twitter:description" content="">
   
@@ -209,47 +209,73 @@
                         
 
                         <div id="post-content">
-                          <p>Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</p>
-<hr>
-<h3 id="1-集群安全security-in-kubernetes"><strong>1. 集群安全（Security in Kubernetes)</strong></h3>
+                          
+
+<p>Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</p>
+
+<hr />
+
+<h3 id="1-集群安全-security-in-kubernetes"><strong>1. 集群安全（Security in Kubernetes)</strong></h3>
+
 <p>众所周知，集群安全的首要关注点无疑是隔离性。进程之间的相互隔离，进程与集群基础设施的严格界限，用户与管理员之前的天然角色区分，都应该被考虑到隔离性的范畴内。 统而言之，集群安全性必须考虑如下几个目标： (1) 保证容器与其运行的宿主机的隔离。 (2) 限制容器对于基础设施及其它容器的影响权限，运行拥有特权模式的容器是不被推荐的行为。 (3) 最小权限原则——对所有组件权限的合理限制。 (4) 通过清晰地划分组件的边界来减少需要加固和加以保护的系统组件数量。 (5) 普通用户和管理员的角色区分，同时允许在必要的时候将管理员权限委派给普通用户。 (6) 允许集群上运行的应用拥有secret data。 涉及安全，authentication和authorization是不能绕过的两个话题。下面我们就先来了解一下k8s在这两个issue所提供的支持。</p>
+
 <h3 id="2-authentication"><strong>2. Authentication</strong></h3>
+
 <p>k8s目前支持三种认证方式，包括certificates/tokens/http basic auth。 client certificate authentication是双向认证的方式，可以经由easyrsa等证书生成工具生成服务器端并客户端证书。 Token authentication：单向认证方式，为kube-apiserver提供<code>- -token_ auth_file</code>，格式为一个有3columns的csv file：token,user name,user id。<a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/logging-elasticsearch.md">此处</a>为使用该认证方法的常见的elasticsearch case。 Basic authentication：传入明文用户名密码作为apiserver的启动参数，不支持在不重启apiserver的前提下进行用户名/密码修改。</p>
+
 <p>更多细节详见<a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/admin/authentication.md">官方相关文档</a>。</p>
+
 <h3 id="3-authorization"><strong>3. Authorization</strong></h3>
+
 <p><code>--authorization-mode</code>，apiserver的参数，用于定义对secure port设置何种authorization policy，包括三种AlwaysAllow/AlwayDeny/ABAC，第一种policy允许所有对apiserver的API request，与之相反，第二种则会block所有的API request，第三种则为Attribute-Based Access Control，即对于不同request attribute，有不同的access control。 下面我们着重讨论ABAC mode。</p>
-<h4 id="31-request-attributes"><strong>3.1 Request Attributes</strong></h4>
+
+<h4 id="3-1-request-attributes"><strong>3.1 Request Attributes</strong></h4>
+
 <p>在考虑authorization时，一个request有5种attribute需要考虑： - user - group - readOnly - resource（如只访问API endpoint，如/api/v1/namesapces/default/pods，或者其它杂项endpoint，如/version，此时的resource是空字符串） - namespace</p>
-<h4 id="32-policy-file-format"><strong>3.2 Policy File Format</strong></h4>
+
+<h4 id="3-2-policy-file-format"><strong>3.2 Policy File Format</strong></h4>
+
 <p>对于ABAC mode，还需要specify <code>--authorization-policy-file</code>参数，例子参见<a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/pkg/auth/authorizer/abac/example_policy_file.jsonl">此处</a>。 除此之外，apiserver还可以通过调用Authorizer(interface)来决定是否允许某个API操作。</p>
+
 <h3 id="4-useraccount"><strong>4. UserAccount</strong></h3>
+
 <p>这个概念适用于所有希望与k8s集群交互的个体（通常可以认为是human），因此用户名通常是human-readable，目前并不作为一个代码中的类型单独出现，一般通过config file来读取和感知。</p>
+
 <h3 id="5-service-account"><strong>5. Service Account</strong></h3>
+
 <p>Service Account概念的引入是基于这样的使用场景：运行在pod里的进程需要调用k8s API（如scheduler/replication controller/minitor system等）以及非k8s API的其它服务（如image repository/被mount到pod上的NFS volumes中的file等）。我们使用Service Account来为pod提供id。 Service Account和第4节中提及的User account可能会带来一定程度上的混淆，下面我们就先从概念的层面将其sort it out。</p>
+
 <ul>
 <li>user account通常是为human设计的，而service account则是为跑在pod里的process。</li>
 <li>user account是global的，即跨namespace使用；而service account是namespaced的，即仅在belonging的namespace下使用。</li>
 <li>创建一个新的user account通常需要较高的特权并且需要经过比较复杂的business process（即对于集群的访问权限的创建），而service account则不然。</li>
 <li>不同的auditing consideration。</li>
 </ul>
-<h4 id="51-design-overview"><strong>5.1 Design Overview</strong></h4>
+
+<h4 id="5-1-design-overview"><strong>5.1 Design Overview</strong></h4>
+
 <p>Service Account包括如下几个元素：</p>
+
 <ul>
 <li>name,用以作为id</li>
 <li>principal，用以authenticated及authorized</li>
 <li>security context，定义linux capabilities等与系统相关的参数。</li>
 <li>secrets</li>
 </ul>
-<h4 id="52-use-cases"><strong>5.2 Use Cases</strong></h4>
+
+<h4 id="5-2-use-cases"><strong>5.2 Use Cases</strong></h4>
+
 <p>通常我们在使用<code>kubectl</code>binary来与集群交互时，我们（User Account）都会通过apiserver的认证（如果该集群设置了认证方式的话），可以被看作某个特定的User Account。类似地，当pod希望与apiserver进行交互时，也需要使用特定的认证机制，即Service Account。 当创建pod且没有经过特殊设置时，它将会被默认地分发到该namespace下default的service account，可以通过<code>kubectl get pods/podname -o yaml</code>的命令行查看<code>spec.serviceAccount</code>的field）。</p>
-<h5 id="521-default-service-account"><strong>5.2.1 default service account</strong></h5>
+
+<h5 id="5-2-1-default-service-account"><strong>5.2.1 default service account</strong></h5>
+
 <p>每个namespace在创建时都会有一个default的service Account，如下所示</p>
 <pre><code>$ kubectl get serviceAccounts --all-namespaces
 NAMESPACE     NAME      SECRETS
 default       default   1
-kube-system   default   1
-</code></pre>
-<h5 id="522-create-your-own-service-account"><strong>5.2.2 Create your own service Account</strong></h5>
+kube-system   default   1</code></pre>
+<h5 id="5-2-2-create-your-own-service-account"><strong>5.2.2 Create your own service Account</strong></h5>
+
 <p>用户可以方便地通过yaml文件等形式创建自己的serviceAccount，如</p>
 <pre><code>$ cat &gt; /tmp/serviceaccount.yaml &lt;&lt;EOF
 apiVersion: v1
@@ -259,8 +285,7 @@ metadata:
 EOF
 
 $ kubectl create -f /tmp/serviceaccount.yaml
-serviceaccounts/build-robot
-</code></pre>
+serviceaccounts/build-robot</code></pre>
 <p>通过`kubectl get &lt; resource &gt; -o yaml获取详细信息</p>
 <pre><code>$ kubectl get serviceaccounts/build-robot -o yaml
 apiVersion: v1
@@ -269,16 +294,15 @@ metadata:
   creationTimestamp: 2015-07-28T07:34:02Z
   name: build-robot
   namespace: default
-  resourceVersion: &quot;196476&quot;
+  resourceVersion: &#34;196476&#34;
   selfLink: /api/v1/namespaces/default/serviceaccounts/build-robot
   uid: 0477793a-34fb-11e5-a412-005056b45394
 secrets:
-- name: build-robot-token-n0o98
-</code></pre>
+- name: build-robot-token-n0o98</code></pre>
 <p>可以看到，token（secret）被自动生成并ref了。如果在之后创建pod的时候ref这个自建的serviceAccount，在<code>spec.serviceAccount</code>中指定即可。 通过如下命令可以删除serviceAccount。</p>
-<pre><code>$ kubectl delete serviceaccount/build-robot
-</code></pre>
-<h5 id="523adding-secrets-to-a-service-account"><strong>5.2.3Adding Secrets to a service account</strong></h5>
+<pre><code>$ kubectl delete serviceaccount/build-robot</code></pre>
+<h5 id="5-2-3adding-secrets-to-a-service-account"><strong>5.2.3Adding Secrets to a service account</strong></h5>
+
 <p>注意到，我们可以不使用serviceAccount自建的secrets，而是选用我们自己生成的secrets，这是一种consume secret的方式。 首先创建secret，<code>kubectl create -f secret.yaml</code></p>
 <pre><code>//secret.yaml
 apiVersion: v1
@@ -287,8 +311,7 @@ metadata:
   name: test-secret
 data:
   data-1: dmFsdWUtMQ0K
-  data-2: dmFsdWUtMg0KDQo=
-</code></pre>
+  data-2: dmFsdWUtMg0KDQo=</code></pre>
 <p>然后创建一个comsume该secret，<code>kubectl create -f serviceaccount.yaml</code></p>
 <pre><code>//serviceaccount.yaml
 apiVersion: v1
@@ -296,8 +319,7 @@ kind: ServiceAccount
 metadata:
   name: build-robot
 secrets:
-- name: test-secret
-</code></pre>
+- name: test-secret</code></pre>
 <p>最后在pod的manifest中指定其serviceaccount，<code>kubectl create -f busybox4.yaml</code></p>
 <pre><code>//busybox4.yaml
 apiVersion: v1
@@ -310,7 +332,7 @@ spec:
   - image: busybox
     command:
       - sleep
-      - &quot;3600&quot;
+      - &#34;3600&#34;
     imagePullPolicy: IfNotPresent
     name: busybox
     volumeMounts:
@@ -322,36 +344,38 @@ spec:
   volumes:
     - name: foo
       secret:
-        secretName: test-secret
-</code></pre>
+        secretName: test-secret</code></pre>
 <p>已了解如何创建一个引用自建secret的serviceaccount，但是如果在exsiting serviceaccount中添加引用，目前<a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/service-accounts.md">官方文档</a>mark it as TODO。笔者认为此用法应该与上例类似，但笔者采用这种方式consume secret时，serviceaccount似乎并不对该secret有维护作用。 Update:此用法确与上例类似，参见issue#12012，笔者后续会考虑对相关doc进行更新。</p>
+
 <h3 id="6-secrets"><strong>6. Secrets</strong></h3>
+
 <p>secret是用于存放sensitive information的数据结构，可以通过manual或者automatic两种方式创建。 secret的use case主要有两种，或者作为volume mount到pod上，或者用于kubelet在为pod里的container拉取镜像时。 使用serviceAccount自建的secret是一种保证secure的推荐方式，当然可以由用户disable或者overridden，如果用户愿意承担额外的风险的话。</p>
-<h4 id="61-secrets类型一览"><strong>6.1 Secrets类型一览</strong></h4>
+
+<h4 id="6-1-secrets类型一览"><strong>6.1 Secrets类型一览</strong></h4>
+
 <p>secret的类型目前有三种，如下所示</p>
 <pre><code>type SecretType string
 
 const (
-    SecretTypeOpaque              SecretType = &quot;Opaque&quot;                                 // Opaque (arbitrary data; default)
-    SecretTypeServiceAccountToken SecretType = &quot;kubernetes.io/service-account-token&quot;    // Kubernetes auth token
-    SecretTypeDockercfg           SecretType = &quot;kubernetes.io/dockercfg&quot;                // Docker registry auth
-)
-</code></pre>
-<p>Opaque类型是默认的用户自建类型，即任意string（实际上也并不是十分任意，<code>data</code> label的key/value必须满足特定的要求：Each key must be a valid DNS_SUBDOMAIN or leading dot followed by valid DNS_SUBDOMAIN. Each value must be a base64 encoded string as described in <a href="https://tools.ietf.org/html/rfc4648#section-4">https://tools.ietf.org/html/rfc4648#section-4</a>）。 第二种类型的例子如下所示</p>
+    SecretTypeOpaque              SecretType = &#34;Opaque&#34;                                 // Opaque (arbitrary data; default)
+    SecretTypeServiceAccountToken SecretType = &#34;kubernetes.io/service-account-token&#34;    // Kubernetes auth token
+    SecretTypeDockercfg           SecretType = &#34;kubernetes.io/dockercfg&#34;                // Docker registry auth
+)</code></pre>
+<p>Opaque类型是默认的用户自建类型，即任意string（实际上也并不是十分任意，<code>data</code> label的key/value必须满足特定的要求：Each key must be a valid DNS_SUBDOMAIN or leading dot followed by valid DNS_SUBDOMAIN. Each value must be a base64 encoded string as described in <a href="https://tools.ietf.org/html/rfc4648#section-4）。">https://tools.ietf.org/html/rfc4648#section-4）。</a> 第二种类型的例子如下所示</p>
 <pre><code>{
-    &quot;apiVersion&quot;: &quot;v1&quot;,
-    &quot;kind&quot;: &quot;Secret&quot;,
-    &quot;metadata&quot;: {
-        &quot;name&quot;: &quot;mysecretname&quot;,
-        &quot;annotations&quot;: {
-            &quot;kubernetes.io/service-account.name&quot;: &quot;build-robot&quot;
+    &#34;apiVersion&#34;: &#34;v1&#34;,
+    &#34;kind&#34;: &#34;Secret&#34;,
+    &#34;metadata&#34;: {
+        &#34;name&#34;: &#34;mysecretname&#34;,
+        &#34;annotations&#34;: {
+            &#34;kubernetes.io/service-account.name&#34;: &#34;build-robot&#34;
         }
     },
-    &quot;type&quot;: &quot;kubernetes.io/service-account-token&quot;
-}    
-</code></pre>
+    &#34;type&#34;: &#34;kubernetes.io/service-account-token&#34;
+}    </code></pre>
 <p>第三种类型一般用于向private registry拉取镜像，在6.3节中再做阐述。</p>
-<h4 id="62-manually-specify-a-secret"><strong>6.2 manually specify a secret</strong></h4>
+
+<h4 id="6-2-manually-specify-a-secret"><strong>6.2 manually specify a secret</strong></h4>
 <pre><code>apiVersion: v1
 kind: Secret
 metadata:
@@ -359,44 +383,48 @@ metadata:
 type: Opaque
 data:
   password: dmFsdWUtMg0K
-  username: dmFsdWUtMQ0K
-</code></pre>
+  username: dmFsdWUtMQ0K</code></pre>
 <p>如上述所示，使用<code>kubectl create</code>命令即可创建一个secret。创建完毕之后，可以使用serviceAccount来consume，也可以手动添加到pod的manifest中，如下例所示：</p>
 <pre><code>{
- &quot;apiVersion&quot;: &quot;v1&quot;,
- &quot;kind&quot;: &quot;Pod&quot;,
-  &quot;metadata&quot;: {
-    &quot;name&quot;: &quot;mypod&quot;,
-    &quot;namespace&quot;: &quot;myns&quot;
+ &#34;apiVersion&#34;: &#34;v1&#34;,
+ &#34;kind&#34;: &#34;Pod&#34;,
+  &#34;metadata&#34;: {
+    &#34;name&#34;: &#34;mypod&#34;,
+    &#34;namespace&#34;: &#34;myns&#34;
   },
-  &quot;spec&quot;: {
-    &quot;containers&quot;: [{
-      &quot;name&quot;: &quot;mypod&quot;,
-      &quot;image&quot;: &quot;redis&quot;,
-      &quot;volumeMounts&quot;: [{
-        &quot;name&quot;: &quot;foo&quot;,
-        &quot;mountPath&quot;: &quot;/etc/foo&quot;,
-        &quot;readOnly&quot;: true
+  &#34;spec&#34;: {
+    &#34;containers&#34;: [{
+      &#34;name&#34;: &#34;mypod&#34;,
+      &#34;image&#34;: &#34;redis&#34;,
+      &#34;volumeMounts&#34;: [{
+        &#34;name&#34;: &#34;foo&#34;,
+        &#34;mountPath&#34;: &#34;/etc/foo&#34;,
+        &#34;readOnly&#34;: true
       }]
     }],
-    &quot;volumes&quot;: [{
-      &quot;name&quot;: &quot;foo&quot;,
-      &quot;secret&quot;: {
-        &quot;secretName&quot;: &quot;mysecret&quot;
+    &#34;volumes&#34;: [{
+      &#34;name&#34;: &#34;foo&#34;,
+      &#34;secret&#34;: {
+        &#34;secretName&#34;: &#34;mysecret&#34;
       }
     }]
   }
-}
-</code></pre>
+}</code></pre>
 <p><a href="https://github.com/GoogleCloudPlatform/kubernetes/tree/master/docs/user-guide/secrets">More example</a> here。</p>
-<h4 id="63-manually-specifying-an-imagepullsecret"><strong>6.3 Manually specifying an imagePullSecret</strong></h4>
+
+<h4 id="6-3-manually-specifying-an-imagepullsecret"><strong>6.3 Manually specifying an imagePullSecret</strong></h4>
+
 <p>这个方法仅在GKE/GCE或其它cloud-provider<a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/user-guide/images.md#specifying-imagepullsecrets-on-a-pod">场景</a>下推荐使用，创建一个类型为kubernetes.io/dockercfg的secret，并且在pod manifest的imagePullSecrets label下使用。因为缺乏实验平台，在此不作赘述。 总而言之，目前k8s对于secret的support仍处于不十分完善的阶段，secret可能以多种方式暴露给外部用户甚至是attacker。</p>
+
 <h3 id="7-security-context"><strong>7. Security context</strong></h3>
+
 <p>Security context是用以对容器进行限制，使得不同的运行容器之前能够实现较为明晰的隔离，以及降低其影响宿主机和其它容器的可能性。通俗而言，容器中的security context用于表征在创建及运行容器时，它能够使用及访问的资源参数。 该概念将会被用到如下两处：</p>
+
 <ul>
 <li>kubelet用于创建及运行container。</li>
 <li>作为serviceAccount的一部分定义在pod中。</li>
 </ul>
+
 <p>这个概念具体如何使用在k8s场景中基本上可以认为在servicAccount中的securityContext label下，目前代码只实现了capabilities和privileged，在此不展开说明。</p>
 
                         </div>
@@ -556,7 +584,7 @@ data:
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -795,7 +823,7 @@ data:
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -808,7 +836,7 @@ data:
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

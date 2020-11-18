@@ -80,7 +80,7 @@
       <pubDate>Thu, 12 Mar 2015 20:16:14 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/03/12/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%9Ddocker%E9%95%9C%E5%83%8F/</guid>
-      <description>1.前言 回首过去的2014年，大家可以看到Docker在全球刮起了一阵又一阵的“容器风”，工业界对Docker的探索与实践更是一波高过一波。在如今的2015年以及未来，Docker似乎并不会像其他昙花一现的技术一样，在历史的舞台上热潮褪去，反而在工业界实践与评估之后，显现了前所未有的发展潜力。</description>
+      <description>1.</description>
     </item>
     
     <item>
@@ -89,7 +89,7 @@
       <pubDate>Thu, 12 Mar 2015 20:03:21 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/03/12/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ABdocker-container%E7%BD%91%E7%BB%9C%E4%B8%8B/</guid>
-      <description>1.Docker Client配置容器网络模式 Docker目前支持4种网络模式，分别是bridge、host、container、none，Docker开发者可以根据自己的需求来确定最适合自己应用场景的网络模式。 从Docker Container网络创建流程图中可以看到，创建流程第一个涉及的Docker模块即为Docker Client。当然，这也十分好理解，毕竟Docker Container网络环境的创建需要由用户发起，用户根据自身对容器的需求，选择网络模式，并将其通过Docker Client传递给Docker Daemon。</description>
+      <description>1.</description>
     </item>
     
     <item>
@@ -99,6 +99,15 @@
       
       <guid>https://Rachel-Shao.github.io/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/</guid>
       <description>Docker作为目前最火的轻量级容器技术，有很多令人称道的功能，如Docker的镜像管理。然而，Docker同样有着很多不完善的地方，网络方面就是Docker比较薄弱的部分。因此，我们有必要深入了解Docker的网络知识，以满足更高的网络需求。本文首先介绍了Docker自身的4种网络工作方式，然后通过3个样例 —— 将Docker容器配置到本地网络环境中、单主机Docker容器的VLAN划分、多主机Docker容器的VLAN划分，演示了如何使用pipework帮助我们进行复杂的网络设置，以及pipework是如何工作的。</description>
+    </item>
+    
+    <item>
+      <title>Docker源码分析（六）：Docker Daemon网络</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/</link>
+      <pubDate>Mon, 05 Jan 2015 10:52:28 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/</guid>
+      <description>本文介绍docker daemon的网络模型。</description>
     </item>
     
     <item>
@@ -116,7 +125,7 @@
       <pubDate>Tue, 02 Dec 2014 13:01:39 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%8Cdocker-client%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/</guid>
-      <description>1. 前言 如今，Docker作为业界领先的轻量级虚拟化容器管理引擎，给全球开发者提供了一种新颖、便捷的软件集成测试与部署之道。在团队开发软件时，Docker可以提供可复用的运行环境、灵活的资源配置、便捷的集成测试方法以及一键式的部署方式。可以说，Docker的优势在简化持续集成、运维部署方面体现得淋漓尽致，它完全让开发者从前者中解放出来，把精力真正地倾注在开发上。 然而，把Docker的功能发挥到极致，并非一件易事。</description>
+      <description>1.</description>
     </item>
     
   </channel>

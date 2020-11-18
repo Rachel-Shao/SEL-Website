@@ -210,15 +210,15 @@
 
                         <div id="post-content">
                           <p>在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。 本文从collector的功能出发，主要讲述以上两个功能的源码实现。</p>
+
 <p>发现注册组件 在Cloud Foundry中，每个组件在启动的时候后会以一个component的形式向Cloud Foundry注册，同时也会作为一个组件，向NATS发布一些启动信息。 首先以DEA为例，讲述该组件register与向NATS publish信息的实现。首先看以下/dea/lib/dea/agent.rb中register的代码： [plain] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>VCAP::Component.register(:type =&gt; 'DEA',  
+<pre><code>VCAP::Component.register(:type =&gt; &#39;DEA&#39;,  
                    :host =&gt; @local_ip,  
-                   :index =&gt; @config['index'],  
+                   :index =&gt; @config[&#39;index&#39;],  
                    :config =&gt; @config,  
-                   :port =&gt; status_config['port'],  
-                   :user =&gt; status_config['user'],  
-                   :password =&gt; status_config['password'])  
-</code></pre>
+                   :port =&gt; status_config[&#39;port&#39;],  
+                   :user =&gt; status_config[&#39;user&#39;],  
+                   :password =&gt; status_config[&#39;password&#39;])  </code></pre>
 <p>这段代码表示，DEA通过VCAP::Component对象中的register方法，实现注册。以下进入vcap-common/lib/vcap/component.rb中的register方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def register(opts)  
   uuid = VCAP.secure_uuid  
@@ -231,70 +231,65 @@
     :start =&gt; Time.now  
   }  
   ……  
-  @healthz = &quot;ok\n&quot;.freeze  
+  @healthz = &#34;ok\n&#34;.freeze  
   start_http_server(host, port, auth, logger)  
-  nats.subscribe('vcap.component.discover') do |msg, reply|  
+  nats.subscribe(&#39;vcap.component.discover&#39;) do |msg, reply|  
     update_discover_uptime  
     nats.publish(reply, @discover.to_json)  
   end  
-  nats.publish('vcap.component.announce', @discover.to_json)  
+  nats.publish(&#39;vcap.component.announce&#39;, @discover.to_json)  
   @discover  
-end  
-</code></pre>
+end  </code></pre>
 <p>可见，在实现register方法的时候，首先通过传递进来的opts参数，构建一个@discover实例变量，订阅了一个vcap.component.discover的消息，又发布了一个vcap.component.announce的消息。关于collector的发现注册组件的功能中，直接关联的register方法中发布的主题，因为collector通过订阅这个主题的消息，将json化的@discover变量取到，然后做相应的处理。 [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>    def send_data(data)  
       @adapters.each do |adapter|  
         begin  
           adapter.send_data(data)  
         rescue =&gt; e  
-          Config.logger.warn(&quot;collector.historian-adapter.sending-data-error&quot;, adapter: adapter.class.name, error: e, backtrace: e.backtrace)  
+          Config.logger.warn(&#34;collector.historian-adapter.sending-data-error&#34;, adapter: adapter.class.name, error: e, backtrace: e.backtrace)  
         end  
       end  
-    end  
-</code></pre>
+    end  </code></pre>
 <p>之前已经涉及了collector组件订阅消息的话题，现在进入collector/lib/collector.rb中，实现消息的订阅还有其他的消息请求： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>@nats = NATS.connect(:uri =&gt; Config.nats_uri) do  
-  Config.logger.info(&quot;collector.nats.connected&quot;)  
-  # Send initially to discover what's already running  
+  Config.logger.info(&#34;collector.nats.connected&#34;)  
+  # Send initially to discover what&#39;s already running  
   @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }  
   @inbox = NATS.create_inbox  
   @nats.subscribe(@inbox) { |message| process_component_discovery(message) }  
-  @nats.publish(DISCOVER_SUBJECT, &quot;&quot;, @inbox)  
+  @nats.publish(DISCOVER_SUBJECT, &#34;&#34;, @inbox)  
   @nats.subscribe(COLLECTOR_PING) { |message| process_nats_ping(message.to_f) }  
   setup_timers  
-end  
-</code></pre>
+end  </code></pre>
 <p>当collector接收到由ANNOUNCE_SUBJECT主题发布过来的message（也就是json化的@discover变量）后，将该内容传递后方法process_component_discovery。以下是process_component_discovery方法的代码实现： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def process_component_discovery(message)  
   message = Yajl::Parser.parse(message)  
-  if message[&quot;index&quot;]  
-    Config.logger.debug1(&quot;collector.component.discovered&quot;, type: message[&quot;type&quot;], index: message[&quot;index&quot;], host: message[&quot;host&quot;])  
-    instances = (@components[message[&quot;type&quot;]] ||= {})  
-    instances[message[&quot;host&quot;].split(&quot;:&quot;).first] = {  
-      :host =&gt; message[&quot;host&quot;],  
-      :index =&gt; message[&quot;index&quot;],  
-      :credentials =&gt; message[&quot;credentials&quot;],  
+  if message[&#34;index&#34;]  
+    Config.logger.debug1(&#34;collector.component.discovered&#34;, type: message[&#34;type&#34;], index: message[&#34;index&#34;], host: message[&#34;host&#34;])  
+    instances = (@components[message[&#34;type&#34;]] ||= {})  
+    instances[message[&#34;host&#34;].split(&#34;:&#34;).first] = {  
+      :host =&gt; message[&#34;host&#34;],  
+      :index =&gt; message[&#34;index&#34;],  
+      :credentials =&gt; message[&#34;credentials&#34;],  
       :timestamp =&gt; Time.now.to_i  
     }  
   end  
 rescue =&gt; e  
-  Config.logger.warn(&quot;collector.component.discovery-failure&quot;, error: e.message, backtrace: e.backtrace)  
-end  
-</code></pre>
+  Config.logger.warn(&#34;collector.component.discovery-failure&#34;, error: e.message, backtrace: e.backtrace)  
+end  </code></pre>
 <p>在该方法中，首先对message对象进行解析，若新产生的message对象中index键，则继续往下的操作：在@components对象中，视情况添加一个instance。如贴出的代码，其中两行标注为红色的代码需要理解：首先如果@components[message[&ldquo;type&rdquo;]]不为空，则将@components[message[&ldquo;type&rdquo;]]赋值给instances；若为空的话，那就把@components[message[&ldquo;type&rdquo;]]赋为空，如果之前不存在message[&ldquo;type&rdquo;]这个键的话，那就先创建一个这样的键，然后再赋为空,最后还是将@components[message[&ldquo;type&rdquo;]]赋值给instances。在这里需要注意的是，instances与@components[message[&ldquo;type&rdquo;]]是的首地址是相同的，所以之后给instances添加键值对的时候也是向@components[message[&ldquo;type&rdquo;]]中添加键值对。需要提一下的是：一个instances代表Cloud Foundry中同一种类型的组件，instances中的每一个instance代表该类型组件的一个实际节点，而且可以发现instance是通过IP来设立键的，因此可见，在Cloud Foundry中相同类型的组件是不能或者不建议共存在同一个节点上或者共享一张网卡的。 一般情况下，当Cloud Foundry的组件启动是发布vcap.component.announce消息后，很快在@components中就会有相应的信息，这样的话，也就是实现了“发现注册组件”的功能。 <strong>获取组件varz和healthz并发送</strong> 在以上功能中，collector只是实现了发现组件，只包括组件的ip：port信息，index，crdentials等信息，并不带有其他关于组件运行时产生的数据信息。而通过varz和healthz访问那些注册的组件，正好可以做到这些收集varz和healthz信息。 实现的过程中，首先是使用添加周期性定时器：EM.add_periodic_timer(Config.varz_interval) { fetch_varz }，在一定的周期内，执行fetch_varz方法，以下进入fetch_varz方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def fetch_varz  
   fetch(:varz) do |http, job, index|  
     ……  
   end  
-end  
-</code></pre>
+end  </code></pre>
 <p>进入fetch_varz方法后，首先是调用fetch方法，参数为：varz，可见通过fetch方法会返回三个值，并作为之后的代码块的参数传入。现在进入fetch方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def fetch(type)  
   @components.each do |job, instances|  
     instances.each do |index, instance|  
       next unless credentials_ok?(job, instance)  
       host = instance[:host]  
-      uri = &quot;http://#{host}/#{type}&quot;  
+      uri = &#34;http://#{host}/#{type}&#34;  
       http = EventMachine::HttpRequest.new(uri).get(  
         :head =&gt; authorization_headers(instance))  
      ……  
@@ -307,63 +302,58 @@ end
       end  
     end  
   end  
-end  
-</code></pre>
+end  </code></pre>
 <p>在发现组件该模块中，以及讲解过@components变量的含义，该方法中首先遍历@components中的每一类组件，再遍历每一类组件中的每一个组件实例，对并该组件实例发起获取varz的请求。实现请求的过程中，首先查阅instance的credentails是否具有，然后组件请求的uri，然后通过EventMachine发送http请求，当请求响应返回的时候，通过yield关键字，将http，job以及instance[:index]返回给fetch_varz方法的代码块，fetch_varz代码块的实现如下： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>varz = Yajl::Parser.parse(http.response)  
 now = Time.now.to_i  
 
 handler = Handler.handler(@historian, job)  
-Config.logger.debug(&quot;collector.job.process&quot;, job: job, handler: handler)  
+Config.logger.debug(&#34;collector.job.process&#34;, job: job, handler: handler)  
 ctx = HandlerContext.new(index, now, varz)  
-handler.do_process(ctx)  
-</code></pre>
+handler.do_process(ctx)  </code></pre>
 <p>首先对http.response进行解析，然后通过Handler类的handler方法创建一个handler对象，其中需要注意的是调用了一个@historian对象，在Collector对象的初始化中，有代码：@historian = ::Collector::Historian.build。 @historian对象的功能是创建了网络连接，具体代码实现在/collector/lib/collector/historian.rb中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>class Historian  
     def self.build  
       historian = new  
       if Config.tsdb  
         historian.add_adapter(Historian::Tsdb.new(Config.tsdb_host, Config.tsdb_port))  
-        Config.logger.info(&quot;collector.historian-adapter.added-opentsdb&quot;, host: Config.tsdb_host)  
+        Config.logger.info(&#34;collector.historian-adapter.added-opentsdb&#34;, host: Config.tsdb_host)  
       end  
       if Config.aws_cloud_watch  
         historian.add_adapter(Historian::CloudWatch.new(Config.aws_access_key_id, Config.aws_secret_access_key))  
-        Config.logger.info(&quot;collector.historian-adapter.added-cloudwatch&quot;)  
+        Config.logger.info(&#34;collector.historian-adapter.added-cloudwatch&#34;)  
       end  
       if Config.datadog  
         historian.add_adapter(Historian::DataDog.new(Config.datadog_api_key, HTTParty))  
-        Config.logger.info(&quot;collector.historian-adapter.added-datadog&quot;)  
+        Config.logger.info(&#34;collector.historian-adapter.added-datadog&#34;)  
       end  
       historian  
     end  
     ……  
-end  
-</code></pre>
+end  </code></pre>
 <p>可以看到@Historian对象的创建是添加了三个网络适配器，或者说是三条连接分别是Tsdb,aws_cloud_watch以及DataDog。当之后需要@historian对象发送数据的时候，也就是通过者三条连接，将数据发送出去，本文马上将涉及这一块。 现在回到fetch_varz中，创建为handler实例对象之后，还创建了一个ctx对象，最后通过handler的do_process方法处理了ctx对象，现在进入collector/lib/collector/handler.rb中，查看do_process方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def do_process(context)  
   varz = context.varz  
-  send_metric(&quot;mem_free_bytes&quot;, varz[&quot;mem_free_bytes&quot;], context) if varz[&quot;mem_free_bytes&quot;]  
+  send_metric(&#34;mem_free_bytes&#34;, varz[&#34;mem_free_bytes&#34;], context) if varz[&#34;mem_free_bytes&#34;]  
   ……  
-  varz.fetch(&quot;log_counts&quot;, {}).each do |level, count|  
+  varz.fetch(&#34;log_counts&#34;, {}).each do |level, count|  
     next unless %w(fatal error warn).include?(level)  
-    send_metric(&quot;log_count&quot;, count, context, {&quot;level&quot; =&gt; level})  
+    send_metric(&#34;log_count&#34;, count, context, {&#34;level&#34; =&gt; level})  
   end  
   process(context)  
-end  
-</code></pre>
+end  </code></pre>
 <p>首先解析出varz对象，并通过send_metric方法将数据发送出去，Handler的子类在执行process方法时，都会调用自己覆写的process方法，以DEA为例，collector/lib/collector/handlers/dea.rb中的process方法为： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def process(context)  
-  send_metric(&quot;can_stage&quot;, context.varz[&quot;can_stage&quot;], context)  
+  send_metric(&#34;can_stage&#34;, context.varz[&#34;can_stage&#34;], context)  
   ……  
   state_counts(context).each do |state, count|  
-    send_metric(&quot;dea_registry_#{state.downcase}&quot;, count, context)  
+    send_metric(&#34;dea_registry_#{state.downcase}&#34;, count, context)  
   end  
 
   metrics = registry_usage(context)  
-  send_metric(&quot;dea_registry_mem_reserved&quot;, metrics[:mem], context)  
-  send_metric(&quot;dea_registry_disk_reserved&quot;, metrics[:disk], context)  
-end  
-</code></pre>
+  send_metric(&#34;dea_registry_mem_reserved&#34;, metrics[:mem], context)  
+  send_metric(&#34;dea_registry_disk_reserved&#34;, metrics[:disk], context)  
+end  </code></pre>
 <p>可以看到其实在process方法也仅仅是将不同组件各自对应的属性值，通过send_metirc方法发送出去。以下进入collector/lib/collector/handler.rb中的send_metric方法中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>   def send_metric(name, value, context, tags = {})  
      tags.merge!(additional_tags(context))  
@@ -374,50 +364,50 @@ end
                               value: value,  
                               tags: tags  
                           })  
-   end  
-</code></pre>
+   end  </code></pre>
 <p>在send_metric代码中，最后通过@historian对象中的send_data实现数据的发送，也就是之前说到的，@historian向@adapter的三条连接中，发送相应的数据，在collector/lib/collector/handler.rb中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def send_data(data)  
   @adapters.each do |adapter|  
     begin  
       adapter.send_data(data)  
     rescue =&gt; e  
-      Config.logger.warn(&quot;collector.historian-adapter.sending-data-error&quot;, adapter: adapter.class.name, error: e, backtrace: e.backtrace)  
+      Config.logger.warn(&#34;collector.historian-adapter.sending-data-error&#34;, adapter: adapter.class.name, error: e, backtrace: e.backtrace)  
     end  
   end  
-end  
-</code></pre>
+end  </code></pre>
 <p>以上讲述从获取varz到发送给TSDB等数据存储模块的流程，关于发送的是什么信息，还没有具体深入。这里以router为例，讲述发送的信息的类型。源码于collector/lib/collector/handlers/router.rb中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
 <pre><code>def process(context)  
   varz = context.varz  
-  send_metric(&quot;router.total_requests&quot;, varz[&quot;requests&quot;], context)  
-  send_metric(&quot;router.total_routes&quot;, varz[&quot;urls&quot;], context)  
-  send_metric(&quot;router.ms_since_last_registry_update&quot;, varz[&quot;ms_since_last_registry_update&quot;], context)  
-  send_metric(&quot;router.bad_requests&quot;, varz[&quot;bad_requests&quot;], context)  
-  send_metric(&quot;router.bad_gateways&quot;, varz[&quot;bad_gateways&quot;], context)  
-  return unless varz[&quot;tags&quot;]  
-  varz[&quot;tags&quot;].each do |key, values|  
+  send_metric(&#34;router.total_requests&#34;, varz[&#34;requests&#34;], context)  
+  send_metric(&#34;router.total_routes&#34;, varz[&#34;urls&#34;], context)  
+  send_metric(&#34;router.ms_since_last_registry_update&#34;, varz[&#34;ms_since_last_registry_update&#34;], context)  
+  send_metric(&#34;router.bad_requests&#34;, varz[&#34;bad_requests&#34;], context)  
+  send_metric(&#34;router.bad_gateways&#34;, varz[&#34;bad_gateways&#34;], context)  
+  return unless varz[&#34;tags&#34;]  
+  varz[&#34;tags&#34;].each do |key, values|  
     values.each do |value, metrics|  
-      if key == &quot;component&quot; &amp;&amp; value.start_with?(&quot;dea-&quot;)  
-        # dea_id looks like &quot;dea-1&quot;, &quot;dea-2&quot;, etc  
-        dea_id = value.split(&quot;-&quot;)[1]  
-        # These are app requests, not requests to the dea. So we change the component to &quot;app&quot;.  
-        tags = {:component =&gt; &quot;app&quot;, :dea_index =&gt; dea_id }  
+      if key == &#34;component&#34; &amp;&amp; value.start_with?(&#34;dea-&#34;)  
+        # dea_id looks like &#34;dea-1&#34;, &#34;dea-2&#34;, etc  
+        dea_id = value.split(&#34;-&#34;)[1]  
+        # These are app requests, not requests to the dea. So we change the component to &#34;app&#34;.  
+        tags = {:component =&gt; &#34;app&#34;, :dea_index =&gt; dea_id }  
       else  
         tags = {key =&gt; value}  
       end  
-      send_metric(&quot;router.requests&quot;, metrics[&quot;requests&quot;], context, tags)  
-      send_latency_metric(&quot;router.latency.1m&quot;, metrics[&quot;latency&quot;], context, tags)  
-      [&quot;2xx&quot;, &quot;3xx&quot;, &quot;4xx&quot;, &quot;5xx&quot;, &quot;xxx&quot;].each do |status_code|  
-        send_metric(&quot;router.responses&quot;, metrics[&quot;responses_#{status_code}&quot;], context, tags.merge(&quot;status&quot; =&gt; status_code))  
+      send_metric(&#34;router.requests&#34;, metrics[&#34;requests&#34;], context, tags)  
+      send_latency_metric(&#34;router.latency.1m&#34;, metrics[&#34;latency&#34;], context, tags)  
+      [&#34;2xx&#34;, &#34;3xx&#34;, &#34;4xx&#34;, &#34;5xx&#34;, &#34;xxx&#34;].each do |status_code|  
+        send_metric(&#34;router.responses&#34;, metrics[&#34;responses_#{status_code}&#34;], context, tags.merge(&#34;status&#34; =&gt; status_code))  
       end  
     end  
   end  
-end  
-</code></pre>
-<p>可见在接收到router的varz信息之后，collector会从中取出过个键值，并进行发送，比如说router的“total_requests”,&ldquo;total_routes&rdquo;,&ldquo;bad_requests&rdquo;,&ldquo;bad_gateways&rdquo;,&ldquo;router.latency.1m&rdquo;,&ldquo;response_2xxx&quot;等。也正式collector通过分析varz并王TSDB发送这样的信息，所以TSDB中可以存有这些信息，最终DashBoard可以通过获取TSDB中的信息，并显示给用户，当然用户可以看到router组件的请求数，请求延迟，请求的响应时间等，也就不足为怪了。</p>
+end  </code></pre>
+<p>可见在接收到router的varz信息之后，collector会从中取出过个键值，并进行发送，比如说router的“total_requests”,&ldquo;total_routes&rdquo;,&ldquo;bad_requests&rdquo;,&ldquo;bad_gateways&rdquo;,&ldquo;router.latency.1m&rdquo;,&ldquo;response_2xxx&rdquo;等。也正式collector通过分析varz并王TSDB发送这样的信息，所以TSDB中可以存有这些信息，最终DashBoard可以通过获取TSDB中的信息，并显示给用户，当然用户可以看到router组件的请求数，请求延迟，请求的响应时间等，也就不足为怪了。</p>
+
 <p>综上代码分析，可以得到框架图如下：</p>
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603620566/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/86/cf-collector_qkwbsl.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603620566/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/86/cf-collector_qkwbsl.png" alt="2014-05-07-100954_694x454_scrot"></a></p>
+
+<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603620566/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/86/cf-collector_qkwbsl.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603620566/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/86/cf-collector_qkwbsl.png" alt="2014-05-07-100954_694x454_scrot" /></a></p>
+
 <p>以上便是Cloud Foundry中collector组件的功能分析。</p>
 
                         </div>
@@ -577,7 +567,7 @@ end
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -816,7 +806,7 @@ end
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -829,7 +819,7 @@ end
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

@@ -17,7 +17,7 @@
       <pubDate>Tue, 29 May 2018 10:35:04 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
-      <description>1. CRI简介 在每个Kubernetes节点的最底层都有一个程序负责具体的容器创建删除工作，Kubernetes会对其接口进行调用，从而完成容器的编排调度。我们将这一层软件称之为容器运行时（Container Runtime），大名鼎鼎的Docker就是其中的代表。 当然，容器运行时并非只有Docker一种，包括CoreOS的rkt，hyper.</description>
+      <description>1.</description>
     </item>
     
     <item>

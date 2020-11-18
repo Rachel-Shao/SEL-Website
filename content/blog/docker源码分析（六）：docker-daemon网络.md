@@ -1,21 +1,32 @@
----
-title: Docker源码分析（六）：Docker Daemon网络
-tags:
-  - Docker
-id: '399'
-date: 2015-01-05 10:52:28
----
++++
+id = "399"
 
-本文介绍docker daemon的网络模型。
+title = "Docker源码分析（六）：Docker Daemon网络"
+describtion = "Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。"
+tags = ["Docker"]
+date = "2015-01-05 10:52:28"
+author = "孙宏亮"
+banner = "img/portfolio-2.jpg"
+categories = ["Docker"]
 
-<!-- more -->
++++
+
+
 
 **摘要:** Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。
 
 **前言**
 ======
 
-Docker作为一个开源的轻量级虚拟化容器引擎技术，已然给云计算领域带来了新的发展模式。Docker借助容器技术彻底释放了轻量级虚拟化技术的威力，让容器的伸缩、应用的运行都变得前所未有的方便与高效。同时，Docker借助强大的镜像技术，让应用的分发、部署与管理变得史无前例的便捷。然而，Docker毕竟是一项较为新颖的技术，在Docker的世界中，用户并非一劳永逸，其中最为典型的便是Docker的网络问题。 毋庸置疑，对于Docker管理者和开发者而言，如何有效、高效的管理Docker容器之间的交互以及Docker容器的网络一直是一个巨大的挑战。目前，云计算领域中，绝大多数系统都采取分布式技术来设计并实现。然而，在原生态的Docker世界中，Docker的网络却是不具备跨宿主机能力的，这也或多或少滞后了Docker在云计算领域的高速发展。 工业界中，Docker的网络问题的解决势在必行，在此环境下，很多IT企业都开发了各自的新产品来帮助完善Docker的网络。这些企业中不乏像Google一样的互联网翘楚企业，同时也有不少初创企业率先出击，在最前沿不懈探索。这些新产品中有，Google推出的容器管理和编排开源项目Kubernetes，Zett.io公司开发的通过虚拟网络连接跨宿主机容器的工具Weave，CoreOS团队针对Kubernetes设计的网络覆盖工具Flannel，Docker官方的工程师Jérôme Petazzoni自己设计的SDN网络解决方案Pipework，以及SocketPlane项目等。 对于Docker管理者与开发者而言，Docker的跨宿主机通信能力固然重要，但Docker自身的网络架构也同样重要。只有深入了解Docker自身的网络设计与实现，才能在这基础上扩展Docker的跨宿主机能力。 Docker自身的网络主要包含两部分：Docker Daemon的网络配置，Docker Container的网络配置。本文主要分析Docker Daemon的网络。
+Docker作为一个开源的轻量级虚拟化容器引擎技术，已然给云计算领域带来了新的发展模式。Docker借助容器技术彻底释放了轻量级虚拟化技术的威力，让容器的伸缩、应用的运行都变得前所未有的方便与高效。同时，Docker借助强大的镜像技术，让应用的分发、部署与管理变得史无前例的便捷。然而，Docker毕竟是一项较为新颖的技术，在Docker的世界中，用户并非一劳永逸，其中最为典型的便是Docker的网络问题。
+
+毋庸置疑，对于Docker管理者和开发者而言，如何有效、高效的管理Docker容器之间的交互以及Docker容器的网络一直是一个巨大的挑战。目前，云计算领域中，绝大多数系统都采取分布式技术来设计并实现。然而，在原生态的Docker世界中，Docker的网络却是不具备跨宿主机能力的，这也或多或少滞后了Docker在云计算领域的高速发展。 
+
+工业界中，Docker的网络问题的解决势在必行，在此环境下，很多IT企业都开发了各自的新产品来帮助完善Docker的网络。这些企业中不乏像Google一样的互联网翘楚企业，同时也有不少初创企业率先出击，在最前沿不懈探索。这些新产品中有，Google推出的容器管理和编排开源项目Kubernetes，Zett.io公司开发的通过虚拟网络连接跨宿主机容器的工具Weave，CoreOS团队针对Kubernetes设计的网络覆盖工具Flannel，Docker官方的工程师Jérôme Petazzoni自己设计的SDN网络解决方案Pipework，以及SocketPlane项目等。 
+
+对于Docker管理者与开发者而言，Docker的跨宿主机通信能力固然重要，但Docker自身的网络架构也同样重要。只有深入了解Docker自身的网络设计与实现，才能在这基础上扩展Docker的跨宿主机能力。 
+
+Docker自身的网络主要包含两部分：Docker Daemon的网络配置，Docker Container的网络配置。本文主要分析Docker Daemon的网络。
 
 **Docker Daemon网络分析内容安排**
 =========================
@@ -31,7 +42,9 @@ Docker作为一个开源的轻量级虚拟化容器引擎技术，已然给云�
 **Docker Daemon网络配置**
 =====================
 
-Docker环境中，Docker管理员完全有权限配置Docker Daemon运行过程中的网络模式。 关于Docker的网络模式，大家最熟知的应该就是“桥接”的模式。下图为桥接模式下，Docker的网络环境拓扑图（包括Docker Daemon网络环境和Docker Container网络环境）： [![17](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/17.jpg)](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/17.jpg)
+Docker环境中，Docker管理员完全有权限配置Docker Daemon运行过程中的网络模式。 关于Docker的网络模式，大家最熟知的应该就是“桥接”的模式。下图为桥接模式下，Docker的网络环境拓扑图（包括Docker Daemon网络环境和Docker Container网络环境）：
+
+[![](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/17.jpg)](https://res.cloudinary.com/rachel725/image/upload/v1605702985/sel/17_emmdxy.jpg)
 
 图3.1 Docker网络桥接示意图
 
@@ -60,7 +73,9 @@ flag.BoolVar(&config.InterContainerCommunication, \[\]string{"#icc", "-icc"}, tr
 
 opts.IPVar(&config.DefaultIp, \[\]string{"#ip", "-ip"}, "0.0.0.0", "Default IP address to use when binding container ports")
 
-该变量的作用是：当绑定容器的端口时，将DefaultIp作为默认使用的IP地址。 具备了以上Docker Daemon的网络背景知识，以下着重举例分析使用BridgeIP和BridgeIface，在启动Docker Daemon时进行网络配置： [![18](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/18.png)](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/18.png) 深入理解BridgeIface与BridgeIP，并熟练使用相应的flag参数，即做到了如何配置Docker Daemon的网络环境。需要特别注意的是，Docker Daemon的网络与Docker Container的网络存在很大的区别。Docker Daemon为Docker Container创建网络的大环境，Docker Container的网络需要Docker Daemon的网络提供支持，但不唯一。举一个形象的例子，Docker Daemon可以创建docker0网桥，为之后Docker Container的桥接模式提供支持，然而Docker Container仍然可以根据用户需求创建自身网络，其中Docker Container的网络可以是桥接模式的网络，同时也可以直接共享使用宿主机的网络接口，另外还有其他模式，会在《Docker源码分析》系列的第七篇——Docker Container网络篇中详细介绍。
+该变量的作用是：当绑定容器的端口时，将DefaultIp作为默认使用的IP地址。 具备了以上Docker Daemon的网络背景知识，以下着重举例分析使用BridgeIP和BridgeIface，在启动Docker Daemon时进行网络配置： [![18](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/18.png)](http://www.sel.zju.edu.cn/wp-content/uploads/2015/01/18.png) 
+
+深入理解BridgeIface与BridgeIP，并熟练使用相应的flag参数，即做到了如何配置Docker Daemon的网络环境。需要特别注意的是，Docker Daemon的网络与Docker Container的网络存在很大的区别。Docker Daemon为Docker Container创建网络的大环境，Docker Container的网络需要Docker Daemon的网络提供支持，但不唯一。举一个形象的例子，Docker Daemon可以创建docker0网桥，为之后Docker Container的桥接模式提供支持，然而Docker Container仍然可以根据用户需求创建自身网络，其中Docker Container的网络可以是桥接模式的网络，同时也可以直接共享使用宿主机的网络接口，另外还有其他模式，会在《Docker源码分析》系列的第七篇——Docker Container网络篇中详细介绍。
 
 **Docker Daemon网络初始化**
 ----------------------
@@ -109,7 +124,7 @@ if !config.DisableNetwork {
     job.Setenv("BridgeIface", config.BridgeIface)
     job.Setenv("BridgeIP", config.BridgeIP)
     job.Setenv("DefaultBindingIP", config.DefaultIp.String())
-
+    
     if err := job.Run(); err != nil {
         return nil, err
     }

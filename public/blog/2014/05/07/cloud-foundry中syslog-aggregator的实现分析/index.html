@@ -209,18 +209,24 @@
                         
 
                         <div id="post-content">
-                          <p>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</p>
+                          
+
+<p>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</p>
+
 <p>以下是对syslog_aggregator实现的简单分析： syslog_aggregator组件主要包括monit模块，日志管理模块。</p>
+
 <h2 id="monit模块"><strong>monit模块</strong></h2>
+
 <p>monit模块主要是实现：监控syslog_aggregator组件的运行状态，一旦监控过syslog_aggregator组件中该进程不存活时，即刻重启该进程；另外，syslog_aggregator组件还将自身的信息通过cloud_agent传送给NATS，这里的信息包括syslog_aggregator组件所在的宿主机的存活状态以及资源使用情况。 以下通过monit监控进程的代码：</p>
 <pre><code>check process syslog_aggregator  
   with pidfile /var/vcap/sys/run/syslog_aggregator/syslog_aggregator.pid  
-  start program &quot;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl start&quot;  
-  stop program &quot;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl stop&quot;  
-  group vcap  
-</code></pre>
+  start program &#34;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl start&#34;  
+  stop program &#34;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl stop&#34;  
+  group vcap  </code></pre>
 <p>该段代码中清晰的标明了进程的pid，进程的start命令以及stop命令。 cloud_agent作为BOSH监控Cloud Foundry组件级信息的辅助工具，负责收集syslog_aggregator组件所在宿主机的运行状态以及资源使用情况，并发送给health_monitor，由health_monitor统一管理。由于cloud_agent不是本文的重点，所以本文不再赘述。</p>
+
 <h2 id="日志管理模块"><strong>日志管理模块</strong></h2>
+
 <p>实现日志管理，syslog_aggregator是通过启动syslog_aggregator_ctl脚本来实现的。上文中提到的monit模块中，也正是监控这个脚本命令启动的进程。以下来分析一下该脚本的代码实现：</p>
 <pre><code>#!/bin/bash  
 
@@ -240,7 +246,7 @@ case $1 in
 
     apt-get -y install rsyslog-relp  
 
-    pid_guard $PIDFILE &quot;Syslog aggregator&quot;  
+    pid_guard $PIDFILE &#34;Syslog aggregator&#34;  
 
     mkdir -p $RUN_DIR  
     mkdir -p $LOG_DIR  
@@ -264,23 +270,20 @@ case $1 in
     ;;  
 
   *)  
-    echo &quot;Usage: syslog_aggregator_ctl {start|stop}&quot;  
+    echo &#34;Usage: syslog_aggregator_ctl {start|stop}&#34;  
     ;;  
 
-esac  
-</code></pre>
+esac  </code></pre>
 <p>在通过该脚本来实现启动syslog_aggregator进程的时候，使用的是start命令。进入start命令，可以看到，安装了rsyslog-relp；然后通过/var/vcap/packages/common/utils.sh中定义的pid_guard()方法来实现对该进程pid的保护，当系统中已经由相应的进程以该pid在运行时，删除该进程，以保证syslog_aggregator可以按预先设置的pid进行运行；随后创建几个定义好的目录，RUN_DIR，LOG_DIR，还对LOG_DIR进行拥有用户修改。 脚本中随后的5行代码，涉及到的是Linux操作系统中cron 定期任务删除与添加的实现：</p>
 <pre><code>rm -f /etc/cron.daily/bzip_old_logs  
 cp -a $BIN_DIR/gzip_old_logs /etc/cron.daily  
 cp -a $BIN_DIR/reap_old_logs /etc/cron.hourly  
 cp -a $BIN_DIR/symlink_logs /etc/cron.hourly  
-cp -a $PACKAGE_DIR/send_error_mail /etc/cron.daily  
-</code></pre>
+cp -a $PACKAGE_DIR/send_error_mail /etc/cron.daily  </code></pre>
 <p>首先在每日的执行任务中删除掉bzip_old_logs任务，如果该任务存在的话；随后将4个任务分别加入到了指定的目录位置，分别是：gzip_old_logs, reap_old_logs, symlink_logs, send_error_mail。也就是让Linux操作系统每天一次执行gzip_old_logs脚本，每小时执行一次reap_old_logs脚本，每小时执行一次symlink_logs脚本，每周一次执行一次send_error_mail脚本。 添加完这些定义任务之后，syslog_aggregator随后启动了rsyslog server，实现日志服务器的启动：</p>
 <pre><code>exec /usr/sbin/rsyslogd -f $JOB_DIR/config/rsyslogd.conf -i $PIDFILE -c 4 \  
          &gt;&gt;$LOG_DIR/rsyslogd.stdout.log \  
-         2&gt;&gt;$LOG_DIR/rsyslogd.stderr.log  
-</code></pre>
+         2&gt;&gt;$LOG_DIR/rsyslogd.stderr.log  </code></pre>
 <p>启动rsyslog server的具体配置可以参看rsyslogd.conf的各参数:</p>
 <pre><code>$MaxMessageSize 4k  
 
@@ -291,28 +294,25 @@ $InputTCPServerRun 54321
 $PrivDropToUser vcap  
 $PrivDropToGroup vcap  
 
-# Write each component's messages to a separate log  
-# programname is assumed to be 'vcap.&lt;component&gt;'  
+# Write each component&#39;s messages to a separate log  
+# programname is assumed to be &#39;vcap.&lt;component&gt;&#39;  
 # Directory is created automatically  
-$template VcapComponentLogFile, &quot;/var/vcap/store/log/%programname:6:$%/%$year%/%$month%/%$day%/%programname:6:$%.log&quot;  
-$template VcapComponentLogFormat, &quot;%fromhost-ip% -- %msg%\n&quot;  
+$template VcapComponentLogFile, &#34;/var/vcap/store/log/%programname:6:$%/%$year%/%$month%/%$day%/%programname:6:$%.log&#34;  
+$template VcapComponentLogFormat, &#34;%fromhost-ip% -- %msg%\n&#34;  
 
-# The initial '-' tells rsyslogd to not sync the file after each write  
-:programname, startswith, &quot;vcap.&quot; -?VcapComponentLogFile;VcapComponentLogFormat  
+# The initial &#39;-&#39; tells rsyslogd to not sync the file after each write  
+:programname, startswith, &#34;vcap.&#34; -?VcapComponentLogFile;VcapComponentLogFormat  
 
 # Prevent them from reaching anywhere else  
-:programname, startswith, &quot;vcap.&quot; ~  
-</code></pre>
+:programname, startswith, &#34;vcap.&#34; ~  </code></pre>
 <p>当然有server的话，自然会accept来自client的请求，所以在Cloud Foundry中每个组件都会安装一个resyslog的client端，然后启动该client，连接rsyslog server，并发送日志请求，以此来实现日志的传输，又通过刚才涉及到的那些脚本实现对日志的管理。 以下分析添加到周期性任务中的脚本功能。 1.gzip_old_logs 该脚本的实现很简单，如下：</p>
 <pre><code>#!/bin/bash  
-# Compress log files that haven't changed in the last day  
-find /var/vcap/store/log -type f -mmin +1440 -name '*.log' -exec gzip '{}' \;  
-</code></pre>
+# Compress log files that haven&#39;t changed in the last day  
+find /var/vcap/store/log -type f -mmin +1440 -name &#39;*.log&#39; -exec gzip &#39;{}&#39; \;  </code></pre>
 <p>功能为找到/var/vcap/store/log目录下，1440分钟（24小时）内没有被修改的文件，然后进行压缩操作。 2.symlink_logs 该脚本实现的是：为每一个当天的创建出来的文件创建符号链接，<code>date + %Y</code>执行结果为执行时的年份，依此类推。代码如下：</p>
 <pre><code>#!/bin/bash  
-# create symlinks to today's logs in /var/vcap/store/log  
-for x in /var/vcap/store/log/*/`date +%Y`/`date +%m`/`date +%d`/* ; do if [ -f &quot;$x&quot; ]; then ln -sf &quot;$x&quot; /var/vcap/store/log; fi; done  
-</code></pre>
+# create symlinks to today&#39;s logs in /var/vcap/store/log  
+for x in /var/vcap/store/log/*/`date +%Y`/`date +%m`/`date +%d`/* ; do if [ -f &#34;$x&#34; ]; then ln -sf &#34;$x&#34; /var/vcap/store/log; fi; done  </code></pre>
 <p>3.reap_old_logs 该脚本实现的是：清除保存已超过7天的日志。代码如下：</p>
 <pre><code>#!/bin/bash  
 
@@ -321,33 +321,34 @@ set -u
 LOG_DIR=/var/vcap/store/log  
 # Reap logs that are older than 7 days  
 DAYS_TO_KEEP=7  
-let &quot;MIN_TO_KEEP=${DAYS_TO_KEEP}*24*60&quot;  
+let &#34;MIN_TO_KEEP=${DAYS_TO_KEEP}*24*60&#34;  
 
 # get the last $DAYS_TO_KEEP date to exclude from the rmdir  
 
 DAYS_TO_EXCLUDE=$(  
 for i in $(seq 0 ${DAYS_TO_KEEP}); do  
-date -d &quot;now - $i days&quot; +%Y/%m/%d  
+date -d &#34;now - $i days&#34; +%Y/%m/%d  
 done  
 )  
-# example output: &quot;2012/09/21|2012/09/20|.....|2012/09/15|2012/09/14&quot;  
-EGREP_FORMAT_DAYS_TO_EXCLUDE=$(echo $DAYS_TO_EXCLUDE | tr ' ' '|')  
+# example output: &#34;2012/09/21|2012/09/20|.....|2012/09/15|2012/09/14&#34;  
+EGREP_FORMAT_DAYS_TO_EXCLUDE=$(echo $DAYS_TO_EXCLUDE | tr &#39; &#39; &#39;|&#39;)  
 
-find ${LOG_DIR} -mmin +${MIN_TO_KEEP} -name '*.log.gz' -exec rm -f '{}' \;  
+find ${LOG_DIR} -mmin +${MIN_TO_KEEP} -name &#39;*.log.gz&#39; -exec rm -f &#39;{}&#39; \;  
 
-# Reap empty dirs in 3 passes, clear empty 'day' dirs, then 'month'  
-# and lastly 'year'  
-for i in '/[0-9]{4}/[0-1][0-9]/[0-9]{2}$' \  
-         '/[0-9]{4}/[0-1][0-9]$' \  
-         '/[0-9]{4}$'; do  
+# Reap empty dirs in 3 passes, clear empty &#39;day&#39; dirs, then &#39;month&#39;  
+# and lastly &#39;year&#39;  
+for i in &#39;/[0-9]{4}/[0-1][0-9]/[0-9]{2}$&#39; \  
+         &#39;/[0-9]{4}/[0-1][0-9]$&#39; \  
+         &#39;/[0-9]{4}$&#39;; do  
     /usr/bin/find ${LOG_DIR} -type d -empty |  
-      egrep -v &quot;${EGREP_FORMAT_DAYS_TO_EXCLUDE}&quot; |  
+      egrep -v &#34;${EGREP_FORMAT_DAYS_TO_EXCLUDE}&#34; |  
       egrep ${i} |  
       xargs -r -n 200 rmdir  
-done  
-</code></pre>
+done  </code></pre>
 <p>其中，EGREP_FORMAT_DAYS_TO_EXCLUDE是为了获取一个通过‘|’字符串联起来的字符串，随后实现对指定路径进行清除。 以上便是对Cloud Foundry中syslog_aggregator的简单分析。</p>
+
 <h2 id="转载请注明出处"><strong>转载请注明出处。</strong></h2>
+
 <p>这篇文档更多出于我本人的理解，肯定在一些地方存在不足和错误。如果你对这方面感兴趣，并有更好的想法和建议，也请联系我。</p>
 
                         </div>
@@ -507,7 +508,7 @@ done
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -746,7 +747,7 @@ done
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -759,7 +760,7 @@ done
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

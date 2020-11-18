@@ -209,27 +209,28 @@
                         
 
                         <div id="post-content">
-                          <p>在Cloud Foundry v2中，当应用用户需要启动应用的实例时，用户通过cf CLI向cloud controller发送请求，而cloud controller通过NATS向DEA转发启动请求。真正执行启动事宜的是DEA，DEA主要做的工作为启动一个warden container, 并将droplet等内容拷贝进入container内部，最后配置完指定的环境变量，在这些环境变量下启动应用的启动脚本。 本文将从阐述Cloud Foundry中DEA如何为应用实例的启动配置环境变量。</p>
+                          
+
+<p>在Cloud Foundry v2中，当应用用户需要启动应用的实例时，用户通过cf CLI向cloud controller发送请求，而cloud controller通过NATS向DEA转发启动请求。真正执行启动事宜的是DEA，DEA主要做的工作为启动一个warden container, 并将droplet等内容拷贝进入container内部，最后配置完指定的环境变量，在这些环境变量下启动应用的启动脚本。 本文将从阐述Cloud Foundry中DEA如何为应用实例的启动配置环境变量。</p>
+
 <h1 id="dea接收应用启动请求及其执行流程"><strong>DEA接收应用启动请求及其执行流程</strong></h1>
+
 <p>在这部分，通过代码的形式来说明DEA对于应用启动请求的执行流程。
 1.首先DEA订阅相应主题的消息，主题为“dea.#{bootstrap.uuid}.start”，含义为“自身DEA的应用启动消息”：</p>
-<pre><code>subscribe(&quot;dea.#{bootstrap.uuid}.start&quot;) do |message|  
+<pre><code>subscribe(&#34;dea.#{bootstrap.uuid}.start&#34;) do |message|  
     bootstrap.handle\_dea\_directed\_start(message)  
-end  
-</code></pre>
+end  </code></pre>
 <p>2.当收到订阅主题之后，执行bootstrap.handle_dea_directed_start(message)，含义为“通过bootstrap类实例来处理应用的启动请求”：</p>
 <pre><code>def handle\_dea\_directed\_start(message)  
     start\_app(message.data)  
-end  
-</code></pre>
+end  </code></pre>
 <p>3.可以认为处理的入口，即为以上代码中的start_app方法：</p>
 <pre><code>def start\_app(data)  
     instance = instance\_manager.create\_instance(data)  
     return unless instance
 
     instance.start  
-end  
-</code></pre>
+end  </code></pre>
 <p>4.在start_app方法中，首先通过instance_manager类实例来创建一个instance对象，通过执行instance实例的类方法start，可以看到自始至终，传递的参数的原始来源都是通过NATS消息传递来的message，也就是1中的message：</p>
 <pre><code>def start(&amp;callback)  
     p = Promise.new do  
@@ -240,19 +241,18 @@ end
     \].each(&amp;:run).each(&amp;:resolve)  
     \[  
         promise\_extract\_droplet,  
-        promise\_exec\_hook\_script('before\_start'),  
+        promise\_exec\_hook\_script(&#39;before\_start&#39;),  
         promise\_start  
     \].each(&amp;:resolve)  
     ……  
     p.deliver  
-end  
-</code></pre>
+end  </code></pre>
 <p>5.其中真正关于应用启动的执行在promise_start方法中实现：</p>
 <pre><code>def promise\_start  
   Promise.new do |p|  
     env = Env.new(StartMessage.new(@raw\_attributes), self)  
     if staged\_info  
-       command = start\_command || staged\_info\['start\_command'\] 
+       command = start\_command || staged\_info\[&#39;start\_command&#39;\] 
        unless command  
          p.fail(MissingStartCommand.new)  
          next  
@@ -264,18 +264,19 @@ end
             env.exported\_system\_environment\_variables 
          ).generate 
     else  
-     start\_script = env.exported\_environment\_variables + &quot;./startup;\\nexit&quot;  
+     start\_script = env.exported\_environment\_variables + &#34;./startup;\\nexit&#34;  
     end  
     response = container.spawn(start\_script, container.resource\_limits(self.file\_descriptor\_limit, NPROC\_LIMIT))  
-    attributes\['warden\_job\_id'\] = response.job\_id  
+    attributes\[&#39;warden\_job\_id&#39;\] = response.job\_id  
     container.update\_path\_and\_ip  
     bootstrap.snapshot.save 
     p.deliver 
   end  
-end  
-</code></pre>
+end  </code></pre>
 <p>可以看到在第5步中，DEA涉及到了应用的ENV环境变量等信息，最后通过container.spawn方法实现了应用的启动。</p>
+
 <h1 id="dea环境变量的配置"><strong>DEA环境变量的配置</strong></h1>
+
 <p>在以上步骤的第5步，首先创建了环境变量env = Env.new(StartMessage.new(@raw_attributes), self)，Env类的初始化方法如下：</p>
 <pre><code>def initialize(message, instance\_or\_staging\_task=nil)  
    @strategy\_env = if message.is\_a? StagingMessage  
@@ -283,85 +284,77 @@ end
    else  
      RunningEnv.new(message, instance\_or\_staging\_task)  
    end  
-end  
-</code></pre>
+end  </code></pre>
 <p>可见，实际是创建了一个RunningEnv类的实例，参数主要为cloud controller发送来的信息。 在promise_start方法中，创建env变量之后，通过判断staged_info来选择start_script变量的构建。 现在分析staged_info的代码实现：</p>
 <pre><code>def staged\_info  
   @staged\_info ||= begin  
     Dir.mktmpdir do |destination\_dir|  
-       staging\_file\_name = 'staging\_info.yml'  
-       copied\_file\_name = &quot;#{destination\_dir}/#{staging\_file\_name}&quot; 
-       copy\_out\_request(&quot;/home/vcap/#{staging\_file\_name}&quot;, destination\_dir)  
+       staging\_file\_name = &#39;staging\_info.yml&#39;  
+       copied\_file\_name = &#34;#{destination\_dir}/#{staging\_file\_name}&#34; 
+       copy\_out\_request(&#34;/home/vcap/#{staging\_file\_name}&#34;, destination\_dir)  
        YAML.load\_file(copied\_file\_name) if File.exists?(copied\_file\_name)  
     end  
   end  
-end  
-</code></pre>
+end  </code></pre>
 <p>主要是通过指定路径，然后从路径中提取出变量。下面以一个ruby的应用为例，其staging_info.yml文件的内容为：</p>
 <pre><code>---  
 detected\_buildpack: Ruby/Rack  
-start\_command: bundle exec rackup config.ru -p $PORT  
-</code></pre>
+start\_command: bundle exec rackup config.ru -p $PORT  </code></pre>
 <p>因此，最终@staged_info的内容如上，在instance.start方法中，command为bundle exec rackup config.ru -p $PORT。有了command变量之后，接着是构建start_script变量：</p>
 <pre><code>start\_script =  
     Dea::StartupScriptGenerator.new(  
         command,  
         env.exported\_user\_environment\_variables,  
         env.exported\_system\_environment\_variables  
-    ).generate  
-</code></pre>
+    ).generate  </code></pre>
 <p>可以看到，DEA通过StartupScriptGenerator类来创建start_script，其中参数为三个，第一个为刚才涉及到的command，后两个均需要通过env变量来生成。 现在看exported_user_environment_variables方法的实现：</p>
 <pre><code>def exported\_user\_environment\_variables  
     to\_export(translate\_env(message.env))  
-end  
-</code></pre>
+end  </code></pre>
 <p>该方法实现从message中提取中属性为env的信息，作为用户的环境变量。 进入env.exported_system_environment_variables的方法实现：</p>
 <pre><code>def exported\_system\_environment\_variables  
     env = \[  
-        \[&quot;VCAP\_APPLICATION&quot;,  Yajl::Encoder.encode(vcap\_application)\],  
-        \[&quot;VCAP\_SERVICES&quot;, Yajl::Encoder.encode(vcap\_services)\],  
-        \[&quot;MEMORY\_LIMIT&quot;, &quot;#{message.mem\_limit}m&quot;\]  
+        \[&#34;VCAP\_APPLICATION&#34;,  Yajl::Encoder.encode(vcap\_application)\],  
+        \[&#34;VCAP\_SERVICES&#34;, Yajl::Encoder.encode(vcap\_services)\],  
+        \[&#34;MEMORY\_LIMIT&#34;, &#34;#{message.mem\_limit}m&#34;\]  
     \]  
-    env &lt;&lt; \[&quot;DATABASE\_URL&quot;, DatabaseUriGenerator.new(message.services).database\_uri\] if message.services.any?  
+    env &lt;&lt; \[&#34;DATABASE\_URL&#34;, DatabaseUriGenerator.new(message.services).database\_uri\] if message.services.any?  
 
     to\_export(env + strategy\_env.exported\_system\_environment\_variables)  
-end  
-</code></pre>
+end  </code></pre>
 <p>可见在生成系统的环境变量的时候，首先创建一个env数组变量，其中有信息VCAP_APPLICATION, VCAP_SERVICES, MEMORY_LIMIT三种，其中VCAP_APPLICATION的信息如下：</p>
 <pre><code>def vcap\_application  
     @vcap\_application ||=  
       begin  
         hash = strategy\_env.vcap\_application  
 
-        hash\[&quot;limits&quot;\] = message.limits  
-        hash\[&quot;application\_version&quot;\] = message.version  
-        hash\[&quot;application\_name&quot;\] = message.name  
-        hash\[&quot;application\_uris&quot;\] = message.uris  
+        hash\[&#34;limits&#34;\] = message.limits  
+        hash\[&#34;application\_version&#34;\] = message.version  
+        hash\[&#34;application\_name&#34;\] = message.name  
+        hash\[&#34;application\_uris&#34;\] = message.uris  
         # Translate keys for backwards compatibility  
-        hash\[&quot;version&quot;\] = hash\[&quot;application\_version&quot;\]  
-        hash\[&quot;name&quot;\] = hash\[&quot;application\_name&quot;\]  
-        hash\[&quot;uris&quot;\] = hash\[&quot;application\_uris&quot;\]  
-        hash\[&quot;users&quot;\] = hash\[&quot;application\_users&quot;\]
+        hash\[&#34;version&#34;\] = hash\[&#34;application\_version&#34;\]  
+        hash\[&#34;name&#34;\] = hash\[&#34;application\_name&#34;\]  
+        hash\[&#34;uris&#34;\] = hash\[&#34;application\_uris&#34;\]  
+        hash\[&#34;users&#34;\] = hash\[&#34;application\_users&#34;\]
 
         hash  
       end  
-end  
-</code></pre>
+end  </code></pre>
 <p>这部分信息中包含了应用的name，uris，users，version等一系列内容。其中需要特别注意的是代码hash = strategy_env.vcap_application，该代码的作用为调用了RunningEnv类中vcap_application方法，如下：</p>
 <pre><code>def vcap\_application  
     hash = {}  
-    hash\[&quot;instance\_id&quot;\] = instance.attributes\[&quot;instance\_id&quot;\]  
-    hash\[&quot;instance\_index&quot;\] = message.index  
-    hash\[&quot;host&quot;\] = HOSTStartupScriptGenerator  
-    hash\[&quot;port&quot;\] = instance.instance\_container\_port  
+    hash\[&#34;instance\_id&#34;\] = instance.attributes\[&#34;instance\_id&#34;\]  
+    hash\[&#34;instance\_index&#34;\] = message.index  
+    hash\[&#34;host&#34;\] = HOSTStartupScriptGenerator  
+    hash\[&#34;port&#34;\] = instance.instance\_container\_port  
     started\_at = Time.at(instance.state\_starting\_timestamp)  
-    hash\[&quot;started\_at&quot;\] = started\_at  
-    hash\[&quot;started\_at\_timestamp&quot;\] = started\_at.to\_i  
-    hash\[&quot;start&quot;\] = hash\[&quot;started\_at&quot;\]  
-    hash\[&quot;state\_timestamp&quot;\] = hash\[&quot;started\_at\_timestamp&quot;\]  
+    hash\[&#34;started\_at&#34;\] = started\_at  
+    hash\[&#34;started\_at\_timestamp&#34;\] = started\_at.to\_i  
+    hash\[&#34;start&#34;\] = hash\[&#34;started\_at&#34;\]  
+    hash\[&#34;state\_timestamp&#34;\] = hash\[&#34;started\_at\_timestamp&#34;\]  
     hash  
-end  
-</code></pre>
+end  </code></pre>
 <p>可见在以上代码中，vcap_application信息中记录了很多关于应用实例的信息，包括instance_id, instance_index, host, port, started_at, started_at_timestamp, start, state_timestamp等。 VCAP_SERVICES的信息如下：</p>
 <pre><code>  WHITELIST\_SERVICE\_KEYS = %W\[name label tags plan plan\_option credentials syslog\_drain\_url\].freeze  
 def vcap\_services  
@@ -375,37 +368,34 @@ def vcap\_services
                service\_hash\[key\] = service\[key\] if service\[key\]  
             end  
 
-            services\_hash\[service\[&quot;label&quot;\]\] &lt;&lt; service\_hash  
+            services\_hash\[service\[&#34;label&#34;\]\] &lt;&lt; service\_hash  
          end  
 
          services\_hash
       end
-end  
-</code></pre>
-<p>这部分内容主要从message中寻找是否存在和WHITELIST_SERVICES_KEYS中值作为键的值，若存在的话，加入services_hash该变量。 随后，DEA在运行代码env &laquo; [&ldquo;DATABASE_URL&rdquo;, DatabaseUriGenerator.new(message.services).database_uri] if message.services.any?，该部分代码的作用主要要理解DatabaseUriGenerator的含义，这部分笔者仍不是很清楚。 再后来，DEA执行代码to_export(env + strategy_env.exported_system_environment_variables)，这部分的内容非常重要，主要要进入strategy_env对象所在的类中查看exported_system_environment_variables方法：</p>
+end  </code></pre>
+<p>这部分内容主要从message中寻找是否存在和WHITELIST_SERVICES_KEYS中值作为键的值，若存在的话，加入services_hash该变量。 随后，DEA在运行代码env &lt;&lt; [&ldquo;DATABASE_URL&rdquo;, DatabaseUriGenerator.new(message.services).database_uri] if message.services.any?，该部分代码的作用主要要理解DatabaseUriGenerator的含义，这部分笔者仍不是很清楚。 再后来，DEA执行代码to_export(env + strategy_env.exported_system_environment_variables)，这部分的内容非常重要，主要要进入strategy_env对象所在的类中查看exported_system_environment_variables方法：</p>
 <pre><code>def exported\_system\_environment\_variables  
   env = \[  
-    \[&quot;HOME&quot;, &quot;$PWD/app&quot;\],  
-    \[&quot;TMPDIR&quot;, &quot;$PWD/tmp&quot;\],  
-    \[&quot;VCAP\_APP\_HOST&quot;, HOST\],  
-    \[&quot;VCAP\_APP\_PORT&quot;, instance.instance\_container\_port\],  
+    \[&#34;HOME&#34;, &#34;$PWD/app&#34;\],  
+    \[&#34;TMPDIR&#34;, &#34;$PWD/tmp&#34;\],  
+    \[&#34;VCAP\_APP\_HOST&#34;, HOST\],  
+    \[&#34;VCAP\_APP\_PORT&#34;, instance.instance\_container\_port\],  
   \]  
-  env &lt;&lt; \[&quot;PORT&quot;, &quot;$VCAP\_APP\_PORT&quot;\]  
+  env &lt;&lt; \[&#34;PORT&#34;, &#34;$VCAP\_APP\_PORT&#34;\]  
   env  
-end  
-</code></pre>
+end  </code></pre>
 <p>可以看到，这里主要包含运行信息的环境变量，比如说HOME目录，TMP临时目录，应用实例运行的host地址，应用实例运行的端口号。其中最为重要的就是应用实例运行的端口号，在我的另一篇博文Cloud Foundry中DEA与warden通信完成应用端口监听 中，有涉及到如何通过warden server来开辟端口，最终为DEA所用，并通过环境变量的形式传递给应用实例的启动脚本。其中VCAP_APP_PORT和PORT都是warden container开启那个端口号。 分析完了StartupScriptGenerator的三个参数，需要进入StartupScriptGenerator类的generate方法：</p>
 <pre><code>def generate  
     script = \[\]  
-    script &lt;&lt; &quot;umask 077&quot;  
+    script &lt;&lt; &#34;umask 077&#34;  
     script &lt;&lt; @system\_envs  
     script &lt;&lt; EXPORT\_BUILDPACK\_ENV\_VARIABLES\_SCRIPT  
     script &lt;&lt; @user\_envs
-    script &lt;&lt; &quot;env &gt; logs/env.log&quot;  
+    script &lt;&lt; &#34;env &gt; logs/env.log&#34;  
     script &lt;&lt; START\_SCRIPT % @start\_command  
-    script.join(&quot;\\n&quot;)  
-end  
-</code></pre>
+    script.join(&#34;\\n&#34;)  
+end  </code></pre>
 <p>以上的代码即为创建启动脚本的过程。其中@system_envs为之前分析的env.exported_system_environment_variables, @user_envs为env.exported_user_environment_variables。还有两个脚本是EXPORT_BUILDPACK_ENV_VARIABLES_SCRIPT和START_SCRIPT，EXPORT_BUILDPACK_ENV_VARIABLES_SCRIPT脚本的代码如下，其意为执行某路径下的所有sh脚本：</p>
 <pre><code>EXPORT\_BUILDPACK\_ENV\_VARIABLES\_SCRIPT = strip\_heredoc(&lt;&lt;-BASH).freeze  
    unset GEM\_PATH  
@@ -417,24 +407,23 @@ end
      done  
      unset i  
    fi  
-BASH  
-</code></pre>
+BASH  </code></pre>
 <p>而START_SCRIPT代码如下：</p>
 <pre><code>START\_SCRIPT = strip\_heredoc(&lt;&lt;-BASH).freeze  
    DROPLET\_BASE\_DIR=$PWD
    cd app  
    (%s) &gt; &gt;(tee $DROPLET\_BASE\_DIR/logs/stdout.log) 2&gt; &gt;(tee $DROPLET\_BASE\_DIR/logs/stderr.log &gt;&amp;2) &amp;  
    STARTED=$!  
-   echo &quot;$STARTED&quot; &gt;&gt; $DROPLET\_BASE\_DIR/run.pid  
+   echo &#34;$STARTED&#34; &gt;&gt; $DROPLET\_BASE\_DIR/run.pid  
 
    wait $STARTED  
-BASH  
-</code></pre>
+BASH  </code></pre>
 <p>以上即创建完了start_script，回到instance.rb中的promise_start方法中，即执</p>
-<pre><code>response = container.spawn(start\_script, container.resource\_limits(self.file\_descriptor\_limit, NPROC\_LIMIT))  
-</code></pre>
+<pre><code>response = container.spawn(start\_script, container.resource\_limits(self.file\_descriptor\_limit, NPROC\_LIMIT))  </code></pre>
 <p>即完成应用实例的启动工作。详情可以进入container类中的spawn方法实现。</p>
+
 <h2 id="转载请注明出处"><strong>转载请注明出处。</strong></h2>
+
 <p>这篇文档更多出于我本人的理解，肯定在一些地方存在不足和错误。希望本文能够对接触Cloud Foundry v2中dea_ng如何启动应用实例的人有些帮助，如果你对这方面感兴趣，并有更好的想法和建议，也请联系我。</p>
 
                         </div>
@@ -594,7 +583,7 @@ BASH
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -833,7 +822,7 @@ BASH
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -846,7 +835,7 @@ BASH
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

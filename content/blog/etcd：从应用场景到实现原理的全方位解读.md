@@ -4,8 +4,6 @@ tags:
   - etcd
 id: '523'
 date: 2015-02-01 15:27:24
-
-
 ---
 
 随着CoreOS和Kubernetes等项目在开源社区日益火热，它们项目中都用到的etcd组件作为一个高可用、强一致性的服务发现存储仓库，渐渐为开发人员所关注。在云计算时代，如何让服务快速透明地接入到计算集群中，如何让共享配置信息快速被集群中的所有机器发现，更为重要的是，如何构建这样一套高可用、安全、易于部署以及响应快速的服务集群，已经成为了迫切需要解决的问题。etcd为解决这类问题带来了福音，本章将从etcd的应用场景开始，深入解读etcd的实现方式，以供开发者们更为充分地享用etcd所带来的便利。
@@ -184,14 +182,14 @@ etcd有三种集群化启动的配置方案，分别为静态配置启动、etcd
 
     ETCD_INITIAL_CLUSTER="infra0=http://10.0.1.10:2380,infra1=http://10.0.1.11:2380,infra2=http://10.0.1.12:2380"
     ETCD_INITIAL_CLUSTER_STATE=new
-    
+
 
 参数方法：
 
     -initial-cluster 
     infra0=http://10.0.1.10:2380,http://10.0.1.11:2380,infra2=http://10.0.1.12:2380 \
      -initial-cluster-state new
-    
+
 
 **值得注意的是**，`-initial-cluster`参数中配置的url地址必须与各个节点启动时设置的`initial-advertise-peer-urls`参数相同。（`initial-advertise-peer-urls`参数表示节点监听其他节点同步信号的地址） 如果你所在的网络环境配置了多个etcd集群，为了避免意外发生，最好使用`-initial-cluster-token`参数为每个集群单独配置一个token认证。这样就可以确保每个集群和集群的成员都拥有独特的ID。 综上所述，如果你要配置包含3个etcd节点的集群，那么你在三个机器上的启动命令分别如下所示。
 
@@ -212,7 +210,7 @@ etcd有三种集群化启动的配置方案，分别为静态配置启动、etcd
       -initial-cluster-token etcd-cluster-1 \
       -initial-cluster infra0=http://10.0.1.10:2380,infra1=http://10.0.1.11:2380,infra2=http://10.0.1.12:2380 \
       -initial-cluster-state new
-    
+
 
 在初始化完成后，etcd还提供动态增、删、改etcd集群节点的功能，这个需要用到`etcdctl`命令进行操作。
 
@@ -221,20 +219,20 @@ etcd有三种集群化启动的配置方案，分别为静态配置启动、etcd
 通过自发现的方式启动etcd集群需要事先准备一个etcd集群。如果你已经有一个etcd集群，首先你可以执行如下命令设定集群的大小，假设为3.
 
     $ curl -X PUT https://myetcd.local/v2/keys/discovery/6c007a14875d53d9bf0ef5a6fc0257c817f0fb83/_config/size -d value=3
-    
+
 
 然后你要把这个url地址`https://myetcd.local/v2/keys/discovery/6c007a14875d53d9bf0ef5a6fc0257c817f0fb83`作为`-discovery`参数来启动etcd。节点会自动使用`https://myetcd.local/v2/keys/discovery/6c007a14875d53d9bf0ef5a6fc0257c817f0fb83`目录进行etcd的注册和发现服务。 所以最终你在某个机器上启动etcd的命令如下。
 
     $ etcd -name infra0 -initial-advertise-peer-urls http://10.0.1.10:2380 \
       -listen-peer-urls http://10.0.1.10:2380 \
       -discovery https://myetcd.local/v2/keys/discovery/6c007a14875d53d9bf0ef5a6fc0257c817f0fb83
-    
+
 
 如果你在本地没有可用的etcd集群，etcd官网提供了一个可以用公网访问的etcd存储地址。 你可以通过如下命令得到etcd服务的目录，并把它作为`-discovery`参数使用。
 
     $ curl https://discovery.etcd.io/new?size=3
     https://discovery.etcd.io/3e86b59982e49066c5d813af1c2e2579cbf573de
-    
+
 
 同样的，当你完成了集群的初始化后，这些信息就失去了作用。当你需要增加节点时，需要使用`etcdctl`来进行操作。 为了安全，在每次启动新的etcd集群时，请务必使用新的discovery token进行注册。 另外，如果你初始化时启动的节点超过了指定的数量，多余的节点会自动转化为proxy模式的etcd。
 
@@ -257,7 +255,7 @@ etcd还支持使用DNS SRV记录进行启动。关于DNS SRV记录如何进行�
     -advertise-client-urls http://infra0.example.com:2379 \
     -listen-client-urls http://infra0.example.com:2379 \
     -listen-peer-urls http://infra0.example.com:2380
-    
+
 
 当然，你也可以直接把节点的域名改成IP来启动。
 
@@ -370,7 +368,7 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
 
     storage := raft.NewMemoryStorage()
     n := raft.StartNode(0x01, []int64{0x02, 0x03}, 3, 1, storage)
-    
+
 
 通过这段代码可以了解到，Raft在运行过程记录数据和状态都是保存在内存中，而代码中`raft.StartNode`启动的Node就是Raft状态机Node。启动了一个Node节点后，Raft会做如下事项。 首先，你需要把从集群的其他机器上收到的信息推送到Node节点，你可以在`etcdserver/server.go`中的`Process`函数看到。
 
@@ -380,7 +378,7 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
         }
         return s.node.Step(ctx, m)
     }
-    
+
 
 检测发来请求的机器是否是集群中的节点，自身节点是否是Follower，把发来请求的机器作为Leader，具体对Node节点信息的推送和处理则通过`node.Step()`函数实现。 其次，你需要把日志项存储起来，在你的应用中执行提交的日志项，然后把完成信号发送给集群中的其它节点，再通过`node.Ready()`监听等待下一次任务执行。有一点非常重要，你必须确保在你发送完成消息给其他节点之前，你的日志项内容已经确切稳定地存储下来了。 最后，你需要保持一个心跳信号`Tick()`。Raft有两个很重要的地方用到超时机制：心跳保持和Leader竞选。需要用户在其Raft的Node节点上周期性地调用Tick()函数，以便为超时机制服务。 综上所述，整个Raft节点的状态机循环类似如下所示：
 
@@ -397,14 +395,14 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
             return
         }
     }
-    
+
 
 而这个状态机真实存在的代码位置为`etcdserver/server.go`中的`run`函数。 对状态机进行状态变更（如用户数据更新等）时将调用`n.Propose(ctx, data)`函数，在存储数据时，会先进行序列化操作。获得大多数其他节点的确认后，数据会被提交，保存为已提交状态。 之前提到etcd集群的启动如果使用自发现方式，需要借助别的etcd集群或者DNS，而启动完毕后这些`外力`就不需要了。etcd会把自身集群的信息作为状态存储起来。所以要变更自身集群节点数量实际上也需要像用户数据变更那样添加数据条目到Raft状态机中。上述功能由`n.ProposeConfChange(ctx, cc)`实现。当集群配置信息变更的请求同样得到大多数节点的确认反馈后，再进行配置变更的正式操作，代码如下。
 
     var cc raftpb.ConfChange
     cc.Unmarshal(data)
     n.ApplyConfChange(cc)
-    
+
 
 注意：为了避免不同etcd集群消息混乱，ID需要确保唯一性，不能重复使用旧的token数据作为ID。
 
@@ -424,7 +422,7 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
                 "value": "Hello world"
             }
         }
-        
+    
     
     反馈的内容含义如下：
     *   action: 刚刚进行的动作名称。
@@ -435,37 +433,30 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
 *   查询etcd某个键存储的值
     
         curl http://127.0.0.1:2379/v2/keys/message
-        
     
 *   修改键值：与创建新值几乎相同，但是反馈时会有一个`prevNode`值反应了修改前存储的内容。
     
         curl http://127.0.0.1:2379/v2/keys/message -XPUT -d value="Hello etcd"
-        
     
 *   删除一个值
     
         curl http://127.0.0.1:2379/v2/keys/message -XDELETE
-        
     
 *   对一个键进行定时删除：etcd中对键进行定时删除，设定一个ttl值，当这个值到期时键就会被删除。反馈的内容会给出expiration项告知超时时间，ttl项告知设定的时长。
     
         curl http://127.0.0.1:2379/v2/keys/foo -XPUT -d value=bar -d ttl=5
-        
     
 *   取消定时删除任务
     
         curl http://127.0.0.1:2379/v2/keys/foo -XPUT -d value=bar -d ttl= -d prevExist=true
-        
     
 *   对键值修改进行监控：etcd提供的这个API让用户可以监控一个值或者递归式地监控一个目录及其子目录的值，当目录或值发生变化时，etcd会主动通知。
     
         curl http://127.0.0.1:2379/v2/keys/foo?wait=true
-        
     
 *   对过去的键值操作进行查询：类似上面提到的监控，在其基础上指定过去某次修改的索引编号，就可以查询历史操作。默认可查询的历史记录为1000条。
     
         curl 'http://127.0.0.1:2379/v2/keys/foo?wait=true&waitIndex=7'
-        
     
 *   自动在目录下创建有序键。在对创建的目录使用`POST`参数，会自动在该目录下创建一个以createdIndex值为键的值，这样就相当于根据创建时间的先后进行了严格排序。该API对分布式队列这类场景非常有用。
     
@@ -479,22 +470,18 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
                 "value": "Job1"
             }
         }
-        
     
 *   按顺序列出所有创建的有序键。
     
         curl -s 'http://127.0.0.1:2379/v2/keys/queue?recursive=true&sorted=true'
-        
     
 *   创建定时删除的目录：就跟定时删除某个键类似。如果目录因为超时被删除了，其下的所有内容也自动超时删除。
     
         curl http://127.0.0.1:2379/v2/keys/dir -XPUT -d ttl=30 -d dir=true
-        
     
 *   刷新超时时间。
     
         curl http://127.0.0.1:2379/v2/keys/dir -XPUT -d ttl=30 -d dir=true -d prevExist=true
-        
     
 *   自动化CAS（Compare-and-Swap）操作：etcd强一致性最直观的表现就是这个API，通过设定条件，阻止节点二次创建或修改。即用户的指令被执行当且仅当CAS的条件成立。条件有以下几个。
     
@@ -509,22 +496,19 @@ WAL最大的作用是记录了整个数据变化的全部历程。在etcd中，�
 *   创建目录
     
         curl http://127.0.0.1:2379/v2/keys/dir -XPUT -d dir=true
-        
     
 *   列出目录下所有的节点信息，最后以`/`结尾。还可以通过recursive参数递归列出所有子目录信息。
     
         curl http://127.0.0.1:2379/v2/keys/
-        
     
 *   删除目录：默认情况下只允许删除空目录，如果要删除有内容的目录需要加上`recursive=true`参数。
     
         curl 'http://127.0.0.1:2379/v2/keys/foo_dir?dir=true' -XDELETE
-        
     
 *   创建一个隐藏节点：命名时名字以下划线`_`开头默认就是隐藏键。
     
         curl http://127.0.0.1:2379/v2/keys/_message -XPUT -d value="Hello hidden world"
-        
+    
     
 
 相信看完这么多API，相信读者已经对Store的工作内容有了基本的了解。它对etcd下存储的数据进行加工，创建出如文件系统般的树状结构供用户快速查询。它有一个`Watcher`用于节点变更的实时反馈，还需要维护一个`WatcherHub`对所有`Watcher`订阅者进行通知的推送。同时，它还维护了一个由定时键构成的小顶堆，快速返回下一个要超时的键。最后，所有这些API的请求都以事件的形式存储在事件队列中等待处理。

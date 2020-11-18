@@ -209,8 +209,11 @@
 
                         <div id="post-content">
                           <p>根据Nolio发布的<a href="http://www.noliosoft.com/resources/videos/webinar/canary/show/1/">DevOps最佳实践系列中的第一个demo</a>，很多公司通过路由策略选择性地对部分用户发布新功能从而使用 “金丝雀部署（Canary Deployments）”来测试生产中的软件，并将这一方式作为其可持续交付的一部分。“金丝雀部署”是增量发布的一种类型，它的执行方式是在原有软件生产版本可用的情况下，同时部署一个新的版本。同时运行同一个软件产品的多个版本需要软件针对配置和完美自动化部署进行特别设计。</p>
+
 <p>考虑到<a href="http://blogs.msdn.com/b/seliot/archive/2009/12/25/don-t-just-listen-to-your-users-watch-them-with-online-experiments.aspx">A/B测试</a>和预防性（pre-emptive）<a href="http://highscalability.com/blog/2011/12/12/netflix-developing-deploying-and-supporting-software-accordi.html">性能测试</a>，一旦克服了“金丝雀部署”所涉及的技术挑战将可以减少部署流程中的风险。A/B 测试允许在不改变大多数用户的用户体验的情况下进行对新功能的测试。而性能测试对于整个用户群体来说同样只会产生微不足道的影响。</p>
+
 <p>根据Nolio的“金丝雀部署”，该方式由以下几个步骤组成：</p>
+
 <ol>
 <li>准备好部署各个阶段的工件，包括：构建工件，测试脚本，配置文件和部署清单文件。</li>
 <li>从负载均衡列表中移除掉“金丝雀”服务器。</li>
@@ -219,10 +222,15 @@
 <li>将“金丝雀”服务器重新添加到负载均衡列表中（连通性和健康检查）。</li>
 <li>如果“金丝雀”在线使用测试成功，升级剩余的其他服务器。（否则就回滚）</li>
 </ol>
+
 <p>Nolio在他们的相关介绍中针对如何使用他们的产品对“金丝雀部署”进行高层次软件编配做了概览。他们使用了一个可在多个流程中复用的应用模型，并通过数据来驱动该模型的用途。管理和报表都将随着“金丝雀部署”而被完成。</p>
+
 <p>注释：矿井中的金丝雀（<a href="https://github.com/Netflix/Hystrix/tree/master/hystrix-contrib/hystrix-network-auditor-agent">canary in a coal mine</a>）</p>
+
 <p>17世纪，英国矿井工人发现，金丝雀对瓦斯这种气体十分敏感。空气中哪怕有极其微量的瓦斯，金丝雀也会停止歌唱；而当瓦斯含量超过一定限度时，虽然鲁钝的人类毫无察觉，金丝雀却早已毒发身亡。当时在采矿设备相对简陋的条件下，工人们每次下井都会带上一只金丝雀作为“瓦斯检测指标”，以便在危险状况下紧急撤离。 所以，在BOSH部署CF某个版本release的过程中，对于部署了多个节点的组件，首先会经过离线、构建、配置和自动化测试之后才会重新通过NATS与现有系统相连，并更新其他节点。否则，这个版本的release将不会部署到其他节点上，Canary节点也会被回滚。</p>
+
 <p><a href="http://www.infoq.com/news/2013/03/canary-release-improve-quality">查看英文原文</a></p>
+
 <p><a href="http://www.ca.com/cn/collateral/recorded-webcasts/na/devops-best-practices-canary-deployments.aspx">视频地址</a></p>
 
                         </div>
@@ -382,7 +390,7 @@
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -621,7 +629,7 @@
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -634,7 +642,7 @@
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

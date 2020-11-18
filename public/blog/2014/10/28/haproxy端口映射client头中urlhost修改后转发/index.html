@@ -209,13 +209,22 @@
                         
 
                         <div id="post-content">
-                          <p>CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP+端口”的形式，在公网访问CF集群上部署的APP。</p>
-<!-- raw HTML omitted -->
+                          
+
+<p>CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP+端口”的形式，在公网访问CF集群上部署的APP。</p>
+
+<!-- more -->
+
 <h1 id="解决方案">解决方案</h1>
+
 <p>配置两层Haproxy，第一层的Haproxy与公网地址绑定。 对第一层的Haproxy进行配置，把外部通过IP+PORT访问的地址映射到后端第二层Haproxy，并把其访问的http Head修改，把Host字段改成能被Cloudfoundry接受的url字符串。 第二层Haproxy就跟CloudFoundry官方配置相同，作为负载均衡把流量导向下层多个gorouter。</p>
-<h1 id="haproxy的安装也可通过源码安装">Haproxy的安装：(也可通过源码安装)</h1>
+
+<h1 id="haproxy的安装-也可通过源码安装">Haproxy的安装：(也可通过源码安装)</h1>
+
 <p><code>apt-get install haproxy</code></p>
+
 <h1 id="修改基本的配置文件如下">修改基本的配置文件如下：</h1>
+
 <p>配置文件所在地址：<code>/etc/haproxy/haproxy.cfg</code>（用xx.xx.xx.xx代表一个IP地址）</p>
 <pre><code>global
 chroot      /var/lib/haproxy
@@ -261,9 +270,9 @@ backend http-routers1
 mode http
 reqirep ^Host:\\ xx.xx.xx.xx\\:80 Host:\\ t2.cloud.paas
 balance roundrobin
-    server node0 t1.cloud.paas:80 check inter 1000
-</code></pre>
+    server node0 t1.cloud.paas:80 check inter 1000</code></pre>
 <h1 id="配置文件中涉及到的要点">配置文件中涉及到的要点</h1>
+
 <ol>
 <li>在global中加入debug可以查看访问的日志信息</li>
 <li>frontend表示访问的输入，对应一个backend导向后端服务器。</li>
@@ -272,25 +281,27 @@ balance roundrobin
 <li>在balance 后面添加haproxy的地址，可以写多个。</li>
 <li>最后设置option httpclose。每次关闭连接，保证每次访问的字段都被改变。</li>
 </ol>
+
 <p>（这样做效率会降低很多，但是解决了应急的需求）</p>
+
 <h1 id="部分option选项解析">部分OPTION选项解析</h1>
+
 <ul>
-<li>
-<p>option httpclose ：HAProxy会针对客户端的第一条请求的返回添加cookie并返回给客户端，客户端发送后续请求时会发送此cookie到HAProxy，HAProxy会针对此cookie分发到上次处理此请求的服务器上，如果服务器不能忽略此cookie值会影响处理结果。如果避免这种情况配置此选项，防止产生多余的cookie信息。</p>
-</li>
-<li>
-<p>option forwardfor ：如果服务器上的应用程序想记录发起请求的客户端的IP地址，需要在HAProxy上配置此选项，这样HAProxy会把客户端的IP信息发送给服务器，在HTTP请求中添加&quot;X-Forwarded-For&quot;字段。</p>
-</li>
-<li>
-<p>option originalto ：如果服务器上的应用程序想记录发起请求的原目的IP地址，需要在HAProxy上配置此选项，这样HAProxy会添加&quot;X-Original-To&quot;字段。</p>
-</li>
-<li>
-<p>option dontlognull ：保证HAProxy不记录上级负载均衡发送过来的用于检测状态没有数据的心跳包。</p>
-</li>
+<li><p>option httpclose ：HAProxy会针对客户端的第一条请求的返回添加cookie并返回给客户端，客户端发送后续请求时会发送此cookie到HAProxy，HAProxy会针对此cookie分发到上次处理此请求的服务器上，如果服务器不能忽略此cookie值会影响处理结果。如果避免这种情况配置此选项，防止产生多余的cookie信息。</p></li>
+
+<li><p>option forwardfor ：如果服务器上的应用程序想记录发起请求的客户端的IP地址，需要在HAProxy上配置此选项，这样HAProxy会把客户端的IP信息发送给服务器，在HTTP请求中添加&rdquo;X-Forwarded-For&rdquo;字段。</p></li>
+
+<li><p>option originalto ：如果服务器上的应用程序想记录发起请求的原目的IP地址，需要在HAProxy上配置此选项，这样HAProxy会添加&rdquo;X-Original-To&rdquo;字段。</p></li>
+
+<li><p>option dontlognull ：保证HAProxy不记录上级负载均衡发送过来的用于检测状态没有数据的心跳包。</p></li>
 </ul>
+
 <h1 id="haproxy作为服务启动">Haproxy作为服务启动</h1>
+
 <p>需要修改一个配置文件<code>/etc/default/haproxy</code> 把ENABLED字段的0改为1. 然后通过<code>service haproxy start</code>就可以启动。 最后调试完毕后记得把global中的debug字段删掉。</p>
+
 <h1 id="参考内容">参考内容</h1>
+
 <ol>
 <li><a href="http://blog.csdn.net/shlazww/article/details/11974411">Cloud Foundry中gorouter源码分析</a></li>
 <li><a href="http://www.cnblogs.com/dkblog/archive/2012/03/13/2393321.html">Haproxy 配置项\配置实例</a></li>
@@ -455,7 +466,7 @@ balance roundrobin
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -694,7 +705,7 @@ balance roundrobin
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -707,7 +718,7 @@ balance roundrobin
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

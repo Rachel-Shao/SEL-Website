@@ -35,7 +35,7 @@
       <pubDate>Fri, 27 Jul 2018 14:28:25 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</guid>
-      <description>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</description>
+      <description>本文分析的istio代码版本为0.</description>
     </item>
     
     <item>
@@ -44,7 +44,7 @@
       <pubDate>Fri, 13 Jul 2018 14:15:16 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</guid>
-      <description>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</description>
+      <description>本文分析的istio代码版本为0.</description>
     </item>
     
     <item>
@@ -53,7 +53,7 @@
       <pubDate>Tue, 26 Jun 2018 14:29:18 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/</guid>
-      <description>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</description>
+      <description>本文分析的istio代码版本为0.</description>
     </item>
     
     <item>
@@ -62,7 +62,7 @@
       <pubDate>Tue, 29 May 2018 10:35:04 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
-      <description>1. CRI简介 在每个Kubernetes节点的最底层都有一个程序负责具体的容器创建删除工作，Kubernetes会对其接口进行调用，从而完成容器的编排调度。我们将这一层软件称之为容器运行时（Container Runtime），大名鼎鼎的Docker就是其中的代表。 当然，容器运行时并非只有Docker一种，包括CoreOS的rkt，hyper.</description>
+      <description>1.</description>
     </item>
     
     <item>

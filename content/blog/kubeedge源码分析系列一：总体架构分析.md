@@ -6,6 +6,7 @@ tags:
   - kubeedge
   - Kubernetes
 id: '989'
+banner: "img/blogs/989/kubeedge_arch.png"
 date: 2018-11-29 16:55:37
 ---
 
@@ -49,70 +50,31 @@ kubeedge由多个模块（Module，beehive微服务框架中的概念，见后�
 
 kubeedge中的模块实现beehive中的模块定义
 
-    //beehive/pkg/core/module.go
-    type Module interface {
-        Name() string
-        Group() string
-        Start(c *context.Context)
-        Cleanup()
-    }
-    
+```go
+//beehive/pkg/core/module.go
+type Module interface {
+    Name() string
+    Group() string
+    Start(c *context.Context)
+    Cleanup()
+}
+```
+
 
 其中功能的`Name`和`Group`方法决定了模块所属分组，前面提到的各模块分组情况如下(stub除外)：
 
-Module
+| Module      | Name        | Group |
+| ----------- | ----------- | ----- |
+| DeviceTwin  | twin        | twin  |
+| edged       | edged       | edged |
+| EdgeHub     | websocket   | hub   |
+| eventbus    | eventbus    | bus   |
+| edgemesh    | edgemesh    | mesh  |
+| metaManager | metaManager | meta  |
+| servicebus  | servicebus  | bus   |
+| test        | testManager | meta  |
 
-Name
 
-Group
-
-DeviceTwin
-
-twin
-
-twin
-
-edged
-
-edged
-
-edged
-
-EdgeHub
-
-websocket
-
-hub
-
-eventbus
-
-eventbus
-
-bus
-
-edgemesh
-
-edgemesh
-
-mesh
-
-metaManager
-
-metaManager
-
-meta
-
-servicebus
-
-servicebus
-
-bus
-
-test
-
-testManager
-
-meta
 
 模块的初始化
 ------
@@ -141,36 +103,41 @@ GracefulShutdown函数监听系统signal，当接收到如下这些signal时，�
 beehive采用golang的channel方式实现模块间通讯，未来可能有基于unix socket的松耦合通讯方式。  
 通讯方式包括“单播”和“组播”两种方式，即可以将消息单独发给某个模块，也可以把消息发给模块组（即前面说的`edged`、`hub`、`bus`等组）。 beehive采用context管理分组与模块间通讯，当使用channel为通讯方式时，`ChannelContext`实现了与context相关的两个接口： `ModuleContext`和`MessageContext`。
 
-    // beehive/pkg/core/context/context_channel.go
-    type ModuleContext interface {
-        AddModule(module string)
-        AddModuleGroup(module, group string)
-        Cleanup(module string)
-    }
-    
+```go
+// beehive/pkg/core/context/context_channel.go
+type ModuleContext interface {
+    AddModule(module string)
+    AddModuleGroup(module, group string)
+    Cleanup(module string)
+}
+```
+
 
 `ChannelContext`对`ModuleContext`的实现中，`AddModule`为一个模块创建默认buffer大小为1024的channel，在自己的`channels`成员中将模块名字映射到该channel，用于“单播”。`AddModuleGroup`将一个模块对应的channel添加到所属group内，也就是将`ChannelContext`的`typeChannels[group][module]`设置为模块对应channel，用于“组播”。
 
-    // beehive/pkg/core/context/context_channel.go
-    channels     map[string]chan model.Message
-    typeChannels map[string]map[string]chan model.Message
-    
-    
+```go
+// beehive/pkg/core/context/context_channel.go
+channels     map[string]chan model.Message
+typeChannels map[string]map[string]chan model.Message
+```
+
+
+​    
 
 `ChannelContext`在`MessageChannel`接口的实现中，实现了模块间消息的同步与异步发送，单播组播等。
 
-    // beehive/pkg/core/context/context_channel.go
-    type MessageContext interface {
-        // async mode
-        Send(module string, message model.Message)
-        Receive(module string) (model.Message, error)
-        // sync mode
-        SendSync(module string, message model.Message, timeout time.Duration) (model.Message, error)
-        SendResp(message model.Message)
-        // group broadcast
-        Send2Group(moduleType string, message model.Message)
-        Send2GroupSync(moduleType string, message model.Message, timeout time.Duration) error
-    }
-    
+```go
+// beehive/pkg/core/context/context_channel.go
+type MessageContext interface {
+    // async mode
+    Send(module string, message model.Message)
+    Receive(module string) (model.Message, error)
+    // sync mode
+    SendSync(module string, message model.Message, timeout time.Duration) (model.Message, error)
+    SendResp(message model.Message)
+    // group broadcast
+    Send2Group(moduleType string, message model.Message)
+    Send2GroupSync(moduleType string, message model.Message, timeout time.Duration) error
+}
+```
 
-\[simple-author-box\]

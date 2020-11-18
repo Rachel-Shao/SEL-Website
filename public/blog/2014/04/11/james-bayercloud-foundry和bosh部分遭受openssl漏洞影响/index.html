@@ -213,10 +213,12 @@
 
                         <div id="post-content">
                           <p>James Bayer <a href="mailto:jbayer@gopivotal.com">jbayer@gopivotal.com</a> greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE. the short summary is:</p>
+
 <ul>
 <li>Ubuntu stemcells based on 10.04 LTS are <strong>NOT VULNERABLE</strong></li>
 <li>CentOS stemcells based on CentOS 6.x are <strong>VULNERABLE</strong></li>
 </ul>
+
 <p>see below for more detail from greg. thanks for putting this together so quickly greg! <em>On Tue, Apr 8, 2014 at 12:15 PM, Greg Oehmen <a href="mailto:goehmen@pivotallabs.com">goehmen@pivotallabs.com</a> wrote:</em> The vulnerability issue related to OpenSSL has recently been exposed. See a full description here: <a href="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160">https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160</a> and here: <a href="http://heartbleed.com/">http://heartbleed.com/</a> In terms of the exposure that BOSH stemcells are experiencing, here are the OpenSSL versions and their specific exposure: OpenSSL 1.0.1 through 1.0.1f (inclusive) are vulnerable OpenSSL 1.0.1g is NOT vulnerable OpenSSL 1.0.0 branch is NOT vulnerable OpenSSL 0.9.8 branch is NOT vulnerable <strong>Bug was introduced to OpenSSL in December 2011 and has been out in the wild since OpenSSL release 1.0.1 on 14th of March 2012. OpenSSL 1.0.1g released on 7th of April 2014 fixes the bug.</strong> BOSH UBUNTU STEMCELLS The BOSH ubuntu stemcell <strong>uses OpenSSL 0.9.8k and thus is not vulnerable.</strong> BOSH team currently has stories in the backlog (<a href="https://www.pivotaltracker.com/story/show/69022850">https://www.pivotaltracker.com/story/show/69022850</a> and <a href="https://www.pivotaltracker.com/story/show/62015812">https://www.pivotaltracker.com/story/show/62015812</a>) to migrate to ubuntu 14.04 for both AWS and Vsphere for the new Go agent. The team will be verifying that the new 14.04 stemcells will have OpenSSL 1.0.1g or higher. But again note that current ubuntu stemcells are NOT vulnerable. BOSH CENTOS STEMCELLS The BOSH centos stemcell <strong>uses OpenSSL 1.0.1e and thus is vulnerable.</strong> THe BOSH team currently has a story in the backlog (<a href="https://www.pivotaltracker.com/story/show/69106298">https://www.pivotaltracker.com/story/show/69106298</a>) to upgrade the centos stemcell as soon as centos.org announces a patched version of centos. I will send out communication when we confirm that a patched version of centos is available to the BOSH team and when a fixed stemcell is GA. Best, Greg &ndash; Greg Oehmen Cloud Foundry Product Manager - Bosh Pivotal</p>
 
                         </div>
@@ -376,7 +378,7 @@
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -615,7 +617,7 @@
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -628,7 +630,7 @@
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>

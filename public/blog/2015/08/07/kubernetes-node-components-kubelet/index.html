@@ -210,31 +210,48 @@
                         
 
                         <div id="post-content">
-                          <p>kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</p>
+                          
+
+<p>kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</p>
+
 <h2 id="1-brief-introduction-of-kubelet"><strong>1. Brief introduction of kubelet</strong></h2>
+
 <p>管中窥豹，可见一斑。我们首先从k8s的官方文档中对kubelet的描述中一探究竟。</p>
+
 <blockquote>
 <p>The kubelet is the primary &ldquo;node agent&rdquo; that runs on each node. The kubelet works in terms of a PodSpec. A PodSpec is a YAML or JSON object that describes a pod. The kubelet takes a set of PodSpecs that are provided through various echanisms (primarily through the apiserver) and ensures that the containers described in those PodSpecs are running and healthy. Other than from an PodSpec from the apiserver, there are three ways that a container manifest can be provided to the Kubelet. File: Path passed as a flag on the command line. This file is rechecked every 20 seconds (configurable with a flag). HTTP endpoint: HTTP endpoint passed as a parameter on the command line. This endpoint is checked every 20 seconds (also configurable with a flag). HTTP server: The kubelet can also listen for HTTP and respond to a simple API (underspec&rsquo;d currently) to submit a new manifest.</p>
 </blockquote>
+
 <p>从上述描述中我们可以看到，kubelet是在集群中每个node上都必须存在的组件，负责维护管理pod。 它的工作主要基于四种source—— apiserver的PodSpec，File，HTTP endpoint及HTTP server——来更新pod。其中，File通过<code>--file-check-frequency</code>参数传入， HTTP通过<code>--http-check-frequency</code>参数。</p>
+
 <h2 id="2-walk-through-the-src-code"><strong>2. Walk through the src code</strong></h2>
+
 <p>文章分析的代码版本&gt;v1.0.1, HEAD 6129d3d4。 kubelet相关代码的主入口在<code>cmd/kublet</code>下，调用方法的实现可能会在<code>pkg/kubelet</code>下。文中为了便利读者，也会就具体函数再进行标明。 下面我们就根据代码逻辑继续一次源码解读的DFS。 <code>kubelet.go#main</code>函数的主要流程包括如下三个步骤：</p>
+
 <ul>
 <li>创建一个KubeletServer实例</li>
 <li>根据命令行参数加载flag</li>
 <li>启动该kubeletServer。</li>
 </ul>
-<p>如下图1所示。 <a href="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/kubelet-go-main.png"><img src="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/kubelet-go-main-300x259.png" alt="kubelet-go-main"></a> 图1 kubelet.go#main 注意到，Run函数负责执行具体的kubelet的构建过程，在正常情况下是永远不会exit的。下面我们就来对该函数进行进一步的分析。</p>
-<h3 id="21-servergorun"><strong>2.1 server.go#Run</strong></h3>
+
+<p>如下图1所示。 <a href="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/kubelet-go-main.png"><img src="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/kubelet-go-main-300x259.png" alt="kubelet-go-main" /></a> 图1 kubelet.go#main 注意到，Run函数负责执行具体的kubelet的构建过程，在正常情况下是永远不会exit的。下面我们就来对该函数进行进一步的分析。</p>
+
+<h3 id="2-1-server-go-run"><strong>2.1 server.go#Run</strong></h3>
+
 <p>如上图所示，<code>KubeletServer.Run</code>函数主要包括以下三个主要流程：</p>
+
 <ul>
 <li>配置并构建<code>KubeletConfig</code>实例。</li>
 <li>调用<code>RunKubelet(&amp;KubeletConfig,nil)</code>函数真正地运行kubelet，该函数接受一个<code>KubeletConfig</code>类型的实例作为参数，包含了kubelet的配置信息。</li>
 <li>根据<code>KubeletServer.HealthzPort</code>的配置（即命令行参数<code>--healthz-port</code>），为/healthz url注册一个默认的handler（<code>http.DefaultServeMux</code>），启动health server。</li>
 </ul>
+
 <p>可见，Run函数的核心步骤在于RunKubelet函数。</p>
-<h3 id="22-servergorunkubelet"><strong>2.2 server.go#RunKubelet</strong></h3>
-<p>我们首先通过略显复杂的图2来了解RunKubelet函数。它的使用场景非常明确，在node上创建并运行kubelet。 <a href="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/Runkubelet.png"><img src="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/Runkubelet-300x162.png" alt="Runkubelet"></a> 图2 RunKubelet函数可以被大致划分为三大步骤。 <strong>Step1</strong>: 配置<code>KubeletConfig</code>信息，包括Hostname,NodeName,Recorder等。<code>KubeletConfig</code>这个结构包含了运行kubelet需要的所有参数，在可见的将来可能会和<code>KubeletServer</code>结构进行merge，不再单独存在。</p>
+
+<h3 id="2-2-server-go-runkubelet"><strong>2.2 server.go#RunKubelet</strong></h3>
+
+<p>我们首先通过略显复杂的图2来了解RunKubelet函数。它的使用场景非常明确，在node上创建并运行kubelet。 <a href="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/Runkubelet.png"><img src="http://www.sel.zju.edu.cn/wp-content/uploads/2015/08/Runkubelet-300x162.png" alt="Runkubelet" /></a> 图2 RunKubelet函数可以被大致划分为三大步骤。 <strong>Step1</strong>: 配置<code>KubeletConfig</code>信息，包括Hostname,NodeName,Recorder等。<code>KubeletConfig</code>这个结构包含了运行kubelet需要的所有参数，在可见的将来可能会和<code>KubeletServer</code>结构进行merge，不再单独存在。</p>
+
 <ul>
 <li>处理Hostname/NodeName信息</li>
 <li>创建了一个EventBroadcaster，创建一条包含kubelet及其NodeName配置的api.EventSource，将其注册到该EventBroadcaster中，用以记录kubelet产生的event并发送给apiserver。</li>
@@ -242,11 +259,13 @@
 <li>配置使用docker拉取镜像时的credentialprovider的路径。</li>
 <li>配置OSInterface信息</li>
 </ul>
+
 <p><strong>Step2</strong>: <code>createAndInitKubelet</code>，顾名思义，创建并初始化kubelet。</p>
-<pre><code>k, podCfg, err := builder(kcfg)
-</code></pre>
+<pre><code>k, podCfg, err := builder(kcfg)</code></pre>
 <p>builder在这里定义为createAndInitKubelet。 注意到这里返回了三个变量值，其中k为<code>KubeletBootstrap</code>（kubelet的interface），podCfg是<code>config.PodConfig</code>，最后一个是error变量。 podCfg变量是通过<code>pc = makePodSourceConfig(kc)</code>返回的，其中kc为传入的<code>kubeletConfig</code>变量。k则由<code>NewMainKubelet</code>函数返回。 <strong>Step3</strong>: 通过<code>startKubelet</code>启动kubelet，传入参数包括上一个函数的返回值及kcfg。 下面我们将就Step2和Step3进行更为详细的阐述。</p>
-<h4 id="221-servergocreateandinitkubelet"><strong>2.2.1 server.go#createAndInitKubelet</strong></h4>
+
+<h4 id="2-2-1-server-go-createandinitkubelet"><strong>2.2.1 server.go#createAndInitKubelet</strong></h4>
+
 <p>这节内容主要包括两部分，首先来看<code>makePodSourceConfig</code>函数。 <em>Section 1</em>: makePodSourceConfig 该函数的返回值是一个config.PodConfig变量，用于将不同source的pod configuration合并到一个结构中，结构如下所示。</p>
 <pre><code>// PodConfig is a configuration mux that merges many sources of pod configuration into a single
 // consistent structure, and then delivers incremental change notifications to listeners
@@ -261,36 +280,35 @@ type PodConfig struct {
     // contains the list of all configured sources
     sourcesLock sync.Mutex
     sources     util.StringSet
-}
-</code></pre>
+}</code></pre>
 <p>下面，我们具体来看<code>makePodSourceConfig</code>完成了什么工作。源码如下：</p>
 <pre><code>func makePodSourceConfig(kc *KubeletConfig) *config.PodConfig {
     // source of all configuration
     cfg := config.NewPodConfig(config.PodConfigNotificationSnapshotAndUpdates, kc.Recorder)
 
     // define file config source
-    if kc.ConfigFile != &quot;&quot; {
-        glog.Infof(&quot;Adding manifest file: %v&quot;, kc.ConfigFile)
+    if kc.ConfigFile != &#34;&#34; {
+        glog.Infof(&#34;Adding manifest file: %v&#34;, kc.ConfigFile)
         config.NewSourceFile(kc.ConfigFile, kc.NodeName, kc.FileCheckFrequency, cfg.Channel(kubelet.FileSource))
     }
 
     // define url config source
-    if kc.ManifestURL != &quot;&quot; {
-        glog.Infof(&quot;Adding manifest url %q with HTTP header %v&quot;, kc.ManifestURL, kc.ManifestURLHeader)
+    if kc.ManifestURL != &#34;&#34; {
+        glog.Infof(&#34;Adding manifest url %q with HTTP header %v&#34;, kc.ManifestURL, kc.ManifestURLHeader)
         config.NewSourceURL(kc.ManifestURL, kc.ManifestURLHeader, kc.NodeName, kc.HTTPCheckFrequency, cfg.Channel(kubelet.HTTPSource))
     }
     if kc.KubeClient != nil {
-        glog.Infof(&quot;Watching apiserver&quot;)
+        glog.Infof(&#34;Watching apiserver&#34;)
         config.NewSourceApiserver(kc.KubeClient, kc.NodeName, cfg.Channel(kubelet.ApiserverSource))
     }
     return cfg
-}
-</code></pre>
+}</code></pre>
 <ul>
 <li>使用<code>NewPodConfig</code>函数创建一个PodConfig变量cfg，用到了<code>config.PodConfigNotificationSnapshotAndUpdates</code>和<code>kc.Recorder</code>；<code>PodConfigNotificationSnapshotAndUpdates</code>的更新规则是，在增删pod的时候发送<code>SET</code>消息，其它变更发送<code>UPDATE</code>消息。其中，cfg.Updates是一个缓存大小为50的channel，收发数据类型为<code>kubelet.PodUpdate</code>（即对于某个pod的某种更新操作）。</li>
 <li>向podConfig变量cfg加入config source，包括 file/hhtp(url)/apiserver source。如同在开篇综述中所说，File类型和HTTP类型的pod configuration的变更，是通过定时查询对应source完成的。</li>
 <li>此处以更为常见的apiserver为例，我们使用<code>NewSourceApiserver</code>监听apiserver中podSpec的变更。该函数接收三个参数，第一个参数为用于向apiserver发起请求的Client，第二个参数为NodeName，第三个参数是由<code>cfg.Channel</code>返回的一个只读channel，类型是<code>chan &lt;- interface{}</code>。</li>
 </ul>
+
 <p>也许读者会好奇，这个Channel函数具体做了哪些工作呢？ 它会创建并返回一个<code>interface{}</code>类型的channel，并且启动go routine持续监听该Channel，并且将监听到的update进行merge。 merge是在<code>NewPodConfig</code>阶段决定的，即此前<code>newPodStorage(updates, mode, recorder)</code>返回的<code>podStorage</code>的Merge函数。该Merge函数定义在pkg/kubelet/config/config.go中，在该过程中会将监听的channel中更新的信息更新到cfg.updates中。限于篇幅，此处只展示<code>PodConfigNotificationSnapshotAndUpdates</code>对应的case，其它仅以&rdquo;&hellip;&ldquo;代替。</p>
 <pre><code>// Merge normalizes a set of incoming changes from different sources into a map of all Pods
 // and ensures that redundant changes are filtered out, and then pushes zero or more minimal
@@ -315,13 +333,15 @@ func (s *podStorage) Merge(source string, change interface{}) error {
     }
 
     return nil
-}
-</code></pre>
+}</code></pre>
 <p>也就是说，<code>cfg.Channel</code>返回的是一个未知具体类型的被持续监听的channel（且该channel在merge之后会影响到原cfg)，那么写channel的工作由谁完成呢？我们相信这是由config source（此处即apiserver）来完成的，也会在<code>NewSourceApiserver</code>函数分析中进行阐释。</p>
+
 <ul>
 <li>通过<code>NewListWatchFromClient</code>函数构造了一个ListWatch</li>
-<li>调用<code>newSourceApiserverFromLW</code>来watch并pull（拉取）apiserver的更新。 // newSourceApiserverFromLW holds creates a config source that watches and pulls from the apiserver. func newSourceApiserverFromLW(lw cache.ListerWatcher, updates chan&lt;- interface{}) { send := func(objs []interface{}) { var pods []_api.Pod for _, o := range objs { pods = append(pods, o.(_api.Pod)) } updates &lt;- kubelet.PodUpdate{pods, kubelet.SET, kubelet.ApiserverSource} } cache.NewReflector(lw, &amp;api.Pod{}, cache.NewUndeltaStore(send, cache.MetaNamespaceKeyFunc), 0).Run() }</li>
+<li>调用<code>newSourceApiserverFromLW</code>来watch并pull（拉取）apiserver的更新。 // newSourceApiserverFromLW holds creates a config source that watches and pulls from the apiserver. func newSourceApiserverFromLW(lw cache.ListerWatcher, updates chan&lt;- interface{}) { send := func(objs []interface{}) { var pods []_api.Pod for _, o := range objs { pods = append(pods, o.(_api.Pod)) } updates &lt;- kubelet.PodUpdate{pods, kubelet.SET, kubelet.ApiserverSource} } cache.NewReflector(lw, &amp;api.Pod{}, cache.NewUndeltaStore(send, cache.MetaNamespaceKeyFunc), 0).Run() }
+<br /></li>
 </ul>
+
 <p>可以看到，<code>newSourceApiserverFromLW</code>的执行核心只有一行代码，将创建出来的Reflector Run起来。 <code>NewReflector</code>函数创建一个Reflector对象，用于保证传入的第三个参数Store里的内容是update to date的。第三个参数以send函数为参数构建一个UndeltaStore，其PushFunc为send函数。 UndeltaStore listens to incremental updates and sends complete state on every change.也就是说，UndeltaStore不仅接受从Reflector来的update，并且还会使用UndeltaStore.PushFunc来进行change的deliver。这里就是写入到Cfg.Updates里，即完成了update的写操作。</p>
 <pre><code>// Reflector watches a specified resource and causes all changes to be reflected in the given store.
 type Reflector struct {
@@ -345,12 +365,13 @@ type Reflector struct {
     lastSyncResourceVersion string
     // lastSyncResourceVersionMutex guards read/write access to lastSyncResourceVersion
     lastSyncResourceVersionMutex sync.RWMutex
-}
-</code></pre>
+}</code></pre>
 <blockquote>
 <p>Note：之前在集群运行过程中遇到过一个error，(可能在将来会upgrage成warning)，即watcher超时，导致kubelet报错，位于reflector.go line#225。更新的内容来自listWatch，即apiserver。这里相当于是写updates。</p>
 </blockquote>
+
 <p><em>Section 2</em>: NewMainKubelet 我们通过pkg/kubelet/kubelet.go#NewMainKubelet函数构造了一个Kubelet。在该函数中创建各个kubelet需要的组件，部分参见如下列表</p>
+
 <ul>
 <li><strong>ContainerGC</strong> manages garbage collection of dead containers。负责进行对死掉的container进行垃圾回收。</li>
 <li><strong>ImageManager</strong> manages lifecycle of all images. 负责管理image。</li>
@@ -363,7 +384,7 @@ type Reflector struct {
 <li>初始化network plugin。这是个alpha feature。</li>
 <li><strong>ContainerRuntime</strong> 可以是DockerManager或者是rkt，默认为docker。</li>
 <li><strong>ContainerManager</strong> manages the containers running on a machine. -（周期性）配置网络参数（iptables rules)。 -（周期性）向master节点发送其它各个node的状态。synchronizes node status to master, registering the kubelet first if necessary.</li>
-<li>启动<strong>ContainerRuntime</strong>。ContainerRuntime是Runtime(interface)的一个实现，定义在pkg/kubelet/container/runtime.go中，包含了<code>SyncPod</code>/<code>GetPodStatus</code>等重要方法。以&quot;docker&quot;为例，它将是一个<strong>DockerManager</strong>，定义在pkg/kubelet/dockertools/manager.go中，并且实现了Runtime的所有方法。</li>
+<li>启动<strong>ContainerRuntime</strong>。ContainerRuntime是Runtime(interface)的一个实现，定义在pkg/kubelet/container/runtime.go中，包含了<code>SyncPod</code>/<code>GetPodStatus</code>等重要方法。以&rdquo;docker&rdquo;为例，它将是一个<strong>DockerManager</strong>，定义在pkg/kubelet/dockertools/manager.go中，并且实现了Runtime的所有方法。</li>
 <li><strong>PodManager</strong> stores and manages access to the pods. Kubelet discovers pod updates from 3 sources: file, http, and apiserver.三个update pod的来源，均在上例中的<code>makePodSourceConfig</code> 中进行了注册。 特别地，对于非apiserver来源的pod，apiserver是不知道其变更的。为了对其进行更新，我们创建了static pod。A mirror pod has the same pod full name (name and namespace) as its static counterpart (albeit different metadata such as UID, etc). By leveraging the fact that kubelet reports the pod status using the pod full name, the status of the mirror pod always reflects the actual status of the static pod. When a static pod gets deleted, the associated orphaned mirror pod will also be removed. 根据GetPodByFullName的原则，mirror pod会映射原pod的状态。</li>
 <li>为containerRuntime设置<strong>RuntimeCache</strong>。RuntimeCache caches a list of pods.该Cache中pod的状态会通过它的两个方法<code>GetPods</code>和<code>ForceUpdateIfOlder</code>来更新。</li>
 <li>创建<strong>PodWorkers</strong>。<code>klet.podWorkers = newPodWorkers(runtimeCache, klet.syncPod, recorder)</code> 第二个参数将作为podWorker.syncPodFn，即用以sync the desired stated of pod.实现为‵func (kl *Kubelet) syncPod`（定义在pkg/kubelet/kubelet.go)。</li>
@@ -371,11 +392,13 @@ type Reflector struct {
 <li>初始化所有注册的（即可以访问kubelet的）plugin。</li>
 <li>建立记录容器的log目录（/var/log/containers）。</li>
 </ul>
+
 <p>至此，所有相关组件或目录文件都已经被创建完毕，该函数返回一个Kubelet实例。</p>
-<h4 id="222-startkubelet"><strong>2.2.2</strong> startKubelet</h4>
+
+<h4 id="2-2-2-startkubelet"><strong>2.2.2</strong> startKubelet</h4>
+
 <p>如果读者还记得我们在<strong>2.2</strong>节中的下段描述，“<em>Step 3</em>: 通过<code>startKubelet</code>启动kubelet，传入参数包括上一个函数的返回值及kcfg。” 那将是一个莫大的幸事，因为我们终于要从一个非常深的源码栈中跳出进入另一个更深的栈了:) 创建完毕kubelet的，下边无疑要进行的是运行操作。 根据运行类别分为两种，其一为RunOnce（只运行一次），其二为startKubelet（持续运行不退出）；两种情况本质的处理逻辑是类似的，下面谨以第二种为例进行讲述。 该函数的核心——启动kubelet——由如下一行代码完成，</p>
-<pre><code>go util.Forever(func() { k.Run(podCfg.Updates()) }, 0)
-</code></pre>
+<pre><code>go util.Forever(func() { k.Run(podCfg.Updates()) }, 0)</code></pre>
 <p><code>podCfg.Updates()</code>返回podCfg.updates，类型为<code>&lt;-chan kubelet.PodUpdate</code>，即前述提及的缓冲区为50的用以存储Pod更新信息的channel，让我们来一览其结构。</p>
 <pre><code>// PodUpdate defines an operation sent on the channel. You can add or remove single services by
 // sending an array of size one and Op == ADD|REMOVE (with REMOVE, only the ID is required).
@@ -390,12 +413,12 @@ type PodUpdate struct {
     Pods   []*api.Pod
     Op     PodOperation
     Source string
-}
-</code></pre>
+}</code></pre>
 <p>Kubelet.Run()定义在pkg/kubelet/kubelet.go中，它完成的工作包括</p>
+
 <ul>
 <li>定义kubelet.logServer</li>
-<li>如果kl.resourceContainer不为空（命令行参数<code>--resource-container</code>，&ldquo;Absolute name of the resource-only container to create and run the Kubelet in (Default: &ldquo;/kubelet.&quot;) ），则将kubelet移入该container中。</li>
+<li>如果kl.resourceContainer不为空（命令行参数<code>--resource-container</code>，&rdquo;Absolute name of the resource-only container to create and run the Kubelet in (Default: &ldquo;/kubelet.&rdquo;) ），则将kubelet移入该container中。</li>
 <li>启动imageManager。运行时该imageManager负责持续list image和container，并在其Record中更新。</li>
 <li>启动cadvisor。</li>
 <li>启动containerManager。</li>
@@ -404,8 +427,11 @@ type PodUpdate struct {
 <li>启动statusManager。</li>
 <li>syncLoop(updates, kl)。</li>
 </ul>
+
 <p><code>statusManager.Start</code>和<code>syncLoop</code>具体做了什么工作，可能会引起读者的兴趣。下面我们就具体进行分析。为了让结构显得更为明晰，我们还是新起一个小章节：）</p>
-<h4 id="2221-statusmanager的启动"><strong>2.2.2.1</strong> statusManager的启动</h4>
+
+<h4 id="2-2-2-1-statusmanager的启动"><strong>2.2.2.1</strong> statusManager的启动</h4>
+
 <p>我们知道statusManager负责监听从apiserver对于pod的更新，更新的读写通过podStatusSyncRequest类型的channel<code>podStatusChannel</code>。</p>
 <pre><code>type podStatusSyncRequest struct {
     pod    *api.Pod
@@ -420,18 +446,18 @@ type statusManager struct {
     podStatusesLock  sync.RWMutex
     podStatuses      map[string]api.PodStatus
     podStatusChannel chan podStatusSyncRequest
-}
-</code></pre>
+}</code></pre>
 <p><code>statusManager.Start</code>执行核心工作的代码如下</p>
 <pre><code>go util.Forever(func() {
         err := s.syncBatch()
         if err != nil {
-            glog.Warningf(&quot;Failed to updated pod status: %v&quot;, err)
+            glog.Warningf(&#34;Failed to updated pod status: %v&#34;, err)
         }
-    }, 0)
-</code></pre>
+    }, 0)</code></pre>
 <p>即持续运行s.syncBatch()，这个函数负责同apiserver交互来获得pod status的更新（located @pkg/kubelet/status_manager.go），在没有更新时会block。这是因为在该函数中会等待<code>s.podStatusChannel</code>的返回值。从另一个角度而言，这是在读channel，写channel的操作应该由apiserver完成。</p>
-<h4 id="2222-syncloop"><strong>2.2.2.2</strong> syncLoop</h4>
+
+<h4 id="2-2-2-2-syncloop"><strong>2.2.2.2</strong> syncLoop</h4>
+
 <p><code>syncLoop</code>这个函数使用到了传入的channel参数，即podCfg.updates，第二个参数为kubelet实例本身。它的函数体异常简单，但是却为我们执行了非常重要的sync pod的核心任务。</p>
 <pre><code>// syncLoop is the main loop for processing changes. It watches for changes from
 // three channels (file, apiserver, and http) and creates a union of them. For
@@ -439,22 +465,20 @@ type statusManager struct {
 // no changes are seen to the configuration, will synchronize the last known desired
 // state every sync_frequency seconds. Never returns.
 func (kl *Kubelet) syncLoop(updates &lt;-chan PodUpdate, handler SyncHandler) {
-    glog.Info(&quot;Starting kubelet main sync loop.&quot;)
+    glog.Info(&#34;Starting kubelet main sync loop.&#34;)
     for {
         kl.syncLoopIteration(updates, handler)
     }
-}
-</code></pre>
-<p><code>syncLoopIteration</code>方法在检查各种配置之后，启动select监听updates（channel）上的数据，一旦有更新的数据，则执行<code>podManager.UpdatePods</code>方法，负责update the internal pods with those provided by the update，实际上就是在podManager的列表里进行相应的更新，并进行相应的标记——把每个pod（以types.UID标记）及其SyncPodType记录好（该函数执行完毕后，所有现有的pod的状态都是&quot;sync&rdquo;）。</p>
+}</code></pre>
+<p><code>syncLoopIteration</code>方法在检查各种配置之后，启动select监听updates（channel）上的数据，一旦有更新的数据，则执行<code>podManager.UpdatePods</code>方法，负责update the internal pods with those provided by the update，实际上就是在podManager的列表里进行相应的更新，并进行相应的标记——把每个pod（以types.UID标记）及其SyncPodType记录好（该函数执行完毕后，所有现有的pod的状态都是&rdquo;sync&rdquo;）。</p>
 <pre><code>podSyncTypes := make(map[types.UID]SyncPodType)
-kl.podManager.UpdatePods(u, podSyncTypes)
-</code></pre>
+kl.podManager.UpdatePods(u, podSyncTypes)</code></pre>
 <p>然后，则是最为重要的sync pod</p>
 <pre><code>if err := handler.SyncPods(pods, podSyncTypes, mirrorPods, start); err != nil {
-        glog.Errorf(&quot;Couldn't sync containers: %v&quot;, err)
-    }
-</code></pre>
+        glog.Errorf(&#34;Couldn&#39;t sync containers: %v&#34;, err)
+    }</code></pre>
 <p><code>handler.SyncPods</code>方法实际为pkg/kubelet/kubelet.go#SyncPods，进行的工作为<strong>SyncPods synchronizes the configured list of pods (desired state) with the host current state</strong>。具体包括如下步骤：</p>
+
 <ol>
 <li>根据传入的现存pod列表将statusManager中的不存在的pod entry删除。</li>
 <li>通过<code>admitPods</code>函数过滤terminated&amp; notfitting &amp; outofdisk pods，返回的pod列表即为desired pod。</li>
@@ -465,6 +489,7 @@ kl.podManager.UpdatePods(u, podSyncTypes)
 <li>删除不存在的pod对应的dir</li>
 <li>删除孤儿mirror pod</li>
 </ol>
+
 <p>下面我们来具体分析一下第3条<code>Kubelet.podWorkers.UpdatePod</code>进行的工作。</p>
 <pre><code>// Apply the new setting to the specified pod. updateComplete is called when the update is completed.
 func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete func()) {
@@ -504,8 +529,7 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
             updateType:       updateType,
         }
     }
-}
-</code></pre>
+}</code></pre>
 <p>如果该pod在podWorkers.podUpdates里不存在，则需要进行创建，此时调用<code>podWorkers.managePodLoop</code>。 然后，根据<code>podWorkers.isWorking[pod.UID]</code>的值更新对应podUpdates的值或者传入<code>podWorkers.lastUndeliveredWorkUpdate</code>。这是对于对应pod状态的一个记录。 下面我们具体来看一下创建新pod的过程经历了什么。</p>
 <pre><code>func (p *podWorkers) managePodLoop(podUpdates &lt;-chan workUpdate) {
     var minRuntimeCacheTime time.Time
@@ -514,21 +538,21 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
             defer p.checkForUpdates(newWork.pod.UID, newWork.updateCompleteFn)
             //更新runtimeCache
             if err := p.runtimeCache.ForceUpdateIfOlder(minRuntimeCacheTime); err != nil {
-                glog.Errorf(&quot;Error updating the container runtime cache: %v&quot;, err)
+                glog.Errorf(&#34;Error updating the container runtime cache: %v&#34;, err)
                 return
             }
                     //获得所有pods
             pods, err := p.runtimeCache.GetPods()
             if err != nil {
-                glog.Errorf(&quot;Error getting pods while syncing pod: %v&quot;, err)
+                glog.Errorf(&#34;Error getting pods while syncing pod: %v&#34;, err)
                 return
             }
                     //sync pod(依次进行）
             err = p.syncPodFn(newWork.pod, newWork.mirrorPod,
                 kubecontainer.Pods(pods).FindPodByID(newWork.pod.UID), newWork.updateType)
             if err != nil {
-                glog.Errorf(&quot;Error syncing pod %s, skipping: %v&quot;, newWork.pod.UID, err)
-                p.recorder.Eventf(newWork.pod, &quot;failedSync&quot;, &quot;Error syncing pod, skipping: %v&quot;, err)
+                glog.Errorf(&#34;Error syncing pod %s, skipping: %v&#34;, newWork.pod.UID, err)
+                p.recorder.Eventf(newWork.pod, &#34;failedSync&#34;, &#34;Error syncing pod, skipping: %v&#34;, err)
                 return
             }
             minRuntimeCacheTime = time.Now()
@@ -536,12 +560,11 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
             newWork.updateCompleteFn()
         }()
     }
-}
-</code></pre>
+}</code></pre>
 <p>从代码中可以看到，核心步骤调用了<code>podWorkers.syncPodFn</code>，这是在创建podWorker时构建的，具体指向了<code>func (kl *Kubelet) syncPod</code>（定义在pkg/kubelet/kubelet.go，完整的传参列表</p>
-<pre><code>func (kl *Kubelet) syncPod(pod *api.Pod, mirrorPod *api.Pod, runningPod kubecontainer.Pod, updateType SyncPodType) error {}
-</code></pre>
+<pre><code>func (kl *Kubelet) syncPod(pod *api.Pod, mirrorPod *api.Pod, runningPod kubecontainer.Pod, updateType SyncPodType) error {}</code></pre>
 <p>这个函数在做什么呢？ Let&rsquo;s figure it out.</p>
+
 <ul>
 <li><code>canRunPod</code>：确认是否有足够的权限运行该pod。</li>
 <li>创建pod data存储的目录，包括root目录（以pod的UID命名）/volumes/plugins（默认在/var/lib/kubelet/pods下）</li>
@@ -552,13 +575,18 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
 <li>sync pod（在下文中再进行详细论述）</li>
 <li>根据该pod是否为static pod，在podManager中进行了相应的设置。</li>
 </ul>
+
 <p>sync pod的过程，以DockerManager.SyncPod为例。有鉴于函数体比较长，在此就不再贴出源码。其功能非常明晰——目的在于使得running pod能够match对应的desired pod。</p>
+
 <ul>
 <li>计算running pod和desired pod之前的差距，返回的信息里包括StartInfraContainer（是否需要创建infra container），InfraContainerId（infra container ID），ContainersToStart（需要start的container），ContainersToKeep（需要keep的container）。</li>
 <li>根据返回的信息决定是否重启infra container（（即gcr.io/google_containers/pause:0.8.0），配置network及其它container</li>
 </ul>
+
 <p>至此，<code>Kubelet.syncLoopIteration</code>算是基本完成了。这也就意味着kubelet已经在node上运行起来，充当其pod的维护者的角色了。</p>
+
 <h2 id="3-summary"><strong>3. Summary</strong></h2>
+
 <p>总之，从宏观角度上而言，kubelet进行的工作就是从apiserver/file/http中获取pod更新的信息，并且定期进行sync pod。其中有大量的工作都涉及了channel的使用，也希望读者在阅读的过程中能够加以注意。 [simple-author-box]</p>
 
                         </div>
@@ -718,7 +746,7 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
             </li>
             
             <li>
-                <a href="/categories/docker">docker (12)</a>
+                <a href="/categories/docker">docker (13)</a>
             </li>
             
             <li>
@@ -957,7 +985,7 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
                           
                         </a>
                     </div>
@@ -970,7 +998,7 @@ func (p *podWorkers) UpdatePod(pod *api.Pod, mirrorPod *api.Pod, updateComplete 
                     <div class="image same-height-always">
                         <a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
                           
-                            <img src="/img/placeholder.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
                           
                         </a>
                     </div>
