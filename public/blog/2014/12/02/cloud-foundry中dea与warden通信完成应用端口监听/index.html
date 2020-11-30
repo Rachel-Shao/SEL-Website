@@ -16,7 +16,7 @@
   <meta name="keywords" content="dea, cloudfoundry">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -81,9 +86,9 @@
   
   <meta name="twitter:title" content="Cloud Foundry中DEA与warden通信完成应用端口监听">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden …">
   
-
+  
 </head>
 
 
@@ -211,54 +216,56 @@
                         <div id="post-content">
                           
 
-<p>在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。 本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。</p>
+<p>在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。</p>
+
+<p>本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。</p>
 
 <p>DEA在执行启动一个应用的时候，主要做到以下这些部分：promise_droplet, promise_container, 其中这两个部分并发完成；promise_extract_droplet, promise_exec_hook_script(“before_start”), promise_start等。代码如下：</p>
-<pre><code>\[  
-  promise\_droplet,  
-  promise\_container  
-\].each(&amp;:run).each(&amp;:resolve)  
-
-\[  
-  promise\_extract\_droplet,  
-  promise\_exec\_hook\_script(&#39;before\_start&#39;),  
-  promise\_start  
-\].each(&amp;:resolve)  </code></pre>
-<h1 id="promise-droplet"><strong>promise_droplet:</strong></h1>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#555">[</span>  
+      promise_droplet,  
+      promise_container  
+    <span style="color:#555">].</span>each(<span style="color:#555">&amp;</span><span style="color:#fc3">:run</span>)<span style="color:#555">.</span>each(<span style="color:#555">&amp;</span><span style="color:#fc3">:resolve</span>)  
+    
+    <span style="color:#555">[</span>  
+      promise_extract_droplet,  
+      promise_exec_hook_script(<span style="color:#c30">&#39;before_start&#39;</span>),  
+      promise_start  
+    <span style="color:#555">].</span>each(<span style="color:#555">&amp;</span><span style="color:#fc3">:resolve</span>)  </code></pre></div>
+<h2 id="promise-droplet"><strong>promise_droplet:</strong></h2>
 
 <p>在这一个环节，DEA主要做的工作是将droplet下载本机，通过droplet_uri,其中基本的路径在/config/dea.yml中，为base_dir: /tmp/dea_ng, 因此最终DEA下载到的droplet存放于DEA组件所在的宿主机上。</p>
 
-<h1 id="promise-container"><strong>promise_container:</strong></h1>
+<h2 id="promise-container"><strong>promise_container:</strong></h2>
 
 <p>该环节的工作主要完成创建一个warden container，随后可以为应用的运行提供一个合适的环境。promise_container的源码实现如下：</p>
-<pre><code>def promise\_container  
-    Promise.new do |p|
-    bind\_mounts = \[{&#39;src\_path&#39; =&gt; droplet.droplet\_dirname, &#39;dst\_path&#39; =&gt; droplet.droplet\_dirname}\]  
-    with\_network = true  
-    container.create\_container(  
-        bind\_mounts: bind\_mounts + config\[&#39;bind\_mounts&#39;\],  
-        limit\_cpu: config\[&#39;instance&#39;\]\[&#39;cpu\_limit\_shares&#39;\],  
-        byte: disk\_limit\_in\_bytes,  
-        inode: config.instance\_disk\_inode\_limit,  
-        limit\_memory: memory\_limit\_in\_bytes,  
-        setup\_network: with\_network)  
-    attributes\[&#39;warden\_handle&#39;\] = container.handle  
-    promise\_setup\_def create\_container(params)  
-    \[:bind\_mounts, :limit\_cpu, :byte, :inode, :limit\_memory, :setup\_network\].each do |param|  
-    raise ArgumentError, &#34;expecting #{param.to\_s} parameter to create container&#34; if params\[param\].nil?  
-end  
-
-with\_em do  
-    new\_container\_with\_bind\_mounts(params\[:bind\_mounts\])  
-    limit\_cpu(params\[:limit\_cpu\])  
-    limit\_disk(byte: params\[:byte\], inode: params\[:inode\])  
-    limit\_memory(params\[:limit\_memory\])  
-    setup\_network if params\[:setup\_network\]  
-end  
-endenvironment.resolve  
-    p.deliver  
-    end  
-end  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">promise_container</span>  
+        <span style="color:#360">Promise</span><span style="color:#555">.</span>new <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span><span style="color:#366">p</span><span style="color:#555">|</span>
+        bind_mounts <span style="color:#555">=</span> <span style="color:#555">[</span>{<span style="color:#c30">&#39;src_path&#39;</span> <span style="color:#555">=&gt;</span> droplet<span style="color:#555">.</span>droplet_dirname, <span style="color:#c30">&#39;dst_path&#39;</span> <span style="color:#555">=&gt;</span> droplet<span style="color:#555">.</span>droplet_dirname}<span style="color:#555">]</span>  
+        with_network <span style="color:#555">=</span> <span style="color:#069">true</span>  
+        container<span style="color:#555">.</span>create_container(  
+            <span style="color:#fc3">bind_mounts</span>: bind_mounts <span style="color:#555">+</span> config<span style="color:#555">[</span><span style="color:#c30">&#39;bind_mounts&#39;</span><span style="color:#555">]</span>,  
+            <span style="color:#fc3">limit_cpu</span>: config<span style="color:#555">[</span><span style="color:#c30">&#39;instance&#39;</span><span style="color:#555">][</span><span style="color:#c30">&#39;cpu_limit_shares&#39;</span><span style="color:#555">]</span>,  
+            <span style="color:#fc3">byte</span>: disk_limit_in_bytes,  
+            <span style="color:#fc3">inode</span>: config<span style="color:#555">.</span>instance_disk_inode_limit,  
+            <span style="color:#fc3">limit_memory</span>: memory_limit_in_bytes,  
+            <span style="color:#fc3">setup_network</span>: with_network)  
+        attributes<span style="color:#555">[</span><span style="color:#c30">&#39;warden_handle&#39;</span><span style="color:#555">]</span> <span style="color:#555">=</span> container<span style="color:#555">.</span>handle  
+        promise_setup_def create_container(params)  
+        <span style="color:#555">[</span><span style="color:#fc3">:bind_mounts</span>, <span style="color:#fc3">:limit_cpu</span>, <span style="color:#fc3">:byte</span>, <span style="color:#fc3">:inode</span>, <span style="color:#fc3">:limit_memory</span>, <span style="color:#fc3">:setup_network</span><span style="color:#555">].</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>param<span style="color:#555">|</span>  
+        <span style="color:#069;font-weight:bold">raise</span> <span style="color:#360">ArgumentError</span>, <span style="color:#c30">&#34;expecting </span><span style="color:#a00">#{</span>param<span style="color:#555">.</span>to_s<span style="color:#a00">}</span><span style="color:#c30"> parameter to create container&#34;</span> <span style="color:#069;font-weight:bold">if</span> params<span style="color:#555">[</span>param<span style="color:#555">].</span>nil?  
+    <span style="color:#069;font-weight:bold">end</span>  
+    
+    with_em <span style="color:#069;font-weight:bold">do</span>  
+        new_container_with_bind_mounts(params<span style="color:#555">[</span><span style="color:#fc3">:bind_mounts</span><span style="color:#555">]</span>)  
+        limit_cpu(params<span style="color:#555">[</span><span style="color:#fc3">:limit_cpu</span><span style="color:#555">]</span>)  
+        limit_disk(<span style="color:#fc3">byte</span>: params<span style="color:#555">[</span><span style="color:#fc3">:byte</span><span style="color:#555">]</span>, <span style="color:#fc3">inode</span>: params<span style="color:#555">[</span><span style="color:#fc3">:inode</span><span style="color:#555">]</span>)  
+        limit_memory(params<span style="color:#555">[</span><span style="color:#fc3">:limit_memory</span><span style="color:#555">]</span>)  
+        setup_network <span style="color:#069;font-weight:bold">if</span> params<span style="color:#555">[</span><span style="color:#fc3">:setup_network</span><span style="color:#555">]</span>  
+    <span style="color:#069;font-weight:bold">end</span>  
+    endenvironment<span style="color:#555">.</span>resolve  
+        <span style="color:#366">p</span><span style="color:#555">.</span>deliver  
+        <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>可以看到传入的参数主要有：</p>
 
 <ul>
@@ -271,238 +278,240 @@ end  </code></pre>
 </ul>
 
 <p>其中setup_network一直设置为true。 在container.create_container的方法实现中，有以下的方法，如下：</p>
-<pre><code>def create\_container(params)  
-    \[:bind\_mounts, :limit\_cpu, :byte, :inode, :limit\_memory, :setup\_network\].each do |param|  
-      raise ArgumentError, &#34;expecting #{param.to\_s} parameter to createdef create\_container(params)  
-    \[:bind\_mounts, :limit\_cpu, :byte, :inode, :limit\_memory, :setup\_network\].each do |param|  
-      raise ArgumentError, &#34;expecting #{param.to\_s} parameter to create container&#34; if params\[param\].nil?  
-    end  
-
-  with\_em do  
-      new\_container\_with\_bind\_mounts(params\[:bind\_mounts\])  
-      limit\_cpu(params\[:limit\_cpu\])  
-      limit\_disk(byte: params\[:byte\], inode: params\[:inode\])  
-      limit\_memory(params\[:limit\_memory\])  
-      setup\_network if params\[:setup\_network\]  
-  end  
-end container&#34; if params\[param\].nil?  
-  end  
-
-  with\_em do  
-    new\_container\_with\_bind\_mounts(params\[:bind\_mounts\])  
-    limit\_cpu(params\[:limit\_cpu\])  
-    limit\_disk(byte: params\[:byte\], inode: params\[:inode\])  
-    limit\_memory(params\[:limit\_memory\])  
-    setup\_network if params\[:setup\_network\]  
-  end  
-end  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">create_container</span>(params)  
+        <span style="color:#555">[</span><span style="color:#fc3">:bind_mounts</span>, <span style="color:#fc3">:limit_cpu</span>, <span style="color:#fc3">:byte</span>, <span style="color:#fc3">:inode</span>, <span style="color:#fc3">:limit_memory</span>, <span style="color:#fc3">:setup_network</span><span style="color:#555">].</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>param<span style="color:#555">|</span>  
+          <span style="color:#069;font-weight:bold">raise</span> <span style="color:#360">ArgumentError</span>, <span style="color:#c30">&#34;expecting </span><span style="color:#a00">#{</span>param<span style="color:#555">.</span>to_s<span style="color:#a00">}</span><span style="color:#c30"> parameter to createdef create_container(params)  
+</span><span style="color:#c30">        [:bind_mounts, :limit_cpu, :byte, :inode, :limit_memory, :setup_network].each do |param|  
+</span><span style="color:#c30">          raise ArgumentError, &#34;</span>expecting <span style="color:#09f;font-style:italic">#{param.to_s} parameter to create container&#34; if params[param].nil?  </span>
+        <span style="color:#069;font-weight:bold">end</span>  
+    
+      with_em <span style="color:#069;font-weight:bold">do</span>  
+          new_container_with_bind_mounts(params<span style="color:#555">[</span><span style="color:#fc3">:bind_mounts</span><span style="color:#555">]</span>)  
+          limit_cpu(params<span style="color:#555">[</span><span style="color:#fc3">:limit_cpu</span><span style="color:#555">]</span>)  
+          limit_disk(<span style="color:#fc3">byte</span>: params<span style="color:#555">[</span><span style="color:#fc3">:byte</span><span style="color:#555">]</span>, <span style="color:#fc3">inode</span>: params<span style="color:#555">[</span><span style="color:#fc3">:inode</span><span style="color:#555">]</span>)  
+          limit_memory(params<span style="color:#555">[</span><span style="color:#fc3">:limit_memory</span><span style="color:#555">]</span>)  
+          setup_network <span style="color:#069;font-weight:bold">if</span> params<span style="color:#555">[</span><span style="color:#fc3">:setup_network</span><span style="color:#555">]</span>  
+      <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span> container<span style="color:#c30">&#34; if params[param].nil?  
+</span><span style="color:#c30">      end  
+</span><span style="color:#c30">    
+</span><span style="color:#c30">      with_em do  
+</span><span style="color:#c30">        new_container_with_bind_mounts(params[:bind_mounts])  
+</span><span style="color:#c30">        limit_cpu(params[:limit_cpu])  
+</span><span style="color:#c30">        limit_disk(byte: params[:byte], inode: params[:inode])  
+</span><span style="color:#c30">        limit_memory(params[:limit_memory])  
+</span><span style="color:#c30">        setup_network if params[:setup_network]  
+</span><span style="color:#c30">      end  
+</span><span style="color:#c30">    end  </span></code></pre></div>
 <p>主要关注一下setup_network方法，如下：</p>
-<pre><code>def setup\_network  
-    request = ::Warden::Protocol::NetInRequest.new(handle: handle)  
-    response = call(:app, request)  
-    network\_ports\[&#39;host\_port&#39;\] = response.host\_port  
-    network\_ports\[&#39;container\_port&#39;\] = response.container\_port  
-
-    request = ::Warden::Protocol::NetInRequest.new(handle: handle)  
-    response = call(:app, request)  
-    network\_ports\[&#39;console\_host\_port&#39;\] = response.host\_port  
-    network\_ports\[&#39;console\_container\_port&#39;\] = response.container\_port 
-
-end  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">setup_network</span>  
+        request <span style="color:#555">=</span> <span style="color:#555">::</span><span style="color:#360">Warden</span><span style="color:#555">::</span><span style="color:#360">Protocol</span><span style="color:#555">::</span><span style="color:#360">NetInRequest</span><span style="color:#555">.</span>new(<span style="color:#fc3">handle</span>: handle)  
+        response <span style="color:#555">=</span> call(<span style="color:#fc3">:app</span>, request)  
+        network_ports<span style="color:#555">[</span><span style="color:#c30">&#39;host_port&#39;</span><span style="color:#555">]</span> <span style="color:#555">=</span> response<span style="color:#555">.</span>host_port  
+        network_ports<span style="color:#555">[</span><span style="color:#c30">&#39;container_port&#39;</span><span style="color:#555">]</span> <span style="color:#555">=</span> response<span style="color:#555">.</span>container_port  
+    
+        request <span style="color:#555">=</span> <span style="color:#555">::</span><span style="color:#360">Warden</span><span style="color:#555">::</span><span style="color:#360">Protocol</span><span style="color:#555">::</span><span style="color:#360">NetInRequest</span><span style="color:#555">.</span>new(<span style="color:#fc3">handle</span>: handle)  
+        response <span style="color:#555">=</span> call(<span style="color:#fc3">:app</span>, request)  
+        network_ports<span style="color:#555">[</span><span style="color:#c30">&#39;console_host_port&#39;</span><span style="color:#555">]</span> <span style="color:#555">=</span> response<span style="color:#555">.</span>host_port  
+        network_ports<span style="color:#555">[</span><span style="color:#c30">&#39;console_container_port&#39;</span><span style="color:#555">]</span> <span style="color:#555">=</span> response<span style="color:#555">.</span>container_port 
+    
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>从代码中可以看到，在setup_network中，主要完成了两次NetIn操作。对于NetIn操作，需要说明的是，完成的工作是将host主机上的端口映射到container内部的端口。换言之，将host_ip:port1映射到container_ip:port2，也就是说如果container在container_ip上监听的是端口port2，则host机器外部的请求访问host机器，并且端口为port1的时候，host的内核网络栈，会将请求转发给container的port2端口，其中使用的协议为DNAT协议。 因此，在以上的代码中实现了两次NetIn操作，也就是说将container的两个端口映射到了host宿主机，第一个端口用于container内应用的正常占用端口，第二个端口是用来为应用的console功能做服务。虽然container也分配了第二个端口，但是在而后的应用启动等中，该console_port都没有使用过，可见Cloud Foundry在这里只是预留了接口，但是没有真正利用起来。 以上主要描述了NetIn的功能，以下进入NetIn操作的源码实现。NetIn的源码实现，主要为warden server的部分。其中，是由DEA进程通过warden.sock和warden server建立通信，随后DEA进程发送NetIn请求给warden server，warden server最终处理该请求。 现在进入warden范畴，研究warden如何接收请求，并实现端口的映射。 在warden/lib/warden/server.rb中，大部分代码都是为了完成warden server的运行，在run！方法中，可以看到warden server另外还启动了一个unix domain server，代码如下：</p>
-<pre><code>server = ::EM.start\_unix\_domain\_server(unix\_domain\_path, ClientConnection)  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    server <span style="color:#555">=</span> <span style="color:#555">::</span><span style="color:#360">EM</span><span style="color:#555">.</span>start_unix_domain_server(unix_domain_path, <span style="color:#360">ClientConnection</span>)  </code></pre></div>
 <p>也就是说，warden server会通过整个unix domain server接收从DEA进程发送来的关于warden container的一系列请求，在ClientConnection类中定义，关于这部分请求如何处理的方法。 当unix domain server中ClientConnection类通过receive_data（data）方法来实现接收请求，代码如下：</p>
-<pre><code>def receive\_data(data)  
-  @buffer &lt;&lt; data  
-  @buffer.each\_request do |request|  
-    begin  
-        receive\_request(request)  
-    rescue =&gt; e  
-        close\_connection\_after\_writing  
-        logger.warn(&#34;Disconnected client after error&#34;)  
-        logger.log\_exception(e)  
-    end  
-  end  
-end  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">receive_data</span>(data)  
+      @buffer <span style="color:#555">&lt;&lt;</span> data  
+      @buffer<span style="color:#555">.</span>each_request <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>request<span style="color:#555">|</span>  
+        <span style="color:#069;font-weight:bold">begin</span>  
+            receive_request(request)  
+        <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#555">=&gt;</span> e  
+            close_connection_after_writing  
+            logger<span style="color:#555">.</span>warn(<span style="color:#c30">&#34;Disconnected client after error&#34;</span>)  
+            logger<span style="color:#555">.</span>log_exception(e)  
+        <span style="color:#069;font-weight:bold">end</span>  
+      <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>从代码中可以看到，当buffer中有请求的时候，通过receive_request（request）方法来进一步提取请求。再进入receive_request(request)方法中，可以看到通过process（request）来处理请求。 接着进入真正请求处理的部分，也就时process（request）的实现：</p>
-<pre><code>def process(request)  
-    case request  
-    when Protocol::PingRequest  
-      response = request.create\_response  
-      send\_response(response)  
-
-    when Protocol::ListRequest  
-      response = request.create\_response  
-      response.handles = Server.container\_klass.registry.keys.map(&amp;:to\_s)  
-      send\_response(response)  
-
-    when Protocol::EchoRequest  
-      response = request.create\_response  
-      response.message = request.message  
-      send\_response(response)  
-
-    when Protocol::CreateRequest  
-      container = Server.container\_klass.new  
-      container.register\_connection(self)  
-      response = container.dispatch(request)  
-      send\_response(response)  
-
-    else  
-      if request.respond\_to?(:handle)  
-        container = find\_container(request.handle)  
-        process\_container\_request(request, container)  
-      else  
-        raise WardenError.new(&#34;Unknown request: #{request.class.name.split(&#34;::&#34;).last}&#34;)  
-      end  
-    end  
-rescue WardenError =&gt; e  
-    send\_error(e)  
-rescue =&gt; e  
-    logger.log\_exception(e)  
-    send\_error(e)  
-end  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">process</span>(request)  
+        <span style="color:#069;font-weight:bold">case</span> request  
+        <span style="color:#069;font-weight:bold">when</span> <span style="color:#360">Protocol</span><span style="color:#555">::</span><span style="color:#360">PingRequest</span>  
+          response <span style="color:#555">=</span> request<span style="color:#555">.</span>create_response  
+          send_response(response)  
+    
+        <span style="color:#069;font-weight:bold">when</span> <span style="color:#360">Protocol</span><span style="color:#555">::</span><span style="color:#360">ListRequest</span>  
+          response <span style="color:#555">=</span> request<span style="color:#555">.</span>create_response  
+          response<span style="color:#555">.</span>handles <span style="color:#555">=</span> <span style="color:#360">Server</span><span style="color:#555">.</span>container_klass<span style="color:#555">.</span>registry<span style="color:#555">.</span>keys<span style="color:#555">.</span>map(<span style="color:#555">&amp;</span><span style="color:#fc3">:to_s</span>)  
+          send_response(response)  
+    
+        <span style="color:#069;font-weight:bold">when</span> <span style="color:#360">Protocol</span><span style="color:#555">::</span><span style="color:#360">EchoRequest</span>  
+          response <span style="color:#555">=</span> request<span style="color:#555">.</span>create_response  
+          response<span style="color:#555">.</span>message <span style="color:#555">=</span> request<span style="color:#555">.</span>message  
+          send_response(response)  
+    
+        <span style="color:#069;font-weight:bold">when</span> <span style="color:#360">Protocol</span><span style="color:#555">::</span><span style="color:#360">CreateRequest</span>  
+          container <span style="color:#555">=</span> <span style="color:#360">Server</span><span style="color:#555">.</span>container_klass<span style="color:#555">.</span>new  
+          container<span style="color:#555">.</span>register_connection(<span style="color:#366">self</span>)  
+          response <span style="color:#555">=</span> container<span style="color:#555">.</span>dispatch(request)  
+          send_response(response)  
+    
+        <span style="color:#069;font-weight:bold">else</span>  
+          <span style="color:#069;font-weight:bold">if</span> request<span style="color:#555">.</span>respond_to?(<span style="color:#fc3">:handle</span>)  
+            container <span style="color:#555">=</span> find_container(request<span style="color:#555">.</span>handle)  
+            process_container_request(request, container)  
+          <span style="color:#069;font-weight:bold">else</span>  
+            <span style="color:#069;font-weight:bold">raise</span> <span style="color:#360">WardenError</span><span style="color:#555">.</span>new(<span style="color:#c30">&#34;Unknown request: </span><span style="color:#a00">#{</span>request<span style="color:#555">.</span>class<span style="color:#555">.</span>name<span style="color:#555">.</span>split(<span style="color:#c30">&#34;::&#34;</span>)<span style="color:#555">.</span>last<span style="color:#a00">}</span><span style="color:#c30">&#34;</span>)  
+          <span style="color:#069;font-weight:bold">end</span>  
+        <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#360">WardenError</span> <span style="color:#555">=&gt;</span> e  
+        send_error(e)  
+    <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#555">=&gt;</span> e  
+        logger<span style="color:#555">.</span>log_exception(e)  
+        send_error(e)  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>可见，在warden server中，请求类型可以简单分为5种：PingRequest, ListRequest, EchoRequest, CreateRequest和其他请求，像NetIn请求则属于其他请求中的一种，程序执行进入case语句块的else分支，也就是：</p>
-<pre><code>if request.respond\_to?(:handle)  
-  container = find\_container(request.handle)  
-  process\_container\_request(request, container)  
-else  
-  raise WardenError.new(&#34;Unknown request: #{request.class.name.split(&#34;::&#34;).last}&#34;)  
-end</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">if</span> request<span style="color:#555">.</span>respond_to?(<span style="color:#fc3">:handle</span>)  
+  container <span style="color:#555">=</span> find_container(request<span style="color:#555">.</span>handle)  
+  process_container_request(request, container)  
+<span style="color:#069;font-weight:bold">else</span>  
+  <span style="color:#069;font-weight:bold">raise</span> <span style="color:#360">WardenError</span><span style="color:#555">.</span>new(<span style="color:#c30">&#34;Unknown request: </span><span style="color:#a00">#{</span>request<span style="color:#555">.</span>class<span style="color:#555">.</span>name<span style="color:#555">.</span>split(<span style="color:#c30">&#34;::&#34;</span>)<span style="color:#555">.</span>last<span style="color:#a00">}</span><span style="color:#c30">&#34;</span>)  
+<span style="color:#069;font-weight:bold">end</span></code></pre></div>
 <p>代码清晰可见，warden server首先通过handle找到具体是给哪一个warden container发送请求，然后调用process_container_request(request, container)方法。进入process_container_request(request, container)方法可以看到：加入请求类型不为StopRequest以及StreamRequest，则进入case语句块的else分支，执行代码：</p>
-<pre><code>response = container.dispatch(request)  
-     send\_response(response)  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">response <span style="color:#555">=</span> container<span style="color:#555">.</span>dispatch(request)  
+     send_response(response)  </code></pre></div>
 <p>可以看到，是调用了container.dispatch（request）方法才返回了response。 以下进入warden/lib/warden/container/base.rb文件中，该文件的dispatch方法主要实现了warden server接收到请求并预处理之后，如何分发执行具体的请求，代码如下：</p>
-<pre><code>def dispatch(request, &amp;blk)  
-    klass\_name = request.class.name.split(&#34;::&#34;).last  
-    klass\_name = klass\_name.gsub(/Request$/, &#34;&#34;)  
-    klass\_name = klass\_name.gsub(/(.)(\[A-Z\])/) { |m| &#34;#{m\[0\]}\_#{m\[1\]}&#34; }  
-    klass\_name = klass\_name.downcase  
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">dispatch</span>(request, <span style="color:#555">&amp;</span>blk)  
+        klass_name <span style="color:#555">=</span> request<span style="color:#555">.</span>class<span style="color:#555">.</span>name<span style="color:#555">.</span>split(<span style="color:#c30">&#34;::&#34;</span>)<span style="color:#555">.</span>last  
+        klass_name <span style="color:#555">=</span> klass_name<span style="color:#555">.</span>gsub(<span style="color:#3aa">/Request$/</span>, <span style="color:#c30">&#34;&#34;</span>)  
+        klass_name <span style="color:#555">=</span> klass_name<span style="color:#555">.</span>gsub(<span style="color:#3aa">/(.)([A-Z])/</span>) { <span style="color:#555">|</span>m<span style="color:#555">|</span> <span style="color:#c30">&#34;</span><span style="color:#a00">#{</span>m<span style="color:#555">[</span><span style="color:#f60">0</span><span style="color:#555">]</span><span style="color:#a00">}</span><span style="color:#c30">_</span><span style="color:#a00">#{</span>m<span style="color:#555">[</span><span style="color:#f60">1</span><span style="color:#555">]</span><span style="color:#a00">}</span><span style="color:#c30">&#34;</span> }  
+        klass_name <span style="color:#555">=</span> klass_name<span style="color:#555">.</span>downcase  
+    
+        response <span style="color:#555">=</span> request<span style="color:#555">.</span>create_response  
+    
+        t1 <span style="color:#555">=</span> <span style="color:#360">Time</span><span style="color:#555">.</span>now  
+    
+        before_method <span style="color:#555">=</span> <span style="color:#c30">&#34;before_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        hook(before_method, request, response)  
+        emit(before_method<span style="color:#555">.</span>to_sym)  
+    
+        around_method <span style="color:#555">=</span> <span style="color:#c30">&#34;around_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        hook(around_method, request, response) <span style="color:#069;font-weight:bold">do</span>  
+            do_method <span style="color:#555">=</span> <span style="color:#c30">&#34;do_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        <span style="color:#366">send</span>(do_method, request, response, <span style="color:#555">&amp;</span>blk)  
+        <span style="color:#069;font-weight:bold">end</span>  
+    
+        after_method <span style="color:#555">=</span> <span style="color:#c30">&#34;after_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        emit(after_method<span style="color:#555">.</span>to_sym)  
+        hook(after_method, request, response)  
+    
+        t2 <span style="color:#555">=</span> <span style="color:#360">Time</span><span style="color:#555">.</span>ndef dispatch(request, <span style="color:#555">&amp;</span>blk)  
+        klass_name <span style="color:#555">=</span> request<span style="color:#555">.</span>class<span style="color:#555">.</span>name<span style="color:#555">.</span>split(<span style="color:#c30">&#34;::&#34;</span>)<span style="color:#555">.</span>last  
+        klass_name <span style="color:#555">=</span> klass_name<span style="color:#555">.</span>gsub(<span style="color:#3aa">/Request$/</span>, <span style="color:#c30">&#34;&#34;</span>)  
+        klass_name <span style="color:#555">=</span> klass_name<span style="color:#555">.</span>gsub(<span style="color:#3aa">/(.)([A-Z])/</span>) { <span style="color:#555">|</span>m<span style="color:#555">|</span> <span style="color:#c30">&#34;</span><span style="color:#a00">#{</span>m<span style="color:#555">[</span><span style="color:#f60">0</span><span style="color:#555">]</span><span style="color:#a00">}</span><span style="color:#c30">_</span><span style="color:#a00">#{</span>m<span style="color:#555">[</span><span style="color:#f60">1</span><span style="color:#555">]</span><span style="color:#a00">}</span><span style="color:#c30">&#34;</span> }  
+        klass_name <span style="color:#555">=</span> klass_name<span style="color:#555">.</span>downcase  
+    
+        response <span style="color:#555">=</span> request<span style="color:#555">.</span>create_response  
+    
+        t1 <span style="color:#555">=</span> <span style="color:#360">Time</span><span style="color:#555">.</span>now  
+    
+        before_method <span style="color:#555">=</span> <span style="color:#c30">&#34;before_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        hook(before_method, request, response)  
+        emit(before_method<span style="color:#555">.</span>to_sym)  
+    
+        around_method <span style="color:#555">=</span> <span style="color:#c30">&#34;around_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        hook(around_method, request, response) <span style="color:#069;font-weight:bold">do</span>  
+            do_method <span style="color:#555">=</span> <span style="color:#c30">&#34;do_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+            <span style="color:#366">send</span>(do_method, request, response, <span style="color:#555">&amp;</span>blk)  
+        <span style="color:#069;font-weight:bold">end</span>  
+    
+        after_method <span style="color:#555">=</span> <span style="color:#c30">&#34;after_%s&#34;</span> <span style="color:#555">%</span> klass_name  
+        emit(after_method<span style="color:#555">.</span>to_sym)  
+        hook(after_method, request, response)  
+    
+        t2 <span style="color:#555">=</span> <span style="color:#360">Time</span><span style="color:#555">.</span>now  
+    
+        logger<span style="color:#555">.</span>info(<span style="color:#c30">&#34;%s (took %.6f)&#34;</span> <span style="color:#555">%</span> <span style="color:#555">[</span>klass_name, t2 <span style="color:#555">-</span> t1<span style="color:#555">]</span>,  
+            <span style="color:#fc3">:request</span> <span style="color:#555">=&gt;</span> request<span style="color:#555">.</span>to_hash,  
+            <span style="color:#fc3">:response</span> <span style="color:#555">=&gt;</span> response<span style="color:#555">.</span>to_hash)  
+    
+        response  
+     endow  
+    
+        logger<span style="color:#555">.</span>info(<span style="color:#c30">&#34;%s (took %.6f)&#34;</span> <span style="color:#555">%</span> <span style="color:#555">[</span>klass_name, t2 <span style="color:#555">-</span> t1<span style="color:#555">]</span>,  
+            <span style="color:#fc3">:request</span> <span style="color:#555">=&gt;</span> request<span style="color:#555">.</span>to_hash,  
+            <span style="color:#fc3">:response</span> <span style="color:#555">=&gt;</span> response<span style="color:#555">.</span>to_hash)  
+    
+        response  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>首先提取出请求的类型名，如果是NetIn请求的话，提取出来的请求的类型名称为net_in，随后构建出方法明do_method，也就是do_net_in，接着就通过send(do_method, request, response, &amp;blk)方法，将参数发送给do_net_in方法。</p>
 
-    response = request.create\_response  
-
-    t1 = Time.now  
-
-    before\_method = &#34;before\_%s&#34; % klass\_name  
-    hook(before\_method, request, response)  
-    emit(before\_method.to\_sym)  
-
-    around\_method = &#34;around\_%s&#34; % klass\_name  
-    hook(around\_method, request, response) do  
-        do\_method = &#34;do\_%s&#34; % klass\_name  
-    send(do\_method, request, response, &amp;blk)  
-    end  
-
-    after\_method = &#34;after\_%s&#34; % klass\_name  
-    emit(after\_method.to\_sym)  
-    hook(after\_method, request, response)  
-
-    t2 = Time.ndef dispatch(request, &amp;blk)  
-    klass\_name = request.class.name.split(&#34;::&#34;).last  
-    klass\_name = klass\_name.gsub(/Request$/, &#34;&#34;)  
-    klass\_name = klass\_name.gsub(/(.)(\[A-Z\])/) { |m| &#34;#{m\[0\]}\_#{m\[1\]}&#34; }  
-    klass\_name = klass\_name.downcase  
-
-    response = request.create\_response  
-
-    t1 = Time.now  
-
-    before\_method = &#34;before\_%s&#34; % klass\_name  
-    hook(before\_method, request, response)  
-    emit(before\_method.to\_sym)  
-
-    around\_method = &#34;around\_%s&#34; % klass\_name  
-    hook(around\_method, request, response) do  
-        do\_method = &#34;do\_%s&#34; % klass\_name  
-        send(do\_method, request, response, &amp;blk)  
-    end  
-
-    after\_method = &#34;after\_%s&#34; % klass\_name  
-    emit(after\_method.to\_sym)  
-    hook(after\_method, request, response)  
-
-    t2 = Time.now  
-
-    logger.info(&#34;%s (took %.6f)&#34; % \[klass\_name, t2 - t1\],  
-        :request =&gt; request.to\_hash,  
-        :response =&gt; response.to\_hash)  
-
-    response  
- endow  
-
-    logger.info(&#34;%s (took %.6f)&#34; % \[klass\_name, t2 - t1\],  
-        :request =&gt; request.to\_hash,  
-        :response =&gt; response.to\_hash)  
-
-    response  
-end  </code></pre>
-<p>首先提取出请求的类型名，如果是NetIn请求的话，提取出来的请求的类型名称为net_in，随后构建出方法明do_method，也就是do_net_in，接着就通过send(do_method, request, response, &amp;blk)方法，将参数发送给do_net_in方法。 现在就是进入warden/lib/warden/container/features/net.rb文件中, do_net_in方法实现如下：</p>
-<pre><code>def do\_net\_in(request, response)  
-    if request.host\_port.nil?  
-      host\_port = self.class.port\_pool.acquire  
-
-      #Use same port on the container side as the host side if unspecified  
-      container\_port = request.container\_port || host\_port  
-
-      # Port may be re-used after this container has been destroyed  
-      @resources\[&#34;ports&#34;\] &lt;&lt; host\_port  
-      @acquired\[&#34;ports&#34;\] &lt;&lt; host\_port  
-    else  
-      host\_port = request.host\_port  
-      container\_port = request.container\_port || host\_port  
-    end  
-
-    \_net\_in(host\_port, container\_port)  
-
-    @resources\[&#34;net\_in&#34;\] ||= \[\]  
-    @resources\[&#34;net\_in&#34;\] &lt;&lt; \[host\_port, container\_port\]  
-
-    response.host\_port      = host\_port  
-    response.container\_port = container\_port  
-rescue WardenError  
-  self.class.port\_pool.release(host\_port) unless request.host\_port  
-  raise  
-end  </code></pre>
+<p>现在就是进入warden/lib/warden/container/features/net.rb文件中, do_net_in方法实现如下：</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">do_net_in</span>(request, response)  
+        <span style="color:#069;font-weight:bold">if</span> request<span style="color:#555">.</span>host_port<span style="color:#555">.</span>nil?  
+          host_port <span style="color:#555">=</span> <span style="color:#366">self</span><span style="color:#555">.</span>class<span style="color:#555">.</span>port_pool<span style="color:#555">.</span>acquire  
+    
+          <span style="color:#09f;font-style:italic">#Use same port on the container side as the host side if unspecified  </span>
+          container_port <span style="color:#555">=</span> request<span style="color:#555">.</span>container_port <span style="color:#555">||</span> host_port  
+    
+          <span style="color:#09f;font-style:italic"># Port may be re-used after this container has been destroyed  </span>
+          @resources<span style="color:#555">[</span><span style="color:#c30">&#34;ports&#34;</span><span style="color:#555">]</span> <span style="color:#555">&lt;&lt;</span> host_port  
+          @acquired<span style="color:#555">[</span><span style="color:#c30">&#34;ports&#34;</span><span style="color:#555">]</span> <span style="color:#555">&lt;&lt;</span> host_port  
+        <span style="color:#069;font-weight:bold">else</span>  
+          host_port <span style="color:#555">=</span> request<span style="color:#555">.</span>host_port  
+          container_port <span style="color:#555">=</span> request<span style="color:#555">.</span>container_port <span style="color:#555">||</span> host_port  
+        <span style="color:#069;font-weight:bold">end</span>  
+    
+        _net_in(host_port, container_port)  
+    
+        @resources<span style="color:#555">[</span><span style="color:#c30">&#34;net_in&#34;</span><span style="color:#555">]</span> <span style="color:#555">||=</span> <span style="color:#555">[]</span>  
+        @resources<span style="color:#555">[</span><span style="color:#c30">&#34;net_in&#34;</span><span style="color:#555">]</span> <span style="color:#555">&lt;&lt;</span> <span style="color:#555">[</span>host_port, container_port<span style="color:#555">]</span>  
+    
+        response<span style="color:#555">.</span>host_port      <span style="color:#555">=</span> host_port  
+        response<span style="color:#555">.</span>container_port <span style="color:#555">=</span> container_port  
+    <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#360">WardenError</span>  
+      <span style="color:#366">self</span><span style="color:#555">.</span>class<span style="color:#555">.</span>port_pool<span style="color:#555">.</span>release(host_port) <span style="color:#069;font-weight:bold">unless</span> request<span style="color:#555">.</span>host_port  
+      <span style="color:#069;font-weight:bold">raise</span>  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>可见，如果请求端口没有指定的话，那么就使用代码host_port = self.class.port_pool.acquire来获取端口号，默认情况下，container端口号与host端口号保持一致，有了这两个端口号之后，执行代码_net_in(host_port, container_port)， 真正实现端口映射，如下：</p>
-<pre><code>def \_net\_in(host\_port, container\_port)  
-  sh File.join(container\_path, &#34;net.sh&#34;), &#34;in&#34;, :env =&gt; {  
-    &#34;HOST\_PORT&#34;      =&gt; host\_port,  
-    &#34;CONTAINER\_PORT&#34; =&gt; container\_port,  
-  }  
-end  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">_net_in</span>(host_port, container_port)  
+      sh <span style="color:#360">File</span><span style="color:#555">.</span>join(container_path, <span style="color:#c30">&#34;net.sh&#34;</span>), <span style="color:#c30">&#34;in&#34;</span>, <span style="color:#fc3">:env</span> <span style="color:#555">=&gt;</span> {  
+        <span style="color:#c30">&#34;HOST_PORT&#34;</span>      <span style="color:#555">=&gt;</span> host_port,  
+        <span style="color:#c30">&#34;CONTAINER_PORT&#34;</span> <span style="color:#555">=&gt;</span> container_port,  
+      }  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>可以清晰的看到是，使用了容器内部的net.sh脚本来实现端口映射。现在进入warden/root/linux/skeleton/net.sh脚本，进入参数为in的执行部分：</p>
-<pre><code>&#34;in&#34;)  
-    if \[ -z &#34;${HOST\_PORT:-}&#34; \]; then  
-        echo &#34;Please specify HOST\_PORT...&#34; 1&gt;&amp;2  
-        exit 1  
-    fi  
-    if \[ -z &#34;${CONTAINER\_PORT:-}&#34; \]; then  
-      echo &#34;Please specify CONTAINER\_PORT...&#34; 1&gt;&amp;2  
-      exit 1  
-    fi  
-    iptables -t nat -A ${nat\_instance\_chain} \\  
-      --protocol tcp \\  
-      --destination &#34;${external\_ip}&#34; \\  
-      --destination-port &#34;${HOST\_PORT}&#34; \\  
-      --jump DNAT \\  
-      --to-destination &#34;${network\_container\_ip}:${CONTAINER\_PORT}&#34;  
-    ;;  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#c30">&#34;in&#34;</span>)  
+        <span style="color:#069;font-weight:bold">if</span> <span style="color:#555">[</span> <span style="color:#555">-</span>z <span style="color:#c30">&#34;${HOST_PORT:-}&#34;</span> <span style="color:#555">]</span>; <span style="color:#069;font-weight:bold">then</span>  
+            echo <span style="color:#c30">&#34;Please specify HOST_PORT...&#34;</span> <span style="color:#f60">1</span><span style="color:#555">&gt;&amp;</span><span style="color:#f60">2</span>  
+            <span style="color:#366">exit</span> <span style="color:#f60">1</span>  
+        fi  
+        <span style="color:#069;font-weight:bold">if</span> <span style="color:#555">[</span> <span style="color:#555">-</span>z <span style="color:#c30">&#34;${CONTAINER_PORT:-}&#34;</span> <span style="color:#555">]</span>; <span style="color:#069;font-weight:bold">then</span>  
+          echo <span style="color:#c30">&#34;Please specify CONTAINER_PORT...&#34;</span> <span style="color:#f60">1</span><span style="color:#555">&gt;&amp;</span><span style="color:#f60">2</span>  
+          <span style="color:#366">exit</span> <span style="color:#f60">1</span>  
+        fi  
+        iptables <span style="color:#555">-</span>t nat <span style="color:#555">-</span>A <span style="color:#a00;background-color:#faa">$</span>{nat_instance_chain} \  
+          <span style="color:#555">--</span>protocol tcp \  
+          <span style="color:#555">--</span>destination <span style="color:#c30">&#34;${external_ip}&#34;</span> \  
+          <span style="color:#555">--</span>destination<span style="color:#555">-</span>port <span style="color:#c30">&#34;${HOST_PORT}&#34;</span> \  
+          <span style="color:#555">--</span>jump <span style="color:#360">DNAT</span> \  
+          <span style="color:#555">--</span>to<span style="color:#555">-</span>destination <span style="color:#c30">&#34;${network_container_ip}:${CONTAINER_PORT}&#34;</span>  
+        ;;  </code></pre></div>
 <p>可见，该脚本这部分的功能是在host主机创建一条DNAT规则，使得host主机上所有HOST_PORT端口上的网络请求，都转发至network_container_ip:CONTAINER_PORT上，也就是完成了目标地址IP转变。</p>
 
-<h1 id="promise-extract-droplet"><strong>promise_extract_droplet:</strong></h1>
+<h2 id="promise-extract-droplet"><strong>promise_extract_droplet:</strong></h2>
 
 <p>该环节主要完成的是让container运行脚本，使得container容器将位于host主机的droplet文件，解压至container内部，代码内容如下：</p>
-<pre><code>def promise\_extract\_droplet  
-    Promise.new do |p|  
-      script = &#34;cd /home/vcap/ &amp;&amp; tar zxf #{droplet.droplet\_path}&#34;  
-      container.run\_script(:app, script)  
-      p.deliver  
-    end  
-end  </code></pre>
-<h1 id="promise-exec-hook-script-before-start"><strong>promise_exec_hook_script(&lsquo;before_start&rsquo;)：</strong></h1>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">promise_extract_droplet</span>  
+        <span style="color:#360">Promise</span><span style="color:#555">.</span>new <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span><span style="color:#366">p</span><span style="color:#555">|</span>  
+          script <span style="color:#555">=</span> <span style="color:#c30">&#34;cd /home/vcap/ &amp;&amp; tar zxf </span><span style="color:#a00">#{</span>droplet<span style="color:#555">.</span>droplet_path<span style="color:#a00">}</span><span style="color:#c30">&#34;</span>  
+          container<span style="color:#555">.</span>run_script(<span style="color:#fc3">:app</span>, script)  
+          <span style="color:#366">p</span><span style="color:#555">.</span>deliver  
+        <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<h2 id="promise-exec-hook-script-before-start"><strong>promise_exec_hook_script(&lsquo;before_start&rsquo;)：</strong></h2>
 
 <p>这部分主要完成的功能是让容器运行名为before_start的脚本，在老的版本中，该部分的设置默认为空。</p>
 
-<h1 id="promise-start"><strong>promise_start:</strong></h1>
+<h2 id="promise-start"><strong>promise_start:</strong></h2>
 
 <p>这部分主要完成的是应用的启动。其中创建容器的时候，返回的端口号，会被DEA保存。最终，当DEA启动应用的时候，由于DEA会将端口号作为参数传递给应用程序的启动脚本，因此当应用启动时会自动去监听已经为它设置的端口，即完成端口监听。</p>
 
@@ -516,14 +525,28 @@ end  </code></pre>
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -569,11 +592,13 @@ end  </code></pre>
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -582,6 +607,9 @@ end  </code></pre>
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -592,18 +620,21 @@ end  </code></pre>
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -612,6 +643,10 @@ end  </code></pre>
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -633,8 +668,46 @@ end  </code></pre>
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -659,23 +732,47 @@ end  </code></pre>
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -727,10 +824,6 @@ end  </code></pre>
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -930,14 +1023,14 @@ end  </code></pre>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -1001,8 +1094,9 @@ end  </code></pre>
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

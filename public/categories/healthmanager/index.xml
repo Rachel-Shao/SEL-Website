@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>healthmanager on 浙大SEL实验室</title>
+    <link>https://Rachel-Shao.github.io/categories/healthmanager/</link>
+    <description>Recent content in healthmanager on 浙大SEL实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 15 Apr 2014 15:14:56 +0000</lastBuildDate>
+    
+	<atom:link href="https://Rachel-Shao.github.io/categories/healthmanager/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Health_Manager2.0源码分析</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link>
+      <pubDate>Tue, 15 Apr 2014 15:14:56 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
+      <description>在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -117,10 +117,11 @@ summaryLength = 1  # 摘要显示的段落数
 
 [params.topbar]
     enable = true
-    text = """<strong>
-                <p>链接访问地址(右边小图标)→</p>
-                <p>github</p>
-                </strong>"""
+    # enable = false
+#    text = """<strong>
+#               <p>链接访问地址(右边小图标)→</p>
+#                <p>github</p>
+#               </strong>"""
 
 [[menu.topbar]]
     weight = 1

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>containerd on 浙大SEL实验室</title>
+    <link>https://Rachel-Shao.github.io/categories/containerd/</link>
+    <description>Recent content in containerd on 浙大SEL实验室</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Sun, 05 Aug 2018 19:03:13 +0000</lastBuildDate>
+    
+	<atom:link href="https://Rachel-Shao.github.io/categories/containerd/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>从containerd pull镜像流程分析oci distribution spec</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/</link>
+      <pubDate>Sun, 05 Aug 2018 19:03:13 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/</guid>
+      <description>oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。</description>
+    </item>
+    
+  </channel>
+</rss>

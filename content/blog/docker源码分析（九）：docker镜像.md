@@ -3,7 +3,7 @@
 id= "549"
 
 title = "Docker源码分析（九）：Docker镜像"
-describtion = "回首过去的2014年，大家可以看到Docker在全球刮起了一阵又一阵的“容器风”，工业界对Docker的探索与实践更是一波高过一波。在如今的2015年以及未来，Docker似乎并不会像其他昙花一现的技术一样，在历史的舞台上热潮褪去，反而在工业界实践与评估之后，显现了前所未有的发展潜力。 "
+description = "Docker风暴席卷全球，并非偶然。如今的云计算时代下，轻量级容器技术与灵活的镜像技术相结合，似乎颠覆了以往的软件交付模式，为持续集成（Continuous Integration, CI）与持续交付（Continuous Delivery, CD）的发展带来了全新的契机。 "
 tags= [ "Docker"]
 date= "2015-03-12 20:16:14"
 author = "孙宏亮"
@@ -33,8 +33,11 @@ Rootfs：代表一个Docker Container在启动时（而非运行后）其内部�
 传统来说，Linux操作系统内核启动时，内核首先会挂载一个只读（read-only）的rootfs，当系统检测其完整性之后，决定是否将其切换为读写（read-write）模式，或者最后在rootfs之上另行挂载一种文件系统并忽略rootfs。Docker架构下，依然沿用Linux中rootfs的思想。当Docker Daemon为Docker Container挂载rootfs的时候，与传统Linux内核类似，将其设定为只读（read-only）模式。在rootfs挂载完毕之后，和Linux内核不一样的是，Docker Daemon没有将Docker Container的文件系统设为读写（read-write）模式，而是利用Union mount的技术，在这个只读的rootfs之上再挂载一个读写（read-write）的文件系统，挂载时该读写（read-write）文件系统内空无一物。 
 
 举一个Ubuntu容器启动的例子。假设用户已经通过Docker Registry下拉了Ubuntu:14.04的镜像，并通过命令docker run –it ubuntu:14.04 /bin/bash将其启动运行。则Docker Daemon为其创建的rootfs以及容器可读写的文件系统可参见图2.1： 
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616374/sel/image1_rhpw84.jpg" alt="" style="zoom:70%;" />
+</center>
 
-[![30](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_666/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image1_t1il6p.jpg)](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_666/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image1_t1il6p.jpg)
+
 
 图2.1 Ubuntu 14.04容器rootfs示意图
 
@@ -47,8 +50,11 @@ Union mount：代表一种文件系统挂载的方式，允许同一时刻多种
 一般情况下，通过某种文件系统挂载内容至挂载点的话，挂载点目录中原先的内容将会被隐藏。而Union mount则不会将挂载点目录中的内容隐藏，反而是将挂载点目录中的内容和被挂载的内容合并，并为合并后的内容提供一个统一独立的文件系统视角。通常来讲，被合并的文件系统中只有一个会以读写（read-write）模式挂载，而其他的文件系统的挂载模式均为只读（read-only）。实现这种Union mount技术的文件系统一般被称为Union Filesystem，较为常见的有UnionFS、AUFS、OverlayFS等。 
 
 Docker实现容器文件系统Union mount时，提供多种具体的文件系统解决方案，如Docker早版本沿用至今的的AUFS，还有在docker 1.4.0版本中开始支持的OverlayFS等。 更深入的了解Union mount，可以使用AUFS文件系统来进一步阐述上文中ubuntu:14.04容器文件系统的例子。如图2.2： 
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616383/sel/image2_vqtcyn.jpg" alt="" style="zoom:40%;" />
+</center>
 
-[![31](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image2_gy0hv8.jpg)](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image2_gy0hv8.jpg)
+
 
 图2.2 AUFS挂载Ubuntu 14.04文件系统示意图
 
@@ -69,8 +75,11 @@ Docker中rootfs的概念，起到容器文件系统中基石的作用。对于�
 Docker中image的概念，非常巧妙的解决了以上的问题。最为简单的解释image，就是 Docker容器中只读文件系统rootfs的一部分。换言之，实际上Docker容器的rootfs可以由多个image来构成。多个image构成rootfs的方式依然沿用Union mount技术。 
 
 多个Image构成rootfs的示意图如图2.3（图中，rootfs中每一层image中的内容划分只为了阐述清楚rootfs由多个image构成，并不代表实际情况中rootfs中的内容划分）： 
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616374/sel/image3_nm00hq.jpg" alt="" style="zoom:40%;" />
+</center>
 
-[![32](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_731/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image3_sdwaie.jpg)](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_731/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image3_sdwaie.jpg)
+
 
 图2.3容器rootfs多image构成图
 
@@ -79,8 +88,11 @@ Docker中image的概念，非常巧妙的解决了以上的问题。最为简单
 基于以上的概念，Docker Image中又抽象出两种概念：Parent Image以及Base Image。除了容器rootfs最底层的image，其余image都依赖于其底下的一个或多个image，而Docker中将下一层的image称为上一层image的Parent Image。以图2.3为例，imageID\_0是imageID\_1的Parent Image，imageID\_2是imageID\_3的Parent Image，而imageID\_0没有Parent Image。对于最下层的image，即没有Parent Image的镜像，在Docker中习惯称之为Base Image。 
 
 通过image的形式，原先较为臃肿的rootfs被逐渐打散成轻便的多层。Image除了轻便的特性，同时还有上文提到的只读特性，如此一来，在不同的容器、不同的rootfs中image完全可以用来复用。 多image组织关系与复用关系如图2.4（图中镜像名称的举例只为将image之间的关系阐述清楚，并不代表实际情况中相应名称image之间的关系）： 
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616378/sel/image4_xcqqpi.jpg" alt="" style="zoom:50%;" />
+</center>
 
-[![33](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304366/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image4_zrl34l.jpg)](https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304366/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image4_zrl34l.jpg)
+
 
 图2.4 多image组织关系示意图
 
@@ -101,7 +113,7 @@ Docker术语中，layer是一个与image含义较为相近的词。容器镜像�
 
 Docker风暴席卷全球，并非偶然。如今的云计算时代下，轻量级容器技术与灵活的镜像技术相结合，似乎颠覆了以往的软件交付模式，为持续集成（Continuous Integration, CI）与持续交付（Continuous Delivery, CD）的发展带来了全新的契机。 理解Docker的“镜像”技术，有助于Docker爱好者更好的使用、创建以及交付Docker镜像。基于此，本文从Docker镜像的4个重要概念入手，介绍了Docker镜像中包含的内容，涉及到的技术，还有重要的特性。Docker引入优秀的“镜像”技术时，着实使容器的使用变得更为便利，也拓宽了Docker的使用范畴。然而，于此同时，我们也应该理性地看待镜像技术引入时，是否会带来其它的副作用。关于镜像技术的其它思考，《Docker源码分析系列》将在后续另文分析。
 
-**5.参考文献**
+**4.参考文献**
 ----------
 
 [http://www.csdn.net/article/2014-09-24/2821832](http://www.csdn.net/article/2014-09-24/2821832) 

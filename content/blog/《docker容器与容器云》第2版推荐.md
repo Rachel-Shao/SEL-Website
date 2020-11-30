@@ -1,25 +1,23 @@
 +++
-id= 123
+id= "123"
 title ="《Docker容器与容器云》第2版推荐"
 description= "自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。"
 tags= ["Docker","Kubernetes","books","news" ]
-date= "2016-11-30T17:41:43"
+date= "2016-11-30 17:41:43"
 author = "丁轶群"
 banner= "img/blogs/123/docker2.png"
 categories = ["Docker"]
 
 +++
 
-自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。 
 
---------
 
 ## 介绍
-本书根据Docker 1.10版和Kubernetes 1.2版对第1版进行了全面更新，从实践者的角度出发，以Docker和Kubernetes为重点，沿着“基本用法介绍”到“核心原理解读”到“高级实践技巧”的思路，一本书讲透当前主流的容器和容器云技术，有助于读者在实际场景中利用Docker容器和容器云解决问题并启发新的思考。
+本书根据Docker 1.10版和Kubernetes 1.2版对第1版进行了全面更新，从实践者的角度出发，以Docker和Kubernetes为重点，沿着“基本用法介绍”到“核心原理解读”到“高级实践技巧”的思路，一本书讲透当前主流的容器和容器云技术，有助于读者在实际场景中利用Docker容器和容器云解决问题并启发新的思考。全书包括两部分，第一部分深入解读Docker容器技术，包括Docker架构与设计、核心源码解读和高级实践技巧；第二部分归纳和比较了三类基于Docker的主流容器云项目，包括专注Docker容器编排与部署的容器云、专注应用支撑的容器云以及一切皆容器的Kubernetes，进而详细解读了Kubernetes核心源码的设计与实现，最后介绍了几种典型场景下的Kubernetes最佳实践。 
 
-全书包括两部分，第一部分深入解读Docker容器技术，包括Docker架构与设计、核心源码解读和高级实践技巧；第二部分归纳和比较了三类基于Docker的主流容器云项目，包括专注Docker容器编排与部署的容器云、专注应用支撑的容器云以及一切皆容器的Kubernetes，进而详细解读了Kubernetes核心源码的设计与实现，最后介绍了几种典型场景下的Kubernetes最佳实践。 自本书第1版出版以来，容器生态圈已经发生了翻天覆地的变化。新的开源项目层出不穷，各个开源项目都在快速迭代演进。
+自本书第1版出版以来，容器生态圈已经发生了翻天覆地的变化。新的开源项目层出不穷，各个开源项目都在快速迭代演进。Docker已经从本书第1版里的1.6.2发展为当前的1.10。Kubernetes也从本书第1版里的0.16发展到了现在的1.2，并且在1.0.1版本时宣布其已经正式进入可投入生产环境（production ready）的状态。  
 
-Docker已经从本书第1版里的1.6.2发展为当前的1.10。Kubernetes也从本书第1版里的0.16发展到了现在的1.2，并且在1.0.1版本时宣布其已经正式进入可投入生产环境（production ready）的状态。  第3章是本书第一部分的重点。Docker 1.10版相对于本书第1版中的1.6.2版，主要的更新包括如下几个方面： 
+第3章是本书第一部分的重点。Docker 1.10版相对于本书第1版中的1.6.2版，主要的更新包括如下几个方面： 
 
 
 - Docker在架构方面不断将自身解耦，逐步发展成容器运行时（runtime）、镜像构建（builder）、镜像分发（distribution）、网络（networking）、数据卷（volume）等独立的功能组件，提供daemon来管理，并通过Engine暴露一组标准的API来操作这些组件（详见本书3.2节）；
@@ -27,7 +25,6 @@ Docker已经从本书第1版里的1.6.2发展为当前的1.10。Kubernetes也从
 - 网络实现方面，Docker将网络相关的实现解耦为独立的组件libnetwork，抽象出一个通用的容器网络模型（CNM），功能上也终于原生支持了跨主机通信（详见本书3.8节）；
 - 在扩展性方面，在1.7.0版本后就开始支持网络、volume和存储驱动（仍处于实验阶段）的插件化，开发者可以通过实现Docker提供的插件标准来定制自己的插件（详见本书3.6节、3.7节、3.8节）； 
 - 在Docker安全方面，Docker支持了user namespace和seccomp来提高容器运行时的安全，在全新的镜像分发组件中引入可信赖的分发和基于内容存储的机制，从而提高镜像的安全性（详见本书3.5节、3.6节、3.9节）。 
-
 
 需要特别指出的一点是，随着容器如火如荼的发展，为了推动容器生态的健康发展，促进生态系统内各组织间的协同合作，容器的标准化也显得越来越重要。Linux基金会于2015年6月成立OCI（Open Container Initiative）组织，并针对容器格式和运行时制定了一个开放的工业化标准，即OCI标准。Docker公司率先贡献出满足OCI标准的容器运行时runC，HyperHQ公司也开源了自己的OCI容器运行时runV，相信业界会有越来越多的公司加入这个标准化浪潮中。
 
@@ -41,9 +38,14 @@ Docker公司虽然没有在Docker 1.10版本中直接使用runC作为容器的�
 -  另外，作为Kubernetes社区的积极参与者，我们还专门增加了8.8节，讨论当前社区正在酝酿中的一些新特性，如Ubernetes、petSet、rescheduler。我们还讨论了Kubernetes性能优化，以及Kubernetes与OCI的关系等话题。  
 
 除了全面更新这两个重点章节之外，我们还在第1章中更新了Docker近期的“大事记”并重新整理了容器生态圈，加入了许多重要的容器云技术开源项目，以及OCI、CNCF等国际标准化组织；在第2章
-中，我们将Docker命令行工具的基础用法更新到了Docker 1.10版；在第4章中完善了对时下火热的“容器化思维”和“微服务”的讨论；在第6章中更新了对Docker“三剑客”——Compose、Swarm和Machine的讨论；在附录中以Docker 1.10版为标准更新了附录A的Docker安装指南，以Kubernetes 1.2为标准，更新了附录F中Kubernetes的安装指南。 如果你是初级程序员，本书可以帮助你熟悉Docker与kubernetes的基本使用；如果你正在IT领域进行高级进阶修炼，那本书也可以与你一起探索Docker与kubernetes的工作原理。无论是架构师、开发者、运维人员，还是对Docker比较好奇的读者，本书都是一本不可多得的带你从入门向高级进阶的精品书，值得大家选择！ 
+中，我们将Docker命令行工具的基础用法更新到了Docker 1.10版；在第4章中完善了对时下火热的“容器化思维”和“微服务”的讨论；在第6章中更新了对Docker“三剑客”——Compose、Swarm和Machine的讨论；在附录中以Docker 1.10版为标准更新了附录A的Docker安装指南，以Kubernetes 1.2为标准，更新了附录F中Kubernetes的安装指南。 
 
-[![《Docker容器与容器云》第2版封面](https://res.cloudinary.com/feesuper/image/upload/v1602728114/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/123/docker2_btrbkh.png)](https://res.cloudinary.com/feesuper/image/upload/v1602728114/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/123/docker2_btrbkh.png)
+如果你是初级程序员，本书可以帮助你熟悉Docker与kubernetes的基本使用；如果你正在IT领域进行高级进阶修炼，那本书也可以与你一起探索Docker与kubernetes的工作原理。无论是架构师、开发者、运维人员，还是对Docker比较好奇的读者，本书都是一本不可多得的带你从入门向高级进阶的精品书，值得大家选择！ 
+
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616381/sel/docker2_dy0k4p.png" alt="《Docker容器与容器云》第2版封面" style="zoom:100%;" />
+</center>
+
 
 最后，摘录一些读者的推荐如下——  
 

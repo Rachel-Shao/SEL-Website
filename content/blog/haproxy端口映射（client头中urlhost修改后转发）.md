@@ -1,16 +1,18 @@
----
-title: Haproxy端口映射（client头中URL/HOST修改后转发）
-tags:
-  - cloudfoundry
-  - haproxy
-id: '99'
-date: 2014-10-28 17:02:26
++++
+id = "99"
 
----
+title = "Haproxy端口映射（client头中URL/HOST修改后转发）"
+description = "CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP+端口”的形式，在公网访问CF集群上部署的APP。"
+tags = ["cloudfoundry","haproxy"]
+date = "2014-10-28 17:02:26"
+author = "丁轶群"
+banner = "img/blogs/99/haproxy.jpg"
+categories = ["haproxy"]
+
++++
 
 CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP+端口”的形式，在公网访问CF集群上部署的APP。
 
-<!-- more -->
 
 解决方案
 ====
@@ -27,7 +29,8 @@ Haproxy的安装：(也可通过源码安装)
 
 配置文件所在地址：`/etc/haproxy/haproxy.cfg`（用xx.xx.xx.xx代表一个IP地址）
 
-	global
+~~~ruby
+global
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
     maxconn     4000
@@ -36,42 +39,43 @@ Haproxy的安装：(也可通过源码安装)
     stats socket /var/lib/haproxy/stats
     debug
     
-	defaults
+defaults
     log global
     option httpclose
     timeout connect 30000ms
     timeout client 300000ms
     timeout server 300000ms
 
-	frontend http-in
+frontend http-in
     mode http
-    bind \*:81
-    reqirep ^Host:\\ xx.xx.xx.xx\\:81 Host:\\ t1.cloud.paas
+    bind *:81
+    reqirep ^Host:\ xx.xx.xx.xx\:81 Host:\ t1.cloud.paas
     option httplog
     option forwardfor
-    reqadd X-Forwarded-Proto:\\ http
-    default\_backend http-routers
+    reqadd X-Forwarded-Proto:\ http
+    default_backend http-routers
 
-	backend http-routers
+backend http-routers
     mode http
-    reqirep ^Host:\\ xx.xx.xx.xx\\:81 Host:\\ t1.cloud.paas
+    reqirep ^Host:\ xx.xx.xx.xx\:81 Host:\ t1.cloud.paas
     balance roundrobin
         server node0 t1.cloud.paas:80 check inter 1000
 
-	frontend http-in1
+frontend http-in1
     mode http
-    bind \*:80
-    reqirep ^Host:\\ xx.xx.xx.xx\\:80 Host:\\ t2.cloud.paas
+    bind *:80
+    reqirep ^Host:\ xx.xx.xx.xx\:80 Host:\ t2.cloud.paas
     option httplog
     option forwardfor
-    reqadd X-Forwarded-Proto:\\ http
-    default\_backend http-routers1
+    reqadd X-Forwarded-Proto:\ http
+    default_backend http-routers1
 
-	backend http-routers1
+backend http-routers1
     mode http
-    reqirep ^Host:\\ xx.xx.xx.xx\\:80 Host:\\ t2.cloud.paas
+    reqirep ^Host:\ xx.xx.xx.xx\:80 Host:\ t2.cloud.paas
     balance roundrobin
         server node0 t1.cloud.paas:80 check inter 1000
+~~~
 
 配置文件中涉及到的要点
 ===========

@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <title>Haproxy端口映射（client头中URL/HOST修改后转发）</title>
-  <meta name="author" content="浙大SEL实验室" />
+  <meta name="author" content="丁轶群" />
   
   
   
@@ -16,7 +16,7 @@
   <meta name="keywords" content="cloudfoundry, haproxy">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP&#43;端口”的形式，在公网访问CF集群上部署的APP。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -67,7 +72,7 @@
   
     
     
-    
+    <meta property="article:section" content="haproxy">
     <meta property="article:tag" content="cloudfoundry">
     <meta property="article:tag" content="haproxy">
     
@@ -81,9 +86,9 @@
   
   <meta name="twitter:title" content="Haproxy端口映射（client头中URL/HOST修改后转发）">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP&#43;端口”的形式，在公网访问CF集群上部署的APP。">
   
-
+  
 </head>
 
 
@@ -202,8 +207,8 @@
 
                         
                           <p class="text-muted text-uppercase mb-small text-right">
-                            
-                            
+                             <a href="#">丁轶群</a>
+                             | 
                             2014-10-28
                           </p>
                         
@@ -212,8 +217,6 @@
                           
 
 <p>CloudFoundry是对域名强依赖的云计算集群，没有域名的话几乎无法访问。但是域名备案等事宜所耗时间较长，在上线较为紧急的情况下，就需要实现直接通过“IP+端口”的形式，在公网访问CF集群上部署的APP。</p>
-
-<!-- more -->
 
 <h1 id="解决方案">解决方案</h1>
 
@@ -226,51 +229,51 @@
 <h1 id="修改基本的配置文件如下">修改基本的配置文件如下：</h1>
 
 <p>配置文件所在地址：<code>/etc/haproxy/haproxy.cfg</code>（用xx.xx.xx.xx代表一个IP地址）</p>
-<pre><code>global
-chroot      /var/lib/haproxy
-pidfile     /var/run/haproxy.pid
-maxconn     4000
-user        haproxy
-group       haproxy
-stats socket /var/lib/haproxy/stats
-debug
-
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">global
+    chroot      <span style="color:#3aa">/var/</span>lib<span style="color:#555">/</span>haproxy
+    pidfile     <span style="color:#3aa">/var/</span>run<span style="color:#555">/</span>haproxy<span style="color:#555">.</span>pid
+    maxconn     <span style="color:#f60">4000</span>
+    user        haproxy
+    group       haproxy
+    stats socket <span style="color:#3aa">/var/</span>lib<span style="color:#555">/</span>haproxy<span style="color:#555">/</span>stats
+    debug
+    
 defaults
-log global
-option httpclose
-timeout connect 30000ms
-timeout client 300000ms
-timeout server 300000ms
+    log global
+    option httpclose
+    timeout connect <span style="color:#f60">30000</span>ms
+    timeout client <span style="color:#f60">300000</span>ms
+    timeout server <span style="color:#f60">300000</span>ms
 
-frontend http-in
-mode http
-bind \*:81
-reqirep ^Host:\\ xx.xx.xx.xx\\:81 Host:\\ t1.cloud.paas
-option httplog
-option forwardfor
-reqadd X-Forwarded-Proto:\\ http
-default\_backend http-routers
+frontend http<span style="color:#555">-</span><span style="color:#069;font-weight:bold">in</span>
+    mode http
+    bind <span style="color:#555">*</span>:<span style="color:#f60">81</span>
+    reqirep <span style="color:#555">^</span><span style="color:#fc3">Host</span>:\ xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx\:<span style="color:#f60">81</span> <span style="color:#fc3">Host</span>:\ t1<span style="color:#555">.</span>cloud<span style="color:#555">.</span>paas
+    option httplog
+    option forwardfor
+    reqadd X<span style="color:#555">-</span><span style="color:#360">Forwarded</span><span style="color:#555">-</span><span style="color:#fc3">Proto</span>:\ http
+    default_backend http<span style="color:#555">-</span>routers
 
-backend http-routers
-mode http
-reqirep ^Host:\\ xx.xx.xx.xx\\:81 Host:\\ t1.cloud.paas
-balance roundrobin
-    server node0 t1.cloud.paas:80 check inter 1000
+backend http<span style="color:#555">-</span>routers
+    mode http
+    reqirep <span style="color:#555">^</span><span style="color:#fc3">Host</span>:\ xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx\:<span style="color:#f60">81</span> <span style="color:#fc3">Host</span>:\ t1<span style="color:#555">.</span>cloud<span style="color:#555">.</span>paas
+    balance roundrobin
+        server node0 t1<span style="color:#555">.</span>cloud<span style="color:#555">.</span>paas:<span style="color:#f60">80</span> check inter <span style="color:#f60">1000</span>
 
-frontend http-in1
-mode http
-bind \*:80
-reqirep ^Host:\\ xx.xx.xx.xx\\:80 Host:\\ t2.cloud.paas
-option httplog
-option forwardfor
-reqadd X-Forwarded-Proto:\\ http
-default\_backend http-routers1
+frontend http<span style="color:#555">-</span>in1
+    mode http
+    bind <span style="color:#555">*</span>:<span style="color:#f60">80</span>
+    reqirep <span style="color:#555">^</span><span style="color:#fc3">Host</span>:\ xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx\:<span style="color:#f60">80</span> <span style="color:#fc3">Host</span>:\ t2<span style="color:#555">.</span>cloud<span style="color:#555">.</span>paas
+    option httplog
+    option forwardfor
+    reqadd X<span style="color:#555">-</span><span style="color:#360">Forwarded</span><span style="color:#555">-</span><span style="color:#fc3">Proto</span>:\ http
+    default_backend http<span style="color:#555">-</span>routers1
 
-backend http-routers1
-mode http
-reqirep ^Host:\\ xx.xx.xx.xx\\:80 Host:\\ t2.cloud.paas
-balance roundrobin
-    server node0 t1.cloud.paas:80 check inter 1000</code></pre>
+backend http<span style="color:#555">-</span>routers1
+    mode http
+    reqirep <span style="color:#555">^</span><span style="color:#fc3">Host</span>:\ xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx<span style="color:#555">.</span>xx\:<span style="color:#f60">80</span> <span style="color:#fc3">Host</span>:\ t2<span style="color:#555">.</span>cloud<span style="color:#555">.</span>paas
+    balance roundrobin
+        server node0 t1<span style="color:#555">.</span>cloud<span style="color:#555">.</span>paas:<span style="color:#f60">80</span> check inter <span style="color:#f60">1000</span></code></pre></div>
 <h1 id="配置文件中涉及到的要点">配置文件中涉及到的要点</h1>
 
 <ol>
@@ -315,14 +318,28 @@ balance roundrobin
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -368,11 +385,13 @@ balance roundrobin
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -381,6 +400,9 @@ balance roundrobin
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -391,18 +413,21 @@ balance roundrobin
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -411,6 +436,10 @@ balance roundrobin
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -432,8 +461,46 @@ balance roundrobin
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -458,23 +525,47 @@ balance roundrobin
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -526,10 +617,6 @@ balance roundrobin
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -729,14 +816,14 @@ balance roundrobin
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -800,8 +887,9 @@ balance roundrobin
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

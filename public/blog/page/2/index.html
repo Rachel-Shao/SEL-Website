@@ -22,8 +22,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -71,7 +76,7 @@
   
   <meta name="twitter:description" content="">
   
-
+  
 </head>
 
 
@@ -219,6 +224,7 @@
                                         </p>
                                         
                                     </div>
+                                    
                                     <p class="intro">自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/" class="btn btn-template-main">继续阅读</a>
                                         
@@ -258,6 +264,7 @@
                                         </p>
                                         
                                     </div>
+                                    
                                     <p class="intro">《Docker容器与容器云》是Kubernetes社区核心开发者张磊博士及其技术团队近年来PaaS方面积累，全书不仅描述了容器与容器云技术，还融入了实验室四年来对云计算各个层面的理解。该书是国内第一本对Docker原理进行深度解析的书籍，也是第一本结合PaaS对各类容器云进行深度剖析，并着重深入分析Kubernetes原理的书籍。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/10/21/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E6%8E%A8%E8%8D%90/" class="btn btn-template-main">继续阅读</a>
                                         
@@ -297,7 +304,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">随着容器技术发展的愈发火热，Linux基金会于2015年6月成立OCI（Open Container Initiative）组织，旨在围绕容器格式和运行时制定一个开放的工业化标准。该组织一成立便得到了包括谷歌、微软、亚马逊、华为等一系列云计算厂商的支持。而runC就是Docker贡献出来的，按照该开放容器格式标准（OCF, Open Container Format）制定的一种具体实现。</p>
+                                    
+                                    <p class="intro">本文从OCI组织的成立开始讲起，描述了开放容器格式的标准及其宗旨，这其实就是runC的由来。继而针对具体的runC特性及其启动进行了详细介绍。OCI的成立表明了社区及各大厂商对容器技术的肯定以及加快容器技术发展进步的强烈决心，相信在不久的将来，符合OCI标准的开放容器项目会越来越多，容器技术将更加欣欣向荣地不断前进。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -311,7 +319,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/609/k8s_arch.png" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -320,6 +328,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/">kubernetes apiserver源码分析——api请求的认证过程</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">王哲</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
                                           
                                           
 
@@ -330,7 +344,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">解决什么问题 笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。 于是我们就回到最初的需求，到底需要解决什么问题，第一个问题就是，apiserver启动的时候，使用secure模式，参数应该如何设置，相关的机制又是怎样？ 这一部分的issue很多，如果不从源码来分析的话，就只能黑盒化的去尝试各种参数搭配，费时费力，也不确定是否正确，之前就是这样，这几个issue可以供参考： https://github.</p>
+                                    
+                                    <p class="intro">apiserver相当于是k8集群的一个入口，不论通过kubectl还是使用remote api 直接控制，都要经过apiserver。apiserver说白了就是一个server负责监听指定的端口，之后处理不同的请求。笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。本文通过分析apiserver的源码解析apiserver启动的时候，参数应该如何设置，相关的机制又是怎样？</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -344,7 +359,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2015/08/07/kubernetes-node-components-kubelet/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/595/kubelet.png" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -353,6 +368,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2015/08/07/kubernetes-node-components-kubelet/">kubernetes node components - kubelet</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">何思玫</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
                                           
                                           
 
@@ -363,6 +384,7 @@
                                         </p>
                                         
                                     </div>
+                                    
                                     <p class="intro">kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/08/07/kubernetes-node-components-kubelet/" class="btn btn-template-main">继续阅读</a>
                                         
@@ -383,7 +405,7 @@
                                   </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <h2><a href="https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/">详解k8s中的&#39;4S&#39;: Services Account, Secret, Security Context and Security in Kubernetes</a></h2>
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/">4S: Services Account, Secret, Security Context and Security in Kubernetes</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
                                           
@@ -402,6 +424,7 @@
                                         </p>
                                         
                                     </div>
+                                    
                                     <p class="intro">Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/" class="btn btn-template-main">继续阅读</a>
                                         
@@ -416,7 +439,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/583/tutum.jpg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -425,6 +448,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">tutum-agent原理浅析</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
                                           
                                           
 
@@ -435,7 +464,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">tutum-aget是tutum提供的一个开源代理引擎。当你把tutum-agent安装在你本地机器上以后，你就可以把本地的机器节点添加到云端，让tutum来帮你统一进行管理。你随时随地都可以登陆tutum网站获得如下功能。</p>
+                                    
+                                    <p class="intro">tutum-aget是tutum提供的一个开源代理引擎。当你把tutum-agent安装在你本地机器上以后，你就可以把本地的机器节点添加到云端，让tutum来帮你统一进行管理。你随时随地都可以登陆tutum网站获得如下功能。1.启停Docker容器。2.动态伸缩容器实例数量。3.监控容器状态、容器CPU/Memory/Disk/Bandwidth使用量。4.查看容器日志、操作记录。5.与tutum其他服务结合的衍生功能（部署应用、绑定服务等）。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -474,7 +504,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，通过管理namespaces、cgroups、capabilities以及文件系统来进行容器控制。你可以使用libcontainer创建容器，并对容器进行生命周期管理。</p>
+                                    
+                                    <p class="intro">本文主要介绍了Docker容器管理的方式libcontainer，从libcontainer的使用到源码实现方式。我们深入到容器进程内部，感受到了libcontainer较为全面的设计。总体而言，libcontainer本身主要分为三大块工作内容，一是容器的创建及初始化，二是容器生命周期管理，三则是进程管理，调用方为Docker的execdriver。容器的监控主要通过cgroups的状态统计信息，未来会加入进程追踪等更丰富的功能。另一方面，libcontainer在安全支持方面也为用户尽可能多的提供了支持和选择。遗憾的是，容器安全的配置需要用户对系统安全本身有足够高的理解，user namespace也尚未支持，可见libcontainer依旧有很多工作要完善。但是Docker社区的火热也自然带动了大家对libcontainer的关注，相信在不久的将来，libcontainer就会变得更安全、更易用。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/06/03/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-libcontainer%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -513,7 +544,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">摘要 当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助</p>
+                                    
+                                    <p class="intro">当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/04/22/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-cgroups%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -552,7 +584,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">Docker这么火，喜欢技术的朋友可能也会想，如果要自己实现一个资源隔离的容器，应该从哪些方面下手呢？也许你第一反应可能就是chroot命令，这条命令给用户最直观的感觉就是使用后根目录/的挂载点切换了，即文件系统被隔离了。然后，为了在分布式的环境下进行通信和定位，容器必然需要一个独立的IP、端口、路由等等，自然就想到了网络的隔离。同时，你的容器还需要一个独立的主机名以便在网络中标识自己。想到网络，顺其自然就想到通信，也就想到了进程间通信的隔离。可能你也想到了权限的问题，对用户和用户组的隔离就实现了用户权限的隔离。最后，运行在容器中的应用需要有自己的PID,自然也需要与宿主机中的PID进行隔离。 由此，我们基本上完成了一个容器所需要做的六项隔离，Linux内核中就提供了这六种namespace隔离的系统调用，如下表所示。</p>
+                                    
+                                    <p class="intro">本文从namespace使用的API开始，结合Docker逐步对六个namespace进行讲解。相信把讲解过程中所有的代码整合起来，你也能实现一个属于自己的“shell”容器了。虽然namespace技术使用起来非常简单，但是要真正把容器做到安全易用却并非易事。PID namespace中，我们要实现一个完善的init进程来维护好所有进程；network namespace中，我们还有复杂的路由表和iptables规则没有配置；user namespace中还有很多权限上的问题需要考虑等等。其中有些方面Docker已经做的很好，有些方面也才刚刚开始。希望通过本文，能为大家更好的理解Docker背后运行的原理提供帮助。 </p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -617,11 +650,13 @@
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -630,6 +665,9 @@
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -640,18 +678,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -660,6 +701,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -681,8 +726,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -707,23 +790,47 @@
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -775,10 +882,6 @@
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -977,14 +1080,14 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -1048,8 +1151,9 @@
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

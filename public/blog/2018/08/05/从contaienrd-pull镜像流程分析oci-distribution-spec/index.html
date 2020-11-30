@@ -16,7 +16,7 @@
   <meta name="keywords" content="Docker, containerd">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。为了了解oci所定义的镜像分发协议，本文分析v1.1.0的containerd代码pull流程，tag创建时间为2018年4月23日。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -81,7 +81,7 @@
   
   <meta name="twitter:title" content="从contaienrd pull镜像流程分析oci distribution spec">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。为了了解oci所 …">
   
 
 </head>
@@ -211,19 +211,22 @@
                         <div id="post-content">
                           
 
-<p>oci组织成立以来已经形成了关于image和runtime的两个spec。<a href="https://www.linuxfoundation.org/press-release/2018/04/open-container-initiative-announces-distribution-specification-project/">2018年4月</a>，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的<a href="https://github.com/docker/distribution/blob/5cb406d511b7b9163bff9b6439072e4892e5ae3b/docs/spec/api.md">Docker Registry HTTP API V2</a>为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。为了了解oci所定义的镜像分发协议，本文分析v1.1.0的containerd代码pull流程，tag创建时间为2018年4月23日。</p>
+<p>oci组织成立以来已经形成了关于image和runtime的两个spec。<a href="https://www.linuxfoundation.org/press-release/2018/04/open-container-initiative-announces-distribution-specification-project/">2018年4月</a>，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的<a href="https://github.com/docker/distribution/blob/5cb406d511b7b9163bff9b6439072e4892e5ae3b/docs/spec/api.md">Docker Registry HTTP API V2</a>为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。</p>
+
+<p>为了了解oci所定义的镜像分发协议，本文分析v1.1.0的containerd代码pull流程，tag创建时间为2018年4月23日。</p>
 
 <h2 id="pull操作的cli命令解释">pull操作的cli命令解释</h2>
 
 <p>关于containerd cli（即ctr）的pull操作指令，由于containerd代码中语焉不详，我们<a href="https://docs.docker.com/engine/reference/commandline/pull/">参照docker官方文档</a>，pull镜像的指令的操作格式如下：</p>
-<pre><code>docker pull [OPTIONS] NAME[:TAG|@DIGEST]</code></pre>
-<p>也就是说，我们pull镜像时，可以用 :tag也可以用@digest。<br />
-其中平时不常用的digest形式用来pull从某个layer开始的包含其所有直接间接父layer的镜像，例子如下：</p>
-<pre><code>$ docker pull ubuntu@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">docker pull <span style="color:#555">[</span>OPTIONS<span style="color:#555">]</span> NAME<span style="color:#555">[</span>:TAG|@DIGEST<span style="color:#555">]</span></code></pre></div>
+<p>也就是说，我们pull镜像时，可以用 :tag也可以用@digest。</p>
+
+<p>其中平时不常用的digest形式用来pull从某个layer开始的包含其所有直接间接父layer的镜像，例子如下：</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ docker pull ubuntu@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2</code></pre></div>
 <p>其中<a href="https://docs.docker.com/registry/spec/api/">digest一般形式如下</a>：</p>
-<pre><code>digest      := algorithm &#34;:&#34; hex
-algorithm   := /[A-Fa-f0-9_+.-]+/
-hex         := /[A-Fa-f0-9]+/</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">digest      :<span style="color:#555">=</span> algorithm <span style="color:#c30">&#34;:&#34;</span> hex
+algorithm   :<span style="color:#555">=</span> /<span style="color:#555">[</span>A-Fa-f0-9_+.-<span style="color:#555">]</span>+/
+hex         :<span style="color:#555">=</span> /<span style="color:#555">[</span>A-Fa-f0-9<span style="color:#555">]</span>+/</code></pre></div>
 <p>另外，根据<code>containerd/ctr/commands/images/pull.go</code>，ctr image pull命令还支持几个flag：</p>
 
 <ol>
@@ -243,7 +246,10 @@ hex         := /[A-Fa-f0-9]+/</code></pre>
 
 <h2 id="ctr-image-pull执行流程">ctr image pull执行流程</h2>
 
-<p>整体流程可以参考<a href="https://github.com/containerd/containerd/blob/master/design/architecture.md">官方流程图</a> <img src="https://github.com/containerd/containerd/raw/master/design/data-flow.png" alt="" />
+<p>整体流程可以参考<a href="https://github.com/containerd/containerd/blob/master/design/architecture.md">官方流程图</a>
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605878863/sel/data-flow_ib2p8w.png"  style="zoom:100%;" />
+</center>
 1. Instruct the Distribution layer to pull a particular image. The distribution layer places the image content into the content store. The image name and root manifest pointers are registered with the metadata store.
 2. Once the image is pulled, the user can instruct the bundle controller to unpack the image into a bundle. Consuming from the content store, layers from the image are unpacked into the snapshot component.
 3. When the snapshot for the rootfs of a container is ready, the bundle controller can use the image manifest and config to prepare the execution configuration. Part of this is entering mounts into the execution config from the snapshot module.
@@ -265,19 +271,28 @@ hex         := /[A-Fa-f0-9]+/</code></pre>
 
 <h3 id="fetch步骤">fetch步骤</h3>
 
-<p>fetch步骤直接调用了content服务的实现逻辑（调函数，不是调用gRPC接口），即<code>containerd/cmd/ctr/commands/cotent/fetch.go</code>里的<code>Fetch</code>方法，所以我们实际上也可以在通过执行ctr images fetch来单独执行fetch步骤，并跳过pull命令的unpack部分。 fetch步骤会创建containerd包下的client和remote context对象。<br />
-其中client负责与containerd的gRPC server联系，里面embed了services，即containerd的各种gRPC服务。<br />
-而remote context负责与registry的联系，封装了：</p>
+<p>fetch步骤直接调用了content服务的实现逻辑（调函数，不是调用gRPC接口），即<code>containerd/cmd/ctr/commands/cotent/fetch.go</code>里的<code>Fetch</code>方法，所以我们实际上也可以在通过执行ctr images fetch来单独执行fetch步骤，并跳过pull命令的unpack部分。 fetch步骤会创建containerd包下的client和remote context对象。</p>
+
+<p>其中client负责与containerd的gRPC server联系，里面embed了services，即containerd的各种gRPC服务。</p>
+
+<p>而remote context负责与registry的联系，封装了：</p>
 
 <ol>
-<li>base handlers：设置为fetch方法中创建的imagehandler</li>
-<li>labels：pull命令的flag label的值</li>
-<li>Platform：pull命令传入的platform、all-platform flag信息</li>
-<li>resolver：设置为fetch方法中创建的resolver。<br />
-resolver（<code>dockerResolver</code>类型），其中包括pull命令的一些flag，包括credential（user+password），plainHTTP,httpclient，track（NewInMemoryTrack函数创建）。其中的httpclient连接被hardcode了一些配置，比如从环境变量里读取的proxy设置，timeout时间等。</li>
-<li>unpack：没被利用</li>
-<li>snapshotter：hardcode成native。pull命令有flag，但是这里被hardcode</li>
-<li>convert schema1：是否需要处理schema1版本的镜像，hardcode成true</li>
+<li><p>base handlers：设置为fetch方法中创建的imagehandler</p></li>
+
+<li><p>labels：pull命令的flag label的值</p></li>
+
+<li><p>Platform：pull命令传入的platform、all-platform flag信息</p></li>
+
+<li><p>resolver：设置为fetch方法中创建的resolver。</p>
+
+<p>resolver（<code>dockerResolver</code>类型），其中包括pull命令的一些flag，包括credential（user+password），plainHTTP,httpclient，track（NewInMemoryTrack函数创建）。其中的httpclient连接被hardcode了一些配置，比如从环境变量里读取的proxy设置，timeout时间等。</p></li>
+
+<li><p>unpack：没被利用</p></li>
+
+<li><p>snapshotter：hardcode成native。pull命令有flag，但是这里被hardcode</p></li>
+
+<li><p>convert schema1：是否需要处理schema1版本的镜像，hardcode成true</p></li>
 </ol>
 
 <p>fetch流程如下：</p>
@@ -287,22 +302,31 @@ resolver（<code>dockerResolver</code>类型），其中包括pull命令的一�
 <p>reference只是用户输入的字符串，比如<code>docker.io/library/redis:alpine</code>，而descriptor代表了保存在registry中的资源，也可以说是一个待执行的下载任务。</p>
 
 <ol>
-<li><p>将reference解析为locator和object两部分。reference为用户在ctr cli中输入的希望拉取镜像的名字，比如<code>ctr image pull docker.io/library/redis:alpine</code>中的<code>docker.io/library/redis:alpine</code>部分，又比如<code>ctr image pull docker.io/library/redis@sha256:xxx</code>中的<code>docker.io/library/redis@sha256:xxx</code>部分。<br />
-locator代表repo的名称比如前面例子中的<code>docker.io/library/redis</code>和<code>docker.io/library/ubuntu</code>。而object则指代repo中某个具体的镜像layer，可以用tag标注，也可以用digest标注。比如前面例子中的tag <code>alpine</code>和digest <code>@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2</code></p>
+<li><p>将reference解析为locator和object两部分。reference为用户在ctr cli中输入的希望拉取镜像的名字，比如<code>ctr image pull docker.io/library/redis:alpine</code>中的<code>docker.io/library/redis:alpine</code>部分，又比如<code>ctr image pull docker.io/library/redis@sha256:xxx</code>中的<code>docker.io/library/redis@sha256:xxx</code>部分。</p>
+
+<p>locator代表repo的名称比如前面例子中的<code>docker.io/library/redis</code>和<code>docker.io/library/ubuntu</code>。而object则指代repo中某个具体的镜像layer，可以用tag标注，也可以用digest标注。比如前面例子中的tag <code>alpine</code>和digest <code>@sha256:45b23dee08af5e43a7fea6c4cf9c25ccf269ee113168c19722f87876677c5cb2</code></p>
 
 <blockquote>
-<p>注意docker cli中registry的host可以省略，但是ctr不会帮我们自动补充。registry的host地址，也就是前面例子中的docker.io，是必须有的。<br />
-xxx指代镜像层对应的sha256值，因为长度过长，在本文中用xxx表示<br />
-descriptor定义在github.com/opencontainers/images-spec中，属于oci规范的实现</p>
+<p>注意docker cli中registry的host可以省略，但是ctr不会帮我们自动补充。registry的host地址，也就是前面例子中的docker.io，是必须有的。</p>
+
+<p>xxx指代镜像层对应的sha256值，因为长度过长，在本文中用xxx表示</p>
+
+<p>descriptor定义在github.com/opencontainers/images-spec中，属于oci规范的实现</p>
 </blockquote></li>
 
 <li><p>根据locator和object信息构建<code>dockerBase</code>对象，并将之封装在<code>dockerFetcher</code>对象中。<code>dockerBase</code>包含一系列成员：</p>
 
 <ol>
 <li>base：url类型。如过plain-http flag的值为true或者host地址为localhost，url的scheme为http，否则为https。url的Host为registry的host地址，如果是docker.io会被替换为registry-1.docker.io。base的path为<code>/v2</code>+locator中的path部分，比如<code>/library/ubuntu</code><br />
-从定义上看base就是为了方便后期组装发送给registry的URL，只包含repo地址。后期发送者的给registry的请求都在此基础上加上一段。</li>
-<li>client: 设置为resolver中的httpclient</li>
-<li>username/secret：resolver中的对应值</li>
+<br /></li>
+</ol>
+
+<p>从定义上看base就是为了方便后期组装发送给registry的URL，只包含repo地址。后期发送者的给registry的请求都在此基础上加上一段。</p>
+
+<ol>
+<li><p>client: 设置为resolver中的httpclient</p></li>
+
+<li><p>username/secret：resolver中的对应值</p></li>
 </ol></li>
 
 <li><p>根据是否object中是否是digest，定义后续resolve reference过程中要向registry发出的http请求。如果object为digest，先尝试向registry发送<code>registry-1.docker.io/v2/library/ubuntu/manifest/sha256:xxx</code>请求，如果未能查询到结果，则再发送<code>registry-1.docker.io/v2/library/ubuntu/blobs/sha256:xxx</code>。如果object不是digest，而是tag，则发送的请求形如<code>registry-1.docker.io/v2/library/redis/manifest/alpine</code></p></li>
@@ -312,13 +336,13 @@ descriptor定义在github.com/opencontainers/images-spec中，属于oci规范的
 <ol>
 <li>digest为response header&rdquo;Docker-Content-Digest&rdquo;的值</li>
 <li>MediaType为response &ldquo;Content-Type&rdquo; header的值</li>
-
-<li><p>size为response &ldquo;Content-Length&rdquo;的值</p>
+<li>size为response &ldquo;Content-Length&rdquo;的值
+<br /></li>
+</ol>
 
 <blockquote>
 <p>构建descriptor过程不依赖registry返回的response body中信息</p>
 </blockquote></li>
-</ol></li>
 </ol>
 
 <p>至此完成了用户输入的reference到descriptor的转化，主要功臣就是<code>containerd/remotes/docker/resolver.go</code>中定义的<code>dockerResolver</code>对象。它实现了<code>remotes</code>包下的<code>Resolver</code>接口，负责与registry之间的交互。前面描述的resolve reference成descriptor的流程就在<code>dockerResolver</code>的<code>Resolve</code>方法中实现。 有了descriptor，我们就有了下载镜像任务的描述，接下来就可以开始按照registry api v2将docker镜像从registry pull到本地，我们继续按照流程走下去。</p>
@@ -328,244 +352,257 @@ descriptor定义在github.com/opencontainers/images-spec中，属于oci规范的
 <p>假设我们使用ctr image pull docker.io/library/redis:alpine来pull一个redis镜像到本地，在上步中我们已经完成了将reference，也就是docker.io/library/redis:alpine转化为descriptor对象。在这个例子中descriptor包含3个成员：</p>
 
 <ol>
-<li>digest<br />
-为response header&rdquo;Docker-Content-Digest&rdquo;的值<code>sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code></li>
-<li>MediaType<br />
-response &ldquo;Content-Type&rdquo; header的值<code>application/vnd.docker.distribution.manifest.list.v2+json</code></li>
-<li>size<br />
-response &ldquo;Content-Length&rdquo;的值2035</li>
+<li><p>digest</p>
+
+<p>为response header&rdquo;Docker-Content-Digest&rdquo;的值<code>sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code></p></li>
+
+<li><p>MediaType</p></li>
 </ol>
 
-<p>registry返回这个response给cli的含义就是让我们再发后续的请求给registry，去下载类型为manifest list，大小为2035字节，digest（作为唯一识别标志）为<code>sha256:xxx</code>的资源。<br />
-我们知道一个manifest对应一个镜像，会包含镜像中各个层的信息，用户在拿到manifest之后就可以并行下载镜像中包含的各个层。然而这里的Mediatype <code>application/vnd.docker.distribution.manifest.list.v2+json</code>并非代表一个manifest，实际它上代表了一个manifest的集合。为什么pull redis:alpine这样一个镜像会对应一个manifest集合，也就是多个manifest呢？那是因为同一个镜像可以对应不同的平台，包括CPU架构、操作系统。所以registry在接收到我们的resolve请求时，通过MediaType为<code>application/vnd.docker.distribution.manifest.list.v2+json</code>的response告诉我们这个镜像存在适应多个平台的版本。而客户端可以进一步下载manifest list之后，再去选择下载其中的某个平台的镜像。 <code>client.go</code>中的<code>Pull</code>方法调用<code>images.Dispatch(ctx, handler, desc)</code>，从而启动镜像所有数据，包括元数据和镜像层（元数据和镜像层分别对应镜像manifest中的config和layer部分，详见本文后面对manifest的描述和例子），的下载流程。其中的<code>desc</code>参数就是前面步骤resolve出来的descriptor，而这个流程的执行的重大职责交给<code>handler</code>参数。<code>handler</code>实际上是一个函数变量：</p>
-<pre><code>// containerd/images/handlers.go
-func(ctx context.Context, desc ocispec.Descriptor) (subdescs []ocispec.Descriptor, err error) {
-        var children []ocispec.Descriptor
-        for _, handler := range handlers {
-            ch, err := handler.Handle(ctx, desc)
-            if err != nil {
-                if errors.Cause(err) == ErrStopHandler {
-                    break
+<p>response &ldquo;Content-Type&rdquo; header的值<code>application/vnd.docker.distribution.manifest.list.v2+json</code></p>
+
+<ol>
+<li>size<br /></li>
+</ol>
+
+<p>response &ldquo;Content-Length&rdquo;的值2035</p>
+
+<p>registry返回这个response给cli的含义就是让我们再发后续的请求给registry，去下载类型为manifest list，大小为2035字节，digest（作为唯一识别标志）为<code>sha256:xxx</code>的资源。</p>
+
+<p>我们知道一个manifest对应一个镜像，会包含镜像中各个层的信息，用户在拿到manifest之后就可以并行下载镜像中包含的各个层。然而这里的Mediatype <code>application/vnd.docker.distribution.manifest.list.v2+json</code>并非代表一个manifest，实际它上代表了一个manifest的集合。为什么pull redis:alpine这样一个镜像会对应一个manifest集合，也就是多个manifest呢？那是因为同一个镜像可以对应不同的平台，包括CPU架构、操作系统。所以registry在接收到我们的resolve请求时，通过MediaType为<code>application/vnd.docker.distribution.manifest.list.v2+json</code>的response告诉我们这个镜像存在适应多个平台的版本。而客户端可以进一步下载manifest list之后，再去选择下载其中的某个平台的镜像。 <code>client.go</code>中的<code>Pull</code>方法调用<code>images.Dispatch(ctx, handler, desc)</code>，从而启动镜像所有数据，包括元数据和镜像层（元数据和镜像层分别对应镜像manifest中的config和layer部分，详见本文后面对manifest的描述和例子），的下载流程。其中的<code>desc</code>参数就是前面步骤resolve出来的descriptor，而这个流程的执行的重大职责交给<code>handler</code>参数。<code>handler</code>实际上是一个函数变量：</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// containerd/images/handlers.go
+</span><span style="color:#09f;font-style:italic"></span><span style="color:#069;font-weight:bold">func</span>(ctx context.Context, desc ocispec.Descriptor) (subdescs []ocispec.Descriptor, err <span style="color:#078;font-weight:bold">error</span>) {
+        <span style="color:#069;font-weight:bold">var</span> children []ocispec.Descriptor
+        <span style="color:#069;font-weight:bold">for</span> _, handler <span style="color:#555">:=</span> <span style="color:#069;font-weight:bold">range</span> handlers {
+            ch, err <span style="color:#555">:=</span> handler.<span style="color:#c0f">Handle</span>(ctx, desc)
+            <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+                <span style="color:#069;font-weight:bold">if</span> errors.<span style="color:#c0f">Cause</span>(err) <span style="color:#555">==</span> ErrStopHandler {
+                    <span style="color:#069;font-weight:bold">break</span>
                 }
-                return nil, err
+                <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>, err
             }
 
-            children = append(children, ch...)
+            children = <span style="color:#366">append</span>(children, ch<span style="color:#555">...</span>)
         }
-        return children, nil
-}</code></pre>
+        <span style="color:#069;font-weight:bold">return</span> children, <span style="color:#069;font-weight:bold">nil</span>
+}</code></pre></div>
 <p>也就是对于每个需要处理的descriptor，顺序调用handler中包含的每个handler（是的，两个变量同一个名字），而每个handler如果在处理descriptor完成之后发现有更多的子 descriptor需要处理，则可以将子descriptor返回出来。最终在一轮调用结束之后，所有handler返回的子descriptor会合并一处，返回给更上一级。所谓的“更上一级”就是<code>images.Dispatch</code>，让我们看看它的定义。<code>images.Dispatch</code>是一个深度优先的算法，假设有1,2,3，&hellip;N个descriptor需要处理，它会先处理1， 然后处理1.1，在处理1.1.1直到1扩散开的子树全处理完，然后开始处理2：</p>
-<pre><code>// containerd/images/handlers.go
-func Dispatch(ctx context.Context, handler Handler, descs ...ocispec.Descriptor) error {
-    eg, ctx := errgroup.WithContext(ctx)
-    for _, desc := range descs {//顺序处理每个每个desc
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// containerd/images/handlers.go
+</span><span style="color:#09f;font-style:italic"></span><span style="color:#069;font-weight:bold">func</span> <span style="color:#c0f">Dispatch</span>(ctx context.Context, handler Handler, descs <span style="color:#555">...</span>ocispec.Descriptor) <span style="color:#078;font-weight:bold">error</span> {
+    eg, ctx <span style="color:#555">:=</span> errgroup.<span style="color:#c0f">WithContext</span>(ctx)
+    <span style="color:#069;font-weight:bold">for</span> _, desc <span style="color:#555">:=</span> <span style="color:#069;font-weight:bold">range</span> descs {<span style="color:#09f;font-style:italic">//顺序处理每个每个desc
+</span><span style="color:#09f;font-style:italic"></span>
+        desc <span style="color:#555">:=</span> desc
 
-        desc := desc
+        eg.<span style="color:#c0f">Go</span>(<span style="color:#069;font-weight:bold">func</span>() <span style="color:#078;font-weight:bold">error</span> {
+            desc <span style="color:#555">:=</span> desc
 
-        eg.Go(func() error {
-            desc := desc
-
-            children, err := handler.Handle(ctx, desc)
-            if err != nil {
-                if errors.Cause(err) == ErrSkipDesc {
-                    return nil // don&#39;t traverse the children.
-                }
-                return err
+            children, err <span style="color:#555">:=</span> handler.<span style="color:#c0f">Handle</span>(ctx, desc)
+            <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+                <span style="color:#069;font-weight:bold">if</span> errors.<span style="color:#c0f">Cause</span>(err) <span style="color:#555">==</span> ErrSkipDesc {
+                    <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span> <span style="color:#09f;font-style:italic">// don&#39;t traverse the children.
+</span><span style="color:#09f;font-style:italic"></span>                }
+                <span style="color:#069;font-weight:bold">return</span> err
             }
 
-            if len(children) &gt; 0 {//如果一轮handler调用下来后，发现有更多的child，则迭代调用Dispatch
-                return Dispatch(ctx, handler, children...)
+            <span style="color:#069;font-weight:bold">if</span> <span style="color:#366">len</span>(children) &gt; <span style="color:#f60">0</span> {<span style="color:#09f;font-style:italic">//如果一轮handler调用下来后，发现有更多的child，则迭代调用Dispatch
+</span><span style="color:#09f;font-style:italic"></span>                <span style="color:#069;font-weight:bold">return</span> <span style="color:#c0f">Dispatch</span>(ctx, handler, children<span style="color:#555">...</span>)
             }
 
-            return nil
+            <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>
         })
     }
 
-    return eg.Wait()
-}</code></pre>
+    <span style="color:#069;font-weight:bold">return</span> eg.<span style="color:#c0f">Wait</span>()
+}</code></pre></div>
 <p>现在我们看看整个处理流程的关键问题：1. 每个handler分别做什么，2. handler执行顺序如何排列：</p>
-<pre><code>// containerd/client.go
-handler = images.Handlers(append(pullCtx.BaseHandlers,
-            remotes.FetchHandler(store, fetcher),
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// containerd/client.go
+</span><span style="color:#09f;font-style:italic"></span>handler = images.<span style="color:#c0f">Handlers</span>(<span style="color:#366">append</span>(pullCtx.BaseHandlers,
+            remotes.<span style="color:#c0f">FetchHandler</span>(store, fetcher),
             childrenHandler,
-        )...)</code></pre>
+        )<span style="color:#555">...</span>)</code></pre></div>
 <p><code>images.Dispatch(ctx, handler, desc)</code>中的<code>handler</code>参数定义在<code>client.go</code>中。这里一共定义了3个handler，其中第一个<code>BaseHandlers</code>只是负责将当前的descriptor处理任务登记在正在执行的job列表中，定义如下：</p>
-<pre><code>// containerd/cmd/ctr/commands/content/fetch.go
-// 第一个handler的定义
-func(ctx context.Context, desc ocispec.Descriptor([]ocispec.Descriptor, error) {
-        if desc.MediaType != images.MediaTypeDockerSchema1Manifest {
-            ongoing.add(desc)
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// containerd/cmd/ctr/commands/content/fetch.go
+</span><span style="color:#09f;font-style:italic">// 第一个handler的定义
+</span><span style="color:#09f;font-style:italic"></span><span style="color:#069;font-weight:bold">func</span>(ctx context.Context, desc ocispec.<span style="color:#c0f">Descriptor</span>([]ocispec.Descriptor, <span style="color:#078;font-weight:bold">error</span>) {
+        <span style="color:#069;font-weight:bold">if</span> desc.MediaType <span style="color:#555">!=</span> images.MediaTypeDockerSchema1Manifest {
+            ongoing.<span style="color:#c0f">add</span>(desc)
+}</code></pre></div>
 <p>而第2个handler通过<code>remotes.FetchHandler(store, fetcher)</code>构建。从函数的名称及参数看，就知道是利用<code>fetcher</code>参数（前面定义的<code>dockerFetcher</code>对象)将根据descriptor下载镜像元数据或镜像层，然后保存在<code>store</code>参数中（descriptor只是下载任务的描述，保存在content服务中的是按照descriptor下载下来的内容）。我们称第二个handler为fetch handler，这里我们简单分析fetch handler如何实现“读”、“写”这两步骤。</p>
 
 <ol>
-<li>如何从registry读数据<br />
-首先根据descriptor生成需要向registry发送请求的URL。fetch handler会从一系列URL里按照成功可能性的高低逐一挑选后发送出去。一旦能通过其中一个URL得到registry的回复，则停止这个过程。<br />
-URL优先级分几个等级，从高到低分别是：
+<li><p>如何从registry读数据</p>
+
+<p>首先根据descriptor生成需要向registry发送请求的URL。fetch handler会从一系列URL里按照成功可能性的高低逐一挑选后发送出去。一旦能通过其中一个URL得到registry的回复，则停止这个过程。</p>
+
+<p>URL优先级分几个等级，从高到低分别是：</p>
 
 <ol>
 <li>首先是在构建descriptor时往里面的URLs成员添加的URL，这些URL会被优先考虑。在当前ctr pull redis镜像的例子中，我们并没有在构建descriptor的过程中添加这类URL。</li>
 <li>其次如果需要获取的资源类型为manifest或者manifest list，则优先向registry发送<code>https://registry-1.docker.io/v2/library/redis/manifests/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code>这样的请求。</li>
-<li>如果如果需要获取的资源类型为manifest或者manifest list，在发送<code>https://registry-1.docker.io/v2/library/redis/manifests/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code>不成功的情况下，尝试发送<code>https://registry-1.docker.io/v2/library/redis/blobs/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code>。</li>
-<li>如果需要获取的并非是manifest或者manifest list，则直接发送<code>https://registry-1.docker.io/v2/library/redis/blobs/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code></li>
+<li>如果如果需要获取的资源类型为manifest或者manifest list，在发送<code>https://registry-1.docker.io/v2/library/redis/manifests/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code>不成功的情况下，尝试发送<code>https://registry-1.docker.io/v2/library/redis/blobs/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code></li>
+<li>如果需要获取的并非是manifest或者manifest list，则直接发送<code>https://registry-1.docker.io/v2/library/redis/blobs/sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code>
+<br /></li>
 </ol></li>
-<li>如何向store里写数据<br />
-<code>store</code>参数类型为<code>remoteContent</code>(定义在<code>content_store.go</code>中)，fetch handler利用封装在<code>remoteContent</code>内部的containerd的content gRPC服务客户端(<code>ContentClient</code>对象)，调用containerd的content gRPC服务，实现了<code>Info</code>、 <code>Delete</code>、 <code>ReaderAt</code>等实现镜像数据（下载好的元数据及镜像层内容）在content服务中的读写。在这里，我们跳过与content gRPC服务交互的大部分细节，只简单地说fetch handler从registry获取镜像相关数据之后，会给containerd的content gRPC服务发送<code>WriteContentRequest</code>请求，将数据写入content服务中。</li>
+
+<li><p>如何向store里写数据</p></li>
 </ol>
 
+<p><code>store</code>参数类型为<code>remoteContent</code>(定义在<code>content_store.go</code>中)，fetch handler利用封装在<code>remoteContent</code>内部的containerd的content gRPC服务客户端(<code>ContentClient</code>对象)，调用containerd的content gRPC服务，实现了<code>Info</code>、 <code>Delete</code>、 <code>ReaderAt</code>等实现镜像数据（下载好的元数据及镜像层内容）在content服务中的读写。在这里，我们跳过与content gRPC服务交互的大部分细节，只简单地说fetch handler从registry获取镜像相关数据之后，会给containerd的content gRPC服务发送<code>WriteContentRequest</code>请求，将数据写入content服务中。</p>
+
 <p>以上优先级定义在<code>containerd/remotes/docker/fetcher.go</code>中定义的<code>getV2URLPaths</code>方法里，感兴趣的读者可以前往阅读。 相对于前两个handler执行逻辑比较直白，与registry定义的交互逻辑比较简单，第三个handler <code>childrenHandler</code>则与registry有更为丰富的交互，它通过以下“3步走”的方式构建出来：</p>
-<pre><code>// containerd/client.go
-// 第三个handler的定义
-// Get all the children for a descriptor
-childrenHandler := images.ChildrenHandler(store)
-// Set any children labels for that content
-childrenHandler = images.SetChildrenLabels(store, childrenHandler)
-// Filter children by platforms
-childrenHandler = images.FilterPlatforms(childrenHandler, pullCtx.Platforms...)</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// containerd/client.go
+</span><span style="color:#09f;font-style:italic">// 第三个handler的定义
+</span><span style="color:#09f;font-style:italic">// Get all the children for a descriptor
+</span><span style="color:#09f;font-style:italic"></span>childrenHandler <span style="color:#555">:=</span> images.<span style="color:#c0f">ChildrenHandler</span>(store)
+<span style="color:#09f;font-style:italic">// Set any children labels for that content
+</span><span style="color:#09f;font-style:italic"></span>childrenHandler = images.<span style="color:#c0f">SetChildrenLabels</span>(store, childrenHandler)
+<span style="color:#09f;font-style:italic">// Filter children by platforms
+</span><span style="color:#09f;font-style:italic"></span>childrenHandler = images.<span style="color:#c0f">FilterPlatforms</span>(childrenHandler, pullCtx.Platforms<span style="color:#555">...</span>)</code></pre></div>
 <p>其中第一步images.ChildrenHandler(store)构建了一个具备解析manifest list和manifest类型数据的handler，具体流程如下：</p>
-<pre><code>// containerd/images/image.go
-// Children returns the immediate children of content described by the descriptor.
-func Children(ctx context.Context, provider content.Provider, desc ocispec.Descriptor) ([]ocispec.Descriptor, error) {
-    var descs []ocispec.Descriptor
-    switch desc.MediaType {
-    case MediaTypeDockerSchema2Manifest, ocispec.MediaTypeImageManifest://解析manifest数据
-        p, err := content.ReadBlob(ctx, provider, desc.Digest)//从containerd的content服务读取fetch handler写入的manifest
-        if err != nil {
-            return nil, err
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// containerd/images/image.go
+</span><span style="color:#09f;font-style:italic">// Children returns the immediate children of content described by the descriptor.
+</span><span style="color:#09f;font-style:italic"></span><span style="color:#069;font-weight:bold">func</span> <span style="color:#c0f">Children</span>(ctx context.Context, provider content.Provider, desc ocispec.Descriptor) ([]ocispec.Descriptor, <span style="color:#078;font-weight:bold">error</span>) {
+    <span style="color:#069;font-weight:bold">var</span> descs []ocispec.Descriptor
+    <span style="color:#069;font-weight:bold">switch</span> desc.MediaType {
+    <span style="color:#069;font-weight:bold">case</span> MediaTypeDockerSchema2Manifest, ocispec.MediaTypeImageManifest:<span style="color:#09f;font-style:italic">//解析manifest数据
+</span><span style="color:#09f;font-style:italic"></span>        p, err <span style="color:#555">:=</span> content.<span style="color:#c0f">ReadBlob</span>(ctx, provider, desc.Digest)<span style="color:#09f;font-style:italic">//从containerd的content服务读取fetch handler写入的manifest
+</span><span style="color:#09f;font-style:italic"></span>        <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+            <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>, err
         }
 
-        var manifest ocispec.Manifest
-        if err := json.Unmarshal(p, &amp;manifest); err != nil {
-            return nil, err
+        <span style="color:#069;font-weight:bold">var</span> manifest ocispec.Manifest
+        <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">:=</span> json.<span style="color:#c0f">Unmarshal</span>(p, <span style="color:#555">&amp;</span>manifest); err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+            <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>, err
         }
-        //将manifest中包含的config和镜像层对应descriptor写入待处理队列中
-        descs = append(descs, manifest.Config)
-        descs = append(descs, manifest.Layers...)
-    case MediaTypeDockerSchema2ManifestList, ocispec.MediaTypeImageIndex://处理manifest list
-        p, err := content.ReadBlob(ctx, provider, desc.Digest)//从containerd的content服务读取fetch handler写入的manifest list
-        ...
-        var index ocispec.Index
-        if err := json.Unmarshal(p, &amp;index); err != nil {
-            return nil, err
+        <span style="color:#09f;font-style:italic">//将manifest中包含的config和镜像层对应descriptor写入待处理队列中
+</span><span style="color:#09f;font-style:italic"></span>        descs = <span style="color:#366">append</span>(descs, manifest.Config)
+        descs = <span style="color:#366">append</span>(descs, manifest.Layers<span style="color:#555">...</span>)
+    <span style="color:#069;font-weight:bold">case</span> MediaTypeDockerSchema2ManifestList, ocispec.MediaTypeImageIndex:<span style="color:#09f;font-style:italic">//处理manifest list
+</span><span style="color:#09f;font-style:italic"></span>        p, err <span style="color:#555">:=</span> content.<span style="color:#c0f">ReadBlob</span>(ctx, provider, desc.Digest)<span style="color:#09f;font-style:italic">//从containerd的content服务读取fetch handler写入的manifest list
+</span><span style="color:#09f;font-style:italic"></span>        <span style="color:#555">...</span>
+        <span style="color:#069;font-weight:bold">var</span> index ocispec.Index
+        <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">:=</span> json.<span style="color:#c0f">Unmarshal</span>(p, <span style="color:#555">&amp;</span>index); err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+            <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>, err
         }
-        //将manifest list中包含的多平台镜像的descriptor写入待处理队列
-        descs = append(descs, index.Manifests...)
-    case MediaTypeDockerSchema2Layer, MediaTypeDockerSchema2LayerGzip,
+        <span style="color:#09f;font-style:italic">//将manifest list中包含的多平台镜像的descriptor写入待处理队列
+</span><span style="color:#09f;font-style:italic"></span>        descs = <span style="color:#366">append</span>(descs, index.Manifests<span style="color:#555">...</span>)
+    <span style="color:#069;font-weight:bold">case</span> MediaTypeDockerSchema2Layer, MediaTypeDockerSchema2LayerGzip,
         MediaTypeDockerSchema2LayerForeign, MediaTypeDockerSchema2LayerForeignGzip,
         MediaTypeDockerSchema2Config, ocispec.MediaTypeImageConfig,
         ocispec.MediaTypeImageLayer, ocispec.MediaTypeImageLayerGzip,
         ocispec.MediaTypeImageLayerNonDistributable, ocispec.MediaTypeImageLayerNonDistributableGzip,
         MediaTypeContainerd1Checkpoint, MediaTypeContainerd1CheckpointConfig:
-        // 已经下载好的镜像层和config层，无需进一步挖掘待处理descriptor.
-        return nil, nil
-        ...
+        <span style="color:#09f;font-style:italic">// 已经下载好的镜像层和config层，无需进一步挖掘待处理descriptor.
+</span><span style="color:#09f;font-style:italic"></span>        <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>, <span style="color:#069;font-weight:bold">nil</span>
+        <span style="color:#555">...</span>
     }
 
-    return descs, nil
-}</code></pre>
+    <span style="color:#069;font-weight:bold">return</span> descs, <span style="color:#069;font-weight:bold">nil</span>
+}</code></pre></div>
 <p>我们继续看<code>childhandler</code>是如何manifest list和manifest类型的资源。</p>
 
 <h4 id="manifest-list处理">manifest list处理</h4>
 
 <p>在fetch handler的帮助下，我们已经从registry下载了redis:alpine对应的manifest list，具体内容如下，我们可以看到这个manifest list中嵌套了适应多个平台的manifest的descriptor，比如适应linux/amd64、linux/armv6、linux/arm64等。按照前面“3步走”中第一步对<code>childrenhandler</code>定义，接下来会从containerd的content gRPC服务中把这个manifest list读取出来，然后把所有的适应各种平台的manifest对应的descriptor全都加入到待处理子descriptor队列中（第3步会按照ctr命令行里的flag过滤删掉无关的descriptor，第一步会先把所有平台的全都加入队列）。</p>
-<pre><code>// sample manifest list
-{
-   &#34;schemaVersion&#34;: 2,
-   &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.list.v2+json&#34;,
-   &#34;manifests&#34;: [
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#09f;font-style:italic">// sample manifest list
+</span><span style="color:#09f;font-style:italic"></span>{
+   <span style="color:#c30">&#34;schemaVersion&#34;</span>: <span style="color:#f60">2</span>,
+   <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.list.v2+json&#34;</span>,
+   <span style="color:#c30">&#34;manifests&#34;</span>: [
       {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-         &#34;size&#34;: 1568,
-         &#34;digest&#34;: &#34;sha256:d5f25b8d0f6125579cd3ac00a5a6e017ed55721d1b0850a3915da501fe7fd571&#34;,
-         &#34;platform&#34;: {
-            &#34;architecture&#34;: &#34;amd64&#34;,
-            &#34;os&#34;: &#34;linux&#34;
+         <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+         <span style="color:#c30">&#34;size&#34;</span>: <span style="color:#f60">1568</span>,
+         <span style="color:#c30">&#34;digest&#34;</span>: <span style="color:#c30">&#34;sha256:d5f25b8d0f6125579cd3ac00a5a6e017ed55721d1b0850a3915da501fe7fd571&#34;</span>,
+         <span style="color:#c30">&#34;platform&#34;</span>: {
+            <span style="color:#c30">&#34;architecture&#34;</span>: <span style="color:#c30">&#34;amd64&#34;</span>,
+            <span style="color:#c30">&#34;os&#34;</span>: <span style="color:#c30">&#34;linux&#34;</span>
          }
       },
       {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-         &#34;size&#34;: 1776,
-         &#34;digest&#34;: &#34;sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae65161b3d7417e255dd22cabb71&#34;,
-         &#34;platform&#34;: {
-            &#34;architecture&#34;: &#34;arm&#34;,
-            &#34;os&#34;: &#34;linux&#34;,
-            &#34;variant&#34;: &#34;v6&#34;
+         <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+         <span style="color:#c30">&#34;size&#34;</span>: <span style="color:#f60">1776</span>,
+         <span style="color:#c30">&#34;digest&#34;</span>: <span style="color:#c30">&#34;sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae65161b3d7417e255dd22cabb71&#34;</span>,
+         <span style="color:#c30">&#34;platform&#34;</span>: {
+            <span style="color:#c30">&#34;architecture&#34;</span>: <span style="color:#c30">&#34;arm&#34;</span>,
+            <span style="color:#c30">&#34;os&#34;</span>: <span style="color:#c30">&#34;linux&#34;</span>,
+            <span style="color:#c30">&#34;variant&#34;</span>: <span style="color:#c30">&#34;v6&#34;</span>
          }
       },
       {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-         &#34;size&#34;: 1775,
-         &#34;digest&#34;: &#34;sha256:8f9dc588a0f8e521923fc61b36b9f54c6c19e8d195e8bbc987515388f4b80e8e&#34;,
-         &#34;platform&#34;: {
-            &#34;architecture&#34;: &#34;arm64&#34;,
-            &#34;os&#34;: &#34;linux&#34;,
-            &#34;variant&#34;: &#34;v8&#34;
+         <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+         <span style="color:#c30">&#34;size&#34;</span>: <span style="color:#f60">1775</span>,
+         <span style="color:#c30">&#34;digest&#34;</span>: <span style="color:#c30">&#34;sha256:8f9dc588a0f8e521923fc61b36b9f54c6c19e8d195e8bbc987515388f4b80e8e&#34;</span>,
+         <span style="color:#c30">&#34;platform&#34;</span>: {
+            <span style="color:#c30">&#34;architecture&#34;</span>: <span style="color:#c30">&#34;arm64&#34;</span>,
+            <span style="color:#c30">&#34;os&#34;</span>: <span style="color:#c30">&#34;linux&#34;</span>,
+            <span style="color:#c30">&#34;variant&#34;</span>: <span style="color:#c30">&#34;v8&#34;</span>
          }
       },
       {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-         &#34;size&#34;: 1775,
-         &#34;digest&#34;: &#34;sha256:ae54cb5b30f30284eed9796e56ad07e02eb5429a424b3163ed7a3116acf66a33&#34;,
-         &#34;platform&#34;: {
-            &#34;architecture&#34;: &#34;386&#34;,
-            &#34;os&#34;: &#34;linux&#34;
+         <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+         <span style="color:#c30">&#34;size&#34;</span>: <span style="color:#f60">1775</span>,
+         <span style="color:#c30">&#34;digest&#34;</span>: <span style="color:#c30">&#34;sha256:ae54cb5b30f30284eed9796e56ad07e02eb5429a424b3163ed7a3116acf66a33&#34;</span>,
+         <span style="color:#c30">&#34;platform&#34;</span>: {
+            <span style="color:#c30">&#34;architecture&#34;</span>: <span style="color:#c30">&#34;386&#34;</span>,
+            <span style="color:#c30">&#34;os&#34;</span>: <span style="color:#c30">&#34;linux&#34;</span>
          }
       },
       {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-         &#34;size&#34;: 1776,
-         &#34;digest&#34;: &#34;sha256:7e3d726348b3c671c82849b930466a2c5d9a653bf8cee20b05d22d30c68a0e75&#34;,
-         &#34;platform&#34;: {
-            &#34;architecture&#34;: &#34;ppc64le&#34;,
-            &#34;os&#34;: &#34;linux&#34;
+         <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+         <span style="color:#c30">&#34;size&#34;</span>: <span style="color:#f60">1776</span>,
+         <span style="color:#c30">&#34;digest&#34;</span>: <span style="color:#c30">&#34;sha256:7e3d726348b3c671c82849b930466a2c5d9a653bf8cee20b05d22d30c68a0e75&#34;</span>,
+         <span style="color:#c30">&#34;platform&#34;</span>: {
+            <span style="color:#c30">&#34;architecture&#34;</span>: <span style="color:#c30">&#34;ppc64le&#34;</span>,
+            <span style="color:#c30">&#34;os&#34;</span>: <span style="color:#c30">&#34;linux&#34;</span>
          }
       },
       {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-         &#34;size&#34;: 1775,
-         &#34;digest&#34;: &#34;sha256:2398b7389b9ab8710e118aa8fdfc57d63077b8f153add86aaff67eacf825c597&#34;,
-         &#34;platform&#34;: {
-            &#34;architecture&#34;: &#34;s390x&#34;,
-            &#34;os&#34;: &#34;linux&#34;
+         <span style="color:#c30">&#34;mediaType&#34;</span>: <span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,
+         <span style="color:#c30">&#34;size&#34;</span>: <span style="color:#f60">1775</span>,
+         <span style="color:#c30">&#34;digest&#34;</span>: <span style="color:#c30">&#34;sha256:2398b7389b9ab8710e118aa8fdfc57d63077b8f153add86aaff67eacf825c597&#34;</span>,
+         <span style="color:#c30">&#34;platform&#34;</span>: {
+            <span style="color:#c30">&#34;architecture&#34;</span>: <span style="color:#c30">&#34;s390x&#34;</span>,
+            <span style="color:#c30">&#34;os&#34;</span>: <span style="color:#c30">&#34;linux&#34;</span>
          }
       }
    ]
-}</code></pre>
+}</code></pre></div>
 <p>对于manifest list这类包含子descriptor的数据，<code>childrenHandler</code>还会在“3步走”的第二步<code>SetChildrenLabels</code>中为保存在content服务中的manifest list加上label，以表达manifest list和manifest之间的父子关系。</p>
-<pre><code>func SetChildrenLabels(manager content.Manager, f HandlerFunc) HandlerFunc {
-    return func(ctx context.Context, desc ocispec.Descriptor) ([]ocispec.Descriptor, error) {
-        children, err := f(ctx, desc)
-        if err != nil {
-            return children, err
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#069;font-weight:bold">func</span> <span style="color:#c0f">SetChildrenLabels</span>(manager content.Manager, f HandlerFunc) HandlerFunc {
+    <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">func</span>(ctx context.Context, desc ocispec.Descriptor) ([]ocispec.Descriptor, <span style="color:#078;font-weight:bold">error</span>) {
+        children, err <span style="color:#555">:=</span> <span style="color:#c0f">f</span>(ctx, desc)
+        <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+            <span style="color:#069;font-weight:bold">return</span> children, err
         }
 
-        if len(children) &gt; 0 {//如果在上一步处理结束后发现包含子descriptor
-            info := content.Info{
+        <span style="color:#069;font-weight:bold">if</span> <span style="color:#366">len</span>(children) &gt; <span style="color:#f60">0</span> {<span style="color:#09f;font-style:italic">//如果在上一步处理结束后发现包含子descriptor
+</span><span style="color:#09f;font-style:italic"></span>            info <span style="color:#555">:=</span> content.Info{
                 Digest: desc.Digest,
-                Labels: map[string]string{},
+                Labels: <span style="color:#069;font-weight:bold">map</span>[<span style="color:#078;font-weight:bold">string</span>]<span style="color:#078;font-weight:bold">string</span>{},
             }
-            fields := []string{}
-            for i, ch := range children {
-                info.Labels[fmt.Sprintf(&#34;containerd.io/gc.ref.content.%d&#34;, i)] = ch.Digest.String()
-                fields = append(fields, fmt.Sprintf(&#34;labels.containerd.io/gc.ref.content.%d&#34;, i))
+            fields <span style="color:#555">:=</span> []<span style="color:#078;font-weight:bold">string</span>{}
+            <span style="color:#069;font-weight:bold">for</span> i, ch <span style="color:#555">:=</span> <span style="color:#069;font-weight:bold">range</span> children {
+                info.Labels[fmt.<span style="color:#c0f">Sprintf</span>(<span style="color:#c30">&#34;containerd.io/gc.ref.content.%d&#34;</span>, i)] = ch.Digest.<span style="color:#c0f">String</span>()
+                fields = <span style="color:#366">append</span>(fields, fmt.<span style="color:#c0f">Sprintf</span>(<span style="color:#c30">&#34;labels.containerd.io/gc.ref.content.%d&#34;</span>, i))
             }
-            //将子descriptor作为descriptor的label
-            _, err := manager.Update(ctx, info, fields...)
-            if err != nil {
-                return nil, err
+            <span style="color:#09f;font-style:italic">//将子descriptor作为descriptor的label
+</span><span style="color:#09f;font-style:italic"></span>            _, err <span style="color:#555">:=</span> manager.<span style="color:#c0f">Update</span>(ctx, info, fields<span style="color:#555">...</span>)
+            <span style="color:#069;font-weight:bold">if</span> err <span style="color:#555">!=</span> <span style="color:#069;font-weight:bold">nil</span> {
+                <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">nil</span>, err
             }
         }
 
-        return children, err
+        <span style="color:#069;font-weight:bold">return</span> children, err
     }
-}</code></pre>
+}</code></pre></div>
 <p>经过“3步走”的第二步处理之后，我们查看containerd中的content服务中的数据，会发现digest为<code>sha256:e57274dac037e5b0c7680717fcaaa0efeffb23430e54e839c50819c9d842a38c</code>的资源，也就是manifest list，被加上了6个label，逐一对应redis:alpine的manifest list中包含的6个manifest。</p>
-<pre><code>containerd.io/gc.ref.content.2=sha256:8f9dc588a0f8e521923fc61b36b9f54c6c19e8d195e8bbc987515388f4b80e8e  
-containerd.io/gc.ref.content.3=sha256:ae54cb5b30f30284eed9796e56ad07e02eb5429a424b3163ed7a3116acf66a33  
-containerd.io/gc.ref.content.4=sha256:7e3d726348b3c671c82849b930466a2c5d9a653bf8cee20b05d22d30c68a0e75  
-containerd.io/gc.ref.content.5=sha256:2398b7389b9ab8710e118aa8fdfc57d63077b8f153add86aaff67eacf825c597  
-containerd.io/gc.ref.content.0=sha256:d5f25b8d0f6125579cd3ac00a5a6e017ed55721d1b0850a3915da501fe7fd571  
-containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae65161b3d7417e255dd22cabb71</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">containerd.io<span style="color:#555">/</span>gc.ref.content<span style="color:#f60">.2</span>=sha256:<span style="color:#f60">8</span>f9dc588a0f8e521923fc61b36b9f54c6c19e8d195e8bbc987515388f4b80e8e  
+containerd.io<span style="color:#555">/</span>gc.ref.content<span style="color:#f60">.3</span>=sha256:ae54cb5b30f30284eed9796e56ad07e02eb5429a424b3163ed7a3116acf66a33  
+containerd.io<span style="color:#555">/</span>gc.ref.content<span style="color:#f60">.4</span>=sha256:<span style="color:#f60">7e3</span>d726348b3c671c82849b930466a2c5d9a653bf8cee20b05d22d30c68a0e75  
+containerd.io<span style="color:#555">/</span>gc.ref.content<span style="color:#f60">.5</span>=sha256:<span style="color:#f60">2398</span>b7389b9ab8710e118aa8fdfc57d63077b8f153add86aaff67eacf825c597  
+containerd.io<span style="color:#555">/</span>gc.ref.content<span style="color:#f60">.0</span>=sha256:d5f25b8d0f6125579cd3ac00a5a6e017ed55721d1b0850a3915da501fe7fd571  
+containerd.io<span style="color:#555">/</span>gc.ref.content<span style="color:#f60">.1</span>=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae65161b3d7417e255dd22cabb71</code></pre></div>
 <p><code>childrenHandler</code>的“3步走”中的第三步，则按照用户调用ctr pull镜像时输入的platform flag来过滤前面第一步中找到的子descriptor，这样下次一迭代调用images.Dispatch时就不会去下载被过滤掉的那些子descriptor对应的资源。第3步逻辑比较简单，这里不再详述。感兴趣的读者可以阅读<code>images/handlers.go</code>中定义的<code>FilterPlatforms</code>函数。</p>
 
 <h4 id="manifest处理">manifest处理</h4>
@@ -580,47 +617,47 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
 </ol>
 
 <p>我们会进入<code>Dispatch</code>方法的嵌套调用中，将这个descriptor对应的manifest下载下来，内容如下。我们可以看到在这个manifest中包含了1个config（<code>&quot;application/vnd.docker.container.image.v1+json&quot;</code>）和多个镜像层（<code>application/vnd.docker.image.rootfs.diff.tar.gzip</code>）对应的descriptor。可以想象<code>Dispatch</code>方法抽取子descriptor，并进一步嵌套调用，把config和镜像层分别下载，然后写入content gRPC服务中，这些过程在这里不再描述。</p>
-<pre><code>{
-   &#34;schemaVersion&#34;: 2,
-   &#34;mediaType&#34;: &#34;application/vnd.docker.distribution.manifest.v2+json&#34;,
-   &#34;config&#34;: {
-      &#34;mediaType&#34;: &#34;application/vnd.docker.container.image.v1+json&#34;,
-      &#34;size&#34;: 5108,
-      &#34;digest&#34;: &#34;sha256:80581db8c700155a91bec6fd6398dad9733135e7c58a19472aa679e8367692ab&#34;
-   },
-   &#34;layers&#34;: [
-      {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;,
-         &#34;size&#34;: 2206542,
-         &#34;digest&#34;: &#34;sha256:8e3ba11ec2a2b39ab372c60c16b421536e50e5ce64a0bc81765c2e38381bcff6&#34;
-      },
-      {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;,
-         &#34;size&#34;: 1249,
-         &#34;digest&#34;: &#34;sha256:1f20bd2a5c234ffab42de6cbf83522946614b21b642a8208dca6b0fd614c31db&#34;
-      },
-      {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;,
-         &#34;size&#34;: 9071,
-         &#34;digest&#34;: &#34;sha256:782ff7702b5cd0a7c0109740838c74945fc27e4ce34e1028c24bf73f8249a63a&#34;
-      },
-      {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;,
-         &#34;size&#34;: 9407568,
-         &#34;digest&#34;: &#34;sha256:cd719ead7ee305492514a8dfa2afcd0979a16e8192836b4aaed98d8d932973c0&#34;
-      },
-      {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;,
-         &#34;size&#34;: 98,
-         &#34;digest&#34;: &#34;sha256:01018940af9a67873ad6737c275cb134372cdf1cda565af58dd14a1e3b85ab2a&#34;
-      },
-      {
-         &#34;mediaType&#34;: &#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;,
-         &#34;size&#34;: 398,
-         &#34;digest&#34;: &#34;sha256:3f1bfdda9588f5c0643b485580060b460b21b5331f4760778ef3279680e20966&#34;
-      }
-   ]
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml">{<span style="color:#bbb">
+</span><span style="color:#bbb">   </span><span style="color:#069;font-weight:bold">&#34;schemaVersion&#34;: </span><span style="color:#f60">2</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">   </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.distribution.manifest.v2+json&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">   </span><span style="color:#069;font-weight:bold">&#34;config&#34;: </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.container.image.v1+json&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">5108</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">      </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:80581db8c700155a91bec6fd6398dad9733135e7c58a19472aa679e8367692ab&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">   </span>},<span style="color:#bbb">
+</span><span style="color:#bbb">   </span><span style="color:#069;font-weight:bold">&#34;layers&#34;: </span>[<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">2206542</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:8e3ba11ec2a2b39ab372c60c16b421536e50e5ce64a0bc81765c2e38381bcff6&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>},<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">1249</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:1f20bd2a5c234ffab42de6cbf83522946614b21b642a8208dca6b0fd614c31db&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>},<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">9071</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:782ff7702b5cd0a7c0109740838c74945fc27e4ce34e1028c24bf73f8249a63a&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>},<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">9407568</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:cd719ead7ee305492514a8dfa2afcd0979a16e8192836b4aaed98d8d932973c0&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>},<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">98</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:01018940af9a67873ad6737c275cb134372cdf1cda565af58dd14a1e3b85ab2a&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>},<span style="color:#bbb">
+</span><span style="color:#bbb">      </span>{<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;mediaType&#34;: </span><span style="color:#c30">&#34;application/vnd.docker.image.rootfs.diff.tar.gzip&#34;</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;size&#34;: </span><span style="color:#f60">398</span>,<span style="color:#bbb">
+</span><span style="color:#bbb">         </span><span style="color:#069;font-weight:bold">&#34;digest&#34;: </span><span style="color:#c30">&#34;sha256:3f1bfdda9588f5c0643b485580060b460b21b5331f4760778ef3279680e20966&#34;</span><span style="color:#bbb">
+</span><span style="color:#bbb">      </span>}<span style="color:#bbb">
+</span><span style="color:#bbb">   </span>]<span style="color:#bbb">
+</span><span style="color:#bbb"></span>}</code></pre></div>
 <p>manifest中的config信息描述如何基于镜像构建容器及其中的进程，内容如下：</p>
 <pre><code>{
    &#34;architecture&#34;:&#34;amd64&#34;,
@@ -802,14 +839,28 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -855,11 +906,13 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -868,6 +921,9 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -878,18 +934,21 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -898,6 +957,10 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -919,8 +982,46 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -945,7 +1046,15 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
@@ -953,15 +1062,31 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/docker">docker (19)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -1013,10 +1138,6 @@ containerd.io/gc.ref.content.1=sha256:b3e481a692c4fce21591fbaa4d7588bc6de5ae6516
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>

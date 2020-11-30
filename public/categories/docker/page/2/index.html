@@ -22,8 +22,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -71,7 +76,7 @@
   
   <meta name="twitter:description" content="">
   
-
+  
 </head>
 
 
@@ -192,9 +197,89 @@
                             <div class="row">
                                 <div class="col-md-3">
                                   <div class="image">
+                                      <a href="https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/">
+                                          
+                                          <img src="/img/blogs/508/docker.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/">Docker源码分析（七）：Docker Container网络 （上）</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙宏亮</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/"><i class="far fa-calendar"></i> 2015-01-26</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">本文为《Docker源码分析》系列第七篇——Docker Container网络（上）。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="https://Rachel-Shao.github.io/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/">
+                                          
+                                          <img src="/img/blogs/444/PIPEWORK1.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/">Docker网络详解及pipework源码解读与实践</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">冯明振</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="https://Rachel-Shao.github.io/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/"><i class="far fa-calendar"></i> 2015-01-16</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">Docker作为目前最火的轻量级容器技术，有很多令人称道的功能，如Docker的镜像管理。然而，Docker同样有着很多不完善的地方，网络方面就是Docker比较薄弱的部分。因此，我们有必要深入了解Docker的网络知识，以满足更高的网络需求。本文首先介绍了Docker自身的4种网络工作方式，然后通过3个样例 —— 将Docker容器配置到本地网络环境中、单主机Docker容器的VLAN划分、多主机Docker容器的VLAN划分，演示了如何使用pipework帮助我们进行复杂的网络设置，以及pipework是如何工作的。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/">
                                           
-                                          <img src="https://res.cloudinary.com/rachel725/image/upload/v1605616386/sel/serviceMesh_ifa27g.png" class="img-responsive" alt="">
+                                          <img src="/img/blogs/399/docker.jpg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -219,7 +304,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">本文介绍docker daemon的网络模型。</p>
+                                    
+                                    <p class="intro">**摘要：**Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -258,8 +344,129 @@
                                         </p>
                                         
                                     </div>
+                                    
                                     <p class="intro">摘要: Docker是基于Go语言开发，通过分层镜像标准化和内核虚拟化技术，使得应用开发者和运维工程师可以以统一的方式跨平台发布应用。镜像是Docker最核心的技术之一，也是应用发布的标准格式。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/12/16/%E7%8E%A9%E8%BD%ACdocker%E9%95%9C%E5%83%8F/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/">
+                                          
+                                          <img src="/img/blogs/259/docker.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/">Docker源码分析（五）：Docker Server的创建</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙宏亮</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/"><i class="far fa-calendar"></i> 2014-12-09</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">Docker架构中，Docker Server是Docker Daemon的重要组成部分。Docker Server最主要的功能是：接受用户通过Docker Client发送的请求，并按照相应的路由规则实现路由分发。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/">
+                                          
+                                          <img src="/img/blogs/165/docker.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/">Docker源码分析（四）：Docker Daemon之NewDaemon实现</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙宏亮</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/"><i class="far fa-calendar"></i> 2014-12-02</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">Docker的生态系统日趋完善，开发者群体也在日趋庞大，这让业界对Docker持续抱有极其乐观的态度。然而，对于广大开发者而言，使用Docker这项技术已然不是门槛，享受Docker带来的技术福利已不是困难。如今，如何探寻Docker适应的场景，如何发展Docker周边的技术，以及如何弥合Docker新技术与传统物理机或VM技术的鸿沟，已经占据Docker研究者们的思考与实践。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/">
+                                          
+                                          <img src="/img/blogs/158/docker.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/">Docker源码分析（三）：Docker Daemon启动</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙宏亮</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/"><i class="far fa-calendar"></i> 2014-12-02</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">【Docker源码分析（三）：Docker Daemon启动】Docker作为业界备受推崇的轻量级虚拟化容器管理引擎，其强大的后台能力全凭Docker Daemon。本文从源码出发，介绍了Docker Daemon的启动流程，并深入分析启动流程中每一步骤的实现细节。Docker的运行真可谓，载体为daemon，调度管理由engine，任务执行靠job。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
                                 </div>
@@ -297,8 +504,49 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">1.</p>
+                                    
+                                    <p class="intro">如今，Docker作为业界领先的轻量级虚拟化容器管理引擎，给全球开发者提供了一种新颖、便捷的软件集成测试与部署之道。在团队开发软件时，Docker可以提供可复用的运行环境、灵活的资源配置、便捷的集成测试方法以及一键式的部署方式。可以说，Docker的优势在简化持续集成、运维部署方面体现得淋漓尽致，它完全让开发者从前者中解放出来，把精力真正地倾注在开发上。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%8Cdocker-client%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/">
+                                          
+                                          <img src="/img/blogs/112/docker.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/">Docker源码分析（一）：Docker架构</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙宏亮</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/"><i class="far fa-calendar"></i> 2014-12-02</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">Docker是Docker公司开源的一个基于轻量级虚拟化技术的容器引擎项目,整个项目基于Go语言开发，并遵从Apache 2.0协议。目前，Docker可以在容器内部快速自动化部署应用，并可以通过内核虚拟化技术（namespaces及cgroups等）来提供容器的资源隔离与安全保障等。由于Docker通过操作系统层的虚拟化实现隔离，所以Docker容器在运行时，不需要类似虚拟机（VM）额外的操作系统开销，提高资源利用率，并且提升诸如IO等方面的性能。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
                                 </div>
@@ -361,11 +609,13 @@
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -374,6 +624,9 @@
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -384,18 +637,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -404,6 +660,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -425,8 +685,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -451,23 +749,47 @@
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/containerd">containerd (1)</a>
             </li>
             
             <li class="active">
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/docker">docker (19)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -519,10 +841,6 @@
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -721,14 +1039,14 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -792,8 +1110,9 @@
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

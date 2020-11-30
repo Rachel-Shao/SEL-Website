@@ -3,14 +3,14 @@
 id= "577"
 
 title = "Docker背后的容器管理——libcontainer深度解析"
-describtion = "libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，通过管理`namespaces`、`cgroups`、`capabilities`以及文件系统来进行容器控制。你可以使用libcontainer创建容器，并对容器进行生命周期管理。"
+description = "本文主要介绍了Docker容器管理的方式libcontainer，从libcontainer的使用到源码实现方式。我们深入到容器进程内部，感受到了libcontainer较为全面的设计。总体而言，libcontainer本身主要分为三大块工作内容，一是容器的创建及初始化，二是容器生命周期管理，三则是进程管理，调用方为Docker的execdriver。容器的监控主要通过cgroups的状态统计信息，未来会加入进程追踪等更丰富的功能。另一方面，libcontainer在安全支持方面也为用户尽可能多的提供了支持和选择。遗憾的是，容器安全的配置需要用户对系统安全本身有足够高的理解，user namespace也尚未支持，可见libcontainer依旧有很多工作要完善。但是Docker社区的火热也自然带动了大家对libcontainer的关注，相信在不久的将来，libcontainer就会变得更安全、更易用。"
 tags= [ "Docker" , "libcontainer" ]
 date= "2015-06-03 13:29:26"
 author = "孙健波"
 banner= "img/blogs/577/libcontainer1.png"
 categories = [ "Docker" ]
 
-+++ 
++++
 
 libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，通过管理`namespaces`、`cgroups`、`capabilities`以及文件系统来进行容器控制。你可以使用libcontainer创建容器，并对容器进行生命周期管理。
 
@@ -18,9 +18,8 @@ libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，�
 
 在2013年Docker刚发布的时候，它是一款基于LXC的开源容器管理引擎。把LXC复杂的容器创建与使用方式简化为Docker自己的一套命令体系。随着Docker的不断发展，它开始有了更为远大的目标，那就是反向定义容器的实现标准，将底层实现都抽象化到libcontainer的接口。这就意味着，底层容器的实现方式变成了一种可变的方案，无论是使用namespace、cgroups技术抑或是使用systemd等其他方案，只要实现了libcontainer定义的一组接口，Docker都可以运行。这也为Docker实现全面的跨平台带来了可能。
 
-
-1. libcontainer 特性
-===================
+1.libcontainer 特性
+-------------------
 
 目前版本的libcontainer，功能实现上涵盖了包括namespaces使用、cgroups管理、Rootfs的配置启动、默认的Linux capability权限集、以及进程运行的环境变量配置。内核版本最低要求为`2.6`，最好是`3.8`，这与内核对namespace的支持有关。 目前除user namespace不完全支持以外，其他五个namespace都是默认开启的，通过`clone`系统调用进行创建。
 
@@ -28,20 +27,25 @@ libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，�
 
 文件系统方面，容器运行需要`rootfs`。所有容器中要执行的指令，都需要包含在`rootfs`（在Docker中指令包含在其上叠加的镜像层也可以执行）所有挂载在容器销毁时都会被卸载，因为mount namespace会在容器销毁时一同消失。为了容器可以正常执行命令，以下文件系统必须在容器运行时挂载到`rootfs`中。
 
-![libcontainer1](https://res.cloudinary.com/feesuper/image/upload/v1604125812/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/577/libcontainer1_dqyq4c.png)
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616382/sel/libcontainer1_psvpmn.png" alt="" style="zoom:70%;" />
+</center>
 
 当容器的文件系统刚挂载完毕时，`/dev`文件系统会被一系列设备节点所填充，所以`rootfs`不应该管理`/dev`文件系统下的设备节点，libcontainer会负责处理并正确启动这些设备。设备及其权限模式如下。
 
-![libcontainer2](https://res.cloudinary.com/feesuper/image/upload/v1604125811/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/577/libcontainer2_cbdu3j.png)
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616381/sel/libcontainer2_my1m4i.png" alt="" style="zoom:80%;" />
+</center>
 
 容器支持伪终端`TTY`，当用户使用时，就会建立`/dev/console`设备。其他终端支持设备，如`/dev/ptmx`则是宿主机的`/dev/ptmx` 链接。容器中指向宿主机 `/dev/null`的IO也会被重定向到容器内的 `/dev/null`设备。当`/proc`挂载完成后，`/dev/`中与IO相关的链接也会建立，如下表。
 
-![libcontainer3](https://res.cloudinary.com/feesuper/image/upload/v1604125812/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/577/libcontainer3_lwdvj5.png)
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616381/sel/libcontainer3_izc3zr.png" alt="" style="zoom:100%;" />
+</center>
 
 `pivot_root` 则用于改变进程的根目录，这样可以有效的将进程控制在我们建立的`rootfs`中。如果`rootfs`是基于`ramfs`的（不支持`pivot_root`），那么会在`mount`时使用`MS_MOVE`标志位加上`chroot`来顶替。 当文件系统创建完毕后，`umask`权限被重新设置回`0022`。
 
-1.2 资源管理
---------
+### 1.2 资源管理
 
 在[《Docker背后的内核知识：cgroups资源隔离》](http://www.infoq.com/cn/articles/docker-kernel-knowledge-cgroups-resource-isolation)一文中已经提到，Docker使用cgroups进行资源管理与限制，包括设备、内存、CPU、输入输出等。 目前除网络外所有内核支持的子系统都被加入到libcontainer的管理中，所以libcontainer使用cgroups原生支持的统计信息作为资源管理的监控展示。 容器中运行的第一个进程`init`，必须在初始化开始前放置到指定的cgroup目录中，这样就能防止初始化完成后运行的其他用户指令逃逸出cgroups的控制。父子进程的同步则通过管道来完成，在随后的运行时初始化中会进行展开描述。
 
@@ -49,8 +53,7 @@ libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，�
 
 容器安全一直是被广泛探讨的话题，使用namespace对进程进行隔离是容器安全的基础，遗憾的是，usernamespace由于设计上的复杂性，还没有被libcontainer完全支持。 libcontainer目前可通过配置[`capabilities`](http://linux.die.net/man/7/capabilities)、[`SELinux`](http://selinuxproject.org/page/Main_Page)、[`apparmor`](http://selinuxproject.org/page/Main_Page) 以及[`seccomp`](http://en.wikipedia.org/wiki/Seccomp)进行一定的安全防范，目前除`seccomp`以外都有一份[默认的配置项](https://github.com/docker/libcontainer/blob/master/SPEC.md#security)提供给用户作为参考。 在本系列的后续文章中，我们将对容器安全进行更深入的探讨，敬请期待。
 
-1.4 运行时与初始化进程
--------------
+### 1.4 运行时与初始化进程
 
 在容器创建过程中，父进程需要与容器的`init`进程进行同步通信，通信的方式则通过向容器中传入管道来实现。当`init`启动时，他会等待管道内传入`EOF`信息，这就给父进程完成初始化，建立uid/gid映射，并把新进程放进新建的cgroup一定的时间。 在libcontainer中运行的应用（进程），应该是事先静态编译完成的。libcontainer在容器中并不提供任何类似Unix init这样的守护进程，用户提供的参数也是通过`exec`系统调用提供给用户进程。通常情况下容器中也没有长进程存在。 如果容器打开了伪终端，就会通过`dup2`把console作为容器的输入输出（STDIN, STDOUT, STDERR）对象。 除此之外，以下4个文件也会在容器运行时自动生成。 \* /etc/hosts \* /etc/resolv.conf \* /etc/hostname \* /etc/localtime
 
@@ -58,8 +61,7 @@ libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，�
 
 用户也可以在运行着的容器中执行一条新的指令，就是我们熟悉的`docker exec`功能。同样，执行指令的二进制文件需要包含在容器的`rootfs`之内。 通过这种方式运行起来的进程会随容器的状态变化，如容器被暂停，进程也随之暂停，恢复也随之恢复。当容器进程不存在时，进程就会被销毁，重启也不会恢复。
 
-1.6 容器热迁移（Checkpoint & Restore）
--------------------------------
+### 1.6 容器热迁移（Checkpoint & Restore）
 
 目前libcontainer已经集成了[CRIU](http://criu.org/Main_Page)作为容器检查点保存与恢复（通常也称为热迁移）的解决方案，应该在不久之后就会被Docker使用。也就是说，通过libcontainer你已经可以把一个正在运行的进程状态保存到磁盘上，然后在本地或其他机器中重新恢复当前的运行状态。这个功能主要带来如下几个好处。
 

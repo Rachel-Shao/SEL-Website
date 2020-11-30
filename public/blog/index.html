@@ -22,8 +22,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -71,7 +76,7 @@
   
   <meta name="twitter:description" content="">
   
-
+  
 </head>
 
 
@@ -204,6 +209,12 @@
                                     <div class="clearfix">
                                         <p class="author-category">
                                           
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
+                                          
                                           
 
                                         </p>
@@ -213,7 +224,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。 SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.</p>
+                                    
+                                    <p class="intro">kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.1后的commit `31e562bc`。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -237,6 +249,12 @@
                                     <div class="clearfix">
                                         <p class="author-category">
                                           
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
+                                          
                                           
 
                                         </p>
@@ -246,7 +264,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">本文基官方knative serving的开发环境搭建文档，加自己的实践，给出以下knative serving开发环境的搭建方案。</p>
+                                    
+                                    <p class="intro">knative serving开发环境搭建。本文基官方knative serving的开发环境搭建文档，加自己的实践，给出以下knative serving开发环境的搭建方案。开始之前请确保已按上面的开发环境搭建文档搭好Kubernetes(1.10以上)和istio。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -258,7 +277,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                   <div class="image">
-                                      <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                                      <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                                           
                                           <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="">
                                           
@@ -266,7 +285,7 @@
                                   </div>
                                 </div>
                                 <div class="col-md-9">
-                                    <h2><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h2>
+                                    <h2><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
                                           
@@ -274,19 +293,20 @@
                                           
                                           
                                           
-                                          | 归档于 <a href="/categories/contaienrd/">contaienrd</a>
+                                          | 归档于 <a href="/categories/containerd/">containerd</a>
                                           
                                           
 
                                         </p>
                                         
                                         <p class="date-comments">
-                                            <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/"><i class="far fa-calendar"></i> 2018-08-05</a>
+                                            <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/"><i class="far fa-calendar"></i> 2018-08-05</a>
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。为了了解oci所定义的镜像分发协议，本文分析v1.</p>
-                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/" class="btn btn-template-main">继续阅读</a>
+                                    
+                                    <p class="intro">oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。为了了解oci所定义的镜像分发协议，本文分析v1.1.0的containerd代码pull流程，tag创建时间为2018年4月23日。</p>
+                                    <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
                                 </div>
@@ -299,7 +319,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/761/PilotAdapters.png" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -308,6 +328,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">Service Mesh深度学习系列（三）| xds协议解密</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/service-mesh/">service mesh</a>
                                           
                                           
 
@@ -318,7 +344,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">本文分析的istio代码版本为0.</p>
+                                    
+                                    <p class="intro">service mesh社区的健康发展离不开控制面和数据面之间的标准化接口，从而使得无论是控制面的开发团队还是数据面的开发团队都可以集中精力依照统一标准开发。对此，istio社区中提出了xds这种data plane api，并号召开源社区的广泛参与和采用。本文着重分析istio项目中的xds主要存在形式，包括cds和eds</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -332,7 +359,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/825/pilot.svg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -341,6 +368,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">Service Mesh深度学习系列（二）| istio pilot模块分析</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/service-mesh/">service mesh</a>
                                           
                                           
 
@@ -351,7 +384,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">本文分析的istio代码版本为0.</p>
+                                    
+                                    <p class="intro">如下图所示，istio的pilot模块扮演服务注册中心、istio控制平面到Envoy之间的桥梁作用。pilot主要功能包括：1.监控服务注册中心（如Kubernetes）的服务注册情况。在Kubernetes环境下，会监控service、endpoint、pod、node等资源信息 2.监控istio控制面信息变化，在Kubernetes环境下，会监控包括RouteRule、 VirtualService、Gateway、EgressRule、ServiceEntry等以Kubernetes CRD形式存在的istio控制面配置信息。3.将上述两类信息合并组合为Envoy可以理解的（即遵循Envoy data plane api的）配置信息，并将这些信息以gRPC协议提供给Envoy</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -365,7 +399,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/831/pilot.svg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -374,6 +408,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">Service Mesh深度学习系列（一）| istio pilot-agent模块分析</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/service-mesh/">service mesh</a>
                                           
                                           
 
@@ -384,7 +424,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">本文分析的istio代码版本为0.</p>
+                                    
+                                    <p class="intro">如istio官方关于pilot模块的架构图所示，istio中的agent模块负责的工作包括：1.生成envoy的配置；2.启动envoy；3.监控并管理envoy的运行状况，比如envoy出错时pilot-agent负责重启envoy，或者envoy配置变更后reload envoy。而envoy负责接受所有发往该pod的网络流量，分发所有从pod中发出的网络流量。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -398,7 +439,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/878/cri.png" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -407,6 +448,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">PouchContainer CRI的设计与实现</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">姚增增</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
                                           
                                           
 
@@ -417,7 +464,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">1.</p>
+                                    
+                                    <p class="intro">本文从引入CRI的缘由而起，简要描述了CRI的架构，重点叙述了PouchContainer对CRI各个核心功能模块的实现。CRI的存在让PouchContainer容器加入Kubernetes生态变得更为简单快捷。而我们也相信，PouchContainer独有的特性必定会让Kubernetes生态变得更加丰富多彩。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/05/29/pouchcontainer-cri%E7%9A%84%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -456,7 +504,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">深入理解Docker容器引擎runC执行框架 1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。 Docker就是基于runC创建的，简单地说，runC是Docker中最为核心的部分，容器的创建，运行，销毁等等操作最终都将通过调用runC完成。下面我们将演示如何使用runC，以最精简的方式创建并运行一个容器。</p>
+                                    
+                                    <p class="intro">根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。 Docker就是基于runC创建的，简单地说，runC是Docker中最为核心的部分，容器的创建，运行，销毁等等操作最终都将通过调用runC完成。本文以代码走读的形式帮助读者理解runC创建并运行一个容器内部机制。 </p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/05/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3docker%E5%AE%B9%E5%99%A8%E5%BC%95%E6%93%8Erunc%E6%89%A7%E8%A1%8C%E6%A1%86%E6%9E%B6/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -495,7 +544,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">根据官网的描述，flannel是一个专为kubernetes定制的三层网络解决方案，主要用于解决容器的跨主机通信问题。</p>
+                                    
+                                    <p class="intro">flannel是一个专为kubernetes定制的三层网络解决方案，主要用于解决容器的跨主机通信问题。总的来说，flannel更像是经典的桥接模式的扩展。我们知道，在桥接模式中，每台主机的容器都将使用一个默认的网段，容器与容器之间，主机与容器之间都能互相通信。要是，我们能手动配置每台主机的网段，使它们互不冲突。接着再想点办法，将目的地址为非本机容器的流量送到相应主机：如果集群的主机都在一个子网内，就搞一条路由转发过去；若是不在一个子网内，就搞一条隧道转发过去。这样以来，容器的跨网络通信问题就解决了。而flannel做的，其实就是将这些工作自动化了而已。 </p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2018/03/14/%E6%8A%80%E6%9C%AF%E5%B9%B2%E8%B4%A7%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3flannel/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -509,7 +559,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/663/zju.jpg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -518,6 +568,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/">Kubernetes全球代码贡献量排行，浙江大学第六</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
                                           
                                           
 
@@ -528,7 +584,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">全球企业Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图。  从全球企业的贡献排名来看，排名状况基本变化不大，仍然是Google独占鳌头。令人欣喜的是，浙江大学SEL实验室排名又上升了一位，代码贡献量近24万行，总排名超越CoreOS达到世界第六位。这无疑是振奋人心的事情，这意味着越来越多的年轻学术人员投入Kubernetes开源社区建设，这将近一步提高中国在容器云社区的地位。 Kubernetes是当前容器集群编排3大开源方案中社区活跃度最高的。虽然现在正值入冬，但仍然挡不住 Kubernetes掀起全球关注的热潮。Kubernetes体现了Google对海量容器集群管理的经验和精华，这让Kubernetes在容器云计算框架横行天下的年代游刃有余，已经逐步成为了容器云框架中的佼佼者。从Kubernetes开放、自由、持续发展生态圈兼容的态度能看出，Kubernetes正变得越来越自信。 下图为Kubernetes模块代码贡献分析图：  从图中可知：Kubernetes运维和生态圈组件模块代码贡献直追核心模块kubernetes，排名2-4位的模块分别是Kubernetes生态圈、操作和界面。Kubernetes使用者越来越关心容器云框架落地而非仅仅将其作为空中楼阁远观而止。 Kubernetes在国内发展已经超过了3年的时间，但是遗憾的一点，尽管我们拥有世界上最多的开发人员，但是我们常常对社区没有话语权，国内的用户的需求无法对社区上游形 成影响，导致很多本地化定制的需求无法真正的在社区版本代码得到体现。所以如何让中国的声音出现在社区，是我们所有容器云计算人需要思考的问题。更希望越来越多的国内传统IT巨头能够意识到这个问题，投身于开源的事业中。</p>
+                                    
+                                    <p class="intro">全球Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -593,11 +650,13 @@
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -606,6 +665,9 @@
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -616,18 +678,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -636,6 +701,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -657,8 +726,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -683,23 +790,47 @@
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -751,10 +882,6 @@
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -953,14 +1080,14 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -1024,8 +1151,9 @@
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

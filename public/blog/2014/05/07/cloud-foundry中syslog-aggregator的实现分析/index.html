@@ -16,7 +16,7 @@
   <meta name="keywords" content="syslog_aggregator, cloudfoundry">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -81,9 +86,9 @@
   
   <meta name="twitter:title" content="Cloud Foundry中syslog_aggregator的实现分析">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台 …">
   
-
+  
 </head>
 
 
@@ -211,140 +216,142 @@
                         <div id="post-content">
                           
 
-<p>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</p>
+<p>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。</p>
+
+<p>syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</p>
 
 <p>以下是对syslog_aggregator实现的简单分析： syslog_aggregator组件主要包括monit模块，日志管理模块。</p>
 
 <h2 id="monit模块"><strong>monit模块</strong></h2>
 
 <p>monit模块主要是实现：监控syslog_aggregator组件的运行状态，一旦监控过syslog_aggregator组件中该进程不存活时，即刻重启该进程；另外，syslog_aggregator组件还将自身的信息通过cloud_agent传送给NATS，这里的信息包括syslog_aggregator组件所在的宿主机的存活状态以及资源使用情况。 以下通过monit监控进程的代码：</p>
-<pre><code>check process syslog_aggregator  
-  with pidfile /var/vcap/sys/run/syslog_aggregator/syslog_aggregator.pid  
-  start program &#34;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl start&#34;  
-  stop program &#34;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl stop&#34;  
-  group vcap  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">check process syslog_aggregator  
+  with pidfile <span style="color:#3aa">/var/</span>vcap<span style="color:#555">/</span>sys<span style="color:#555">/</span>run<span style="color:#555">/</span>syslog_aggregator<span style="color:#555">/</span>syslog_aggregator<span style="color:#555">.</span>pid  
+  start program <span style="color:#c30">&#34;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl start&#34;</span>  
+  stop program <span style="color:#c30">&#34;/var/vcap/jobs/syslog_aggregator/bin/syslog_aggregator_ctl stop&#34;</span>  
+  group vcap  </code></pre></div>
 <p>该段代码中清晰的标明了进程的pid，进程的start命令以及stop命令。 cloud_agent作为BOSH监控Cloud Foundry组件级信息的辅助工具，负责收集syslog_aggregator组件所在宿主机的运行状态以及资源使用情况，并发送给health_monitor，由health_monitor统一管理。由于cloud_agent不是本文的重点，所以本文不再赘述。</p>
 
 <h2 id="日志管理模块"><strong>日志管理模块</strong></h2>
 
 <p>实现日志管理，syslog_aggregator是通过启动syslog_aggregator_ctl脚本来实现的。上文中提到的monit模块中，也正是监控这个脚本命令启动的进程。以下来分析一下该脚本的代码实现：</p>
-<pre><code>#!/bin/bash  
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#099">#!/bin/bash  
+</span><span style="color:#099"></span>
+<span style="color:#033">RUN_DIR</span><span style="color:#555">=</span>/var/vcap/sys/run/syslog_aggregator  
+<span style="color:#033">LOG_DIR</span><span style="color:#555">=</span>/var/vcap/store/log  
+<span style="color:#033">JOB_DIR</span><span style="color:#555">=</span>/var/vcap/jobs/syslog_aggregator  
+<span style="color:#033">PACKAGE_DIR</span><span style="color:#555">=</span>/var/vcap/packages/syslog_aggregator  
 
-RUN_DIR=/var/vcap/sys/run/syslog_aggregator  
-LOG_DIR=/var/vcap/store/log  
-JOB_DIR=/var/vcap/jobs/syslog_aggregator  
-PACKAGE_DIR=/var/vcap/packages/syslog_aggregator  
+<span style="color:#033">BIN_DIR</span><span style="color:#555">=</span><span style="color:#033">$JOB_DIR</span>/bin  
+<span style="color:#033">PIDFILE</span><span style="color:#555">=</span><span style="color:#033">$RUN_DIR</span>/syslog_aggregator.pid  
 
-BIN_DIR=$JOB_DIR/bin  
-PIDFILE=$RUN_DIR/syslog_aggregator.pid  
+<span style="color:#366">source</span> /var/vcap/packages/common/utils.sh  
 
-source /var/vcap/packages/common/utils.sh  
+<span style="color:#069;font-weight:bold">case</span> <span style="color:#033">$1</span> in  
 
-case $1 in  
-
-  start)  
+  start<span style="color:#555">)</span>  
 
     apt-get -y install rsyslog-relp  
 
-    pid_guard $PIDFILE &#34;Syslog aggregator&#34;  
+    pid_guard <span style="color:#033">$PIDFILE</span> <span style="color:#c30">&#34;Syslog aggregator&#34;</span>  
 
-    mkdir -p $RUN_DIR  
-    mkdir -p $LOG_DIR  
-    chown -R vcap:vcap $LOG_DIR  
+    mkdir -p <span style="color:#033">$RUN_DIR</span>  
+    mkdir -p <span style="color:#033">$LOG_DIR</span>  
+    chown -R vcap:vcap <span style="color:#033">$LOG_DIR</span>  
 
     rm -f /etc/cron.daily/bzip_old_logs  
-    cp -a $BIN_DIR/gzip_old_logs /etc/cron.daily  
-    cp -a $BIN_DIR/reap_old_logs /etc/cron.hourly  
-    cp -a $BIN_DIR/symlink_logs /etc/cron.hourly  
-    cp -a $PACKAGE_DIR/send_error_mail /etc/cron.daily  
+    cp -a <span style="color:#033">$BIN_DIR</span>/gzip_old_logs /etc/cron.daily  
+    cp -a <span style="color:#033">$BIN_DIR</span>/reap_old_logs /etc/cron.hourly  
+    cp -a <span style="color:#033">$BIN_DIR</span>/symlink_logs /etc/cron.hourly  
+    cp -a <span style="color:#033">$PACKAGE_DIR</span>/send_error_mail /etc/cron.daily  
 
-    exec /usr/sbin/rsyslogd -f $JOB_DIR/config/rsyslogd.conf -i $PIDFILE -c 4 \  
-         &gt;&gt;$LOG_DIR/rsyslogd.stdout.log \  
-         2&gt;&gt;$LOG_DIR/rsyslogd.stderr.log  
+    <span style="color:#366">exec</span> /usr/sbin/rsyslogd -f <span style="color:#033">$JOB_DIR</span>/config/rsyslogd.conf -i <span style="color:#033">$PIDFILE</span> -c <span style="color:#f60">4</span> <span style="color:#c30;font-weight:bold">\ </span> 
+         &gt;&gt;<span style="color:#033">$LOG_DIR</span>/rsyslogd.stdout.log <span style="color:#c30;font-weight:bold">\ </span> 
+         2&gt;&gt;<span style="color:#033">$LOG_DIR</span>/rsyslogd.stderr.log  
     ;;  
 
-  stop)  
-    kill_and_wait $PIDFILE  
+  stop<span style="color:#555">)</span>  
+    kill_and_wait <span style="color:#033">$PIDFILE</span>  
     rm /etc/cron.daily/gzip_old_logs  
     rm /etc/cron.hourly/reap_old_logs  
     ;;  
 
-  *)  
-    echo &#34;Usage: syslog_aggregator_ctl {start|stop}&#34;  
+  *<span style="color:#555">)</span>  
+    <span style="color:#366">echo</span> <span style="color:#c30">&#34;Usage: syslog_aggregator_ctl {start|stop}&#34;</span>  
     ;;  
 
-esac  </code></pre>
+<span style="color:#069;font-weight:bold">esac</span>  </code></pre></div>
 <p>在通过该脚本来实现启动syslog_aggregator进程的时候，使用的是start命令。进入start命令，可以看到，安装了rsyslog-relp；然后通过/var/vcap/packages/common/utils.sh中定义的pid_guard()方法来实现对该进程pid的保护，当系统中已经由相应的进程以该pid在运行时，删除该进程，以保证syslog_aggregator可以按预先设置的pid进行运行；随后创建几个定义好的目录，RUN_DIR，LOG_DIR，还对LOG_DIR进行拥有用户修改。 脚本中随后的5行代码，涉及到的是Linux操作系统中cron 定期任务删除与添加的实现：</p>
-<pre><code>rm -f /etc/cron.daily/bzip_old_logs  
-cp -a $BIN_DIR/gzip_old_logs /etc/cron.daily  
-cp -a $BIN_DIR/reap_old_logs /etc/cron.hourly  
-cp -a $BIN_DIR/symlink_logs /etc/cron.hourly  
-cp -a $PACKAGE_DIR/send_error_mail /etc/cron.daily  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">rm -f /etc/cron.daily/bzip_old_logs  
+cp -a <span style="color:#033">$BIN_DIR</span>/gzip_old_logs /etc/cron.daily  
+cp -a <span style="color:#033">$BIN_DIR</span>/reap_old_logs /etc/cron.hourly  
+cp -a <span style="color:#033">$BIN_DIR</span>/symlink_logs /etc/cron.hourly  
+cp -a <span style="color:#033">$PACKAGE_DIR</span>/send_error_mail /etc/cron.daily  </code></pre></div>
 <p>首先在每日的执行任务中删除掉bzip_old_logs任务，如果该任务存在的话；随后将4个任务分别加入到了指定的目录位置，分别是：gzip_old_logs, reap_old_logs, symlink_logs, send_error_mail。也就是让Linux操作系统每天一次执行gzip_old_logs脚本，每小时执行一次reap_old_logs脚本，每小时执行一次symlink_logs脚本，每周一次执行一次send_error_mail脚本。 添加完这些定义任务之后，syslog_aggregator随后启动了rsyslog server，实现日志服务器的启动：</p>
-<pre><code>exec /usr/sbin/rsyslogd -f $JOB_DIR/config/rsyslogd.conf -i $PIDFILE -c 4 \  
-         &gt;&gt;$LOG_DIR/rsyslogd.stdout.log \  
-         2&gt;&gt;$LOG_DIR/rsyslogd.stderr.log  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#366">exec</span> /usr/sbin/rsyslogd -f <span style="color:#033">$JOB_DIR</span>/config/rsyslogd.conf -i <span style="color:#033">$PIDFILE</span> -c <span style="color:#f60">4</span> <span style="color:#c30;font-weight:bold">\ </span> 
+         &gt;&gt;<span style="color:#033">$LOG_DIR</span>/rsyslogd.stdout.log <span style="color:#c30;font-weight:bold">\ </span> 
+         2&gt;&gt;<span style="color:#033">$LOG_DIR</span>/rsyslogd.stderr.log  </code></pre></div>
 <p>启动rsyslog server的具体配置可以参看rsyslogd.conf的各参数:</p>
-<pre><code>$MaxMessageSize 4k  
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#033">$MaxMessageSize</span> 4k  
 
-# Caveat - This always binds to all interfaces (cannot specify otherwise).  
-$ModLoad imtcp  
-$InputTCPMaxSessions 1024  
-$InputTCPServerRun 54321  
-$PrivDropToUser vcap  
-$PrivDropToGroup vcap  
+<span style="color:#09f;font-style:italic"># Caveat - This always binds to all interfaces (cannot specify otherwise).</span>  
+<span style="color:#033">$ModLoad</span> imtcp  
+<span style="color:#033">$InputTCPMaxSessions</span> <span style="color:#f60">1024</span>  
+<span style="color:#033">$InputTCPServerRun</span> <span style="color:#f60">54321</span>  
+<span style="color:#033">$PrivDropToUser</span> vcap  
+<span style="color:#033">$PrivDropToGroup</span> vcap  
 
-# Write each component&#39;s messages to a separate log  
-# programname is assumed to be &#39;vcap.&lt;component&gt;&#39;  
-# Directory is created automatically  
-$template VcapComponentLogFile, &#34;/var/vcap/store/log/%programname:6:$%/%$year%/%$month%/%$day%/%programname:6:$%.log&#34;  
-$template VcapComponentLogFormat, &#34;%fromhost-ip% -- %msg%\n&#34;  
+<span style="color:#09f;font-style:italic"># Write each component&#39;s messages to a separate log</span>  
+<span style="color:#09f;font-style:italic"># programname is assumed to be &#39;vcap.&lt;component&gt;&#39;</span>  
+<span style="color:#09f;font-style:italic"># Directory is created automatically</span>  
+<span style="color:#033">$template</span> VcapComponentLogFile, <span style="color:#c30">&#34;/var/vcap/store/log/%programname:6:</span>$<span style="color:#c30">%/%</span><span style="color:#033">$year</span><span style="color:#c30">%/%</span><span style="color:#033">$month</span><span style="color:#c30">%/%</span><span style="color:#033">$day</span><span style="color:#c30">%/%programname:6:</span>$<span style="color:#c30">%.log&#34;</span>  
+<span style="color:#033">$template</span> VcapComponentLogFormat, <span style="color:#c30">&#34;%fromhost-ip% -- %msg%\n&#34;</span>  
 
-# The initial &#39;-&#39; tells rsyslogd to not sync the file after each write  
-:programname, startswith, &#34;vcap.&#34; -?VcapComponentLogFile;VcapComponentLogFormat  
+<span style="color:#09f;font-style:italic"># The initial &#39;-&#39; tells rsyslogd to not sync the file after each write</span>  
+:programname, startswith, <span style="color:#c30">&#34;vcap.&#34;</span> -?VcapComponentLogFile;VcapComponentLogFormat  
 
-# Prevent them from reaching anywhere else  
-:programname, startswith, &#34;vcap.&#34; ~  </code></pre>
+<span style="color:#09f;font-style:italic"># Prevent them from reaching anywhere else</span>  
+:programname, startswith, <span style="color:#c30">&#34;vcap.&#34;</span> ~  </code></pre></div>
 <p>当然有server的话，自然会accept来自client的请求，所以在Cloud Foundry中每个组件都会安装一个resyslog的client端，然后启动该client，连接rsyslog server，并发送日志请求，以此来实现日志的传输，又通过刚才涉及到的那些脚本实现对日志的管理。 以下分析添加到周期性任务中的脚本功能。 1.gzip_old_logs 该脚本的实现很简单，如下：</p>
-<pre><code>#!/bin/bash  
-# Compress log files that haven&#39;t changed in the last day  
-find /var/vcap/store/log -type f -mmin +1440 -name &#39;*.log&#39; -exec gzip &#39;{}&#39; \;  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#099">#!/bin/bash  
+</span><span style="color:#099"></span><span style="color:#09f;font-style:italic"># Compress log files that haven&#39;t changed in the last day</span>  
+find /var/vcap/store/log -type f -mmin +1440 -name <span style="color:#c30">&#39;*.log&#39;</span> -exec gzip <span style="color:#c30">&#39;{}&#39;</span> <span style="color:#c30;font-weight:bold">\;</span>  </code></pre></div>
 <p>功能为找到/var/vcap/store/log目录下，1440分钟（24小时）内没有被修改的文件，然后进行压缩操作。 2.symlink_logs 该脚本实现的是：为每一个当天的创建出来的文件创建符号链接，<code>date + %Y</code>执行结果为执行时的年份，依此类推。代码如下：</p>
-<pre><code>#!/bin/bash  
-# create symlinks to today&#39;s logs in /var/vcap/store/log  
-for x in /var/vcap/store/log/*/`date +%Y`/`date +%m`/`date +%d`/* ; do if [ -f &#34;$x&#34; ]; then ln -sf &#34;$x&#34; /var/vcap/store/log; fi; done  </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#099">#!/bin/bash  
+</span><span style="color:#099"></span><span style="color:#09f;font-style:italic"># create symlinks to today&#39;s logs in /var/vcap/store/log</span>  
+<span style="color:#069;font-weight:bold">for</span> x in /var/vcap/store/log/*/<span style="color:#c30">`</span>date +%Y<span style="color:#c30">`</span>/<span style="color:#c30">`</span>date +%m<span style="color:#c30">`</span>/<span style="color:#c30">`</span>date +%d<span style="color:#c30">`</span>/* ; <span style="color:#069;font-weight:bold">do</span> <span style="color:#069;font-weight:bold">if</span> <span style="color:#555">[</span> -f <span style="color:#c30">&#34;</span><span style="color:#033">$x</span><span style="color:#c30">&#34;</span> <span style="color:#555">]</span>; <span style="color:#069;font-weight:bold">then</span> ln -sf <span style="color:#c30">&#34;</span><span style="color:#033">$x</span><span style="color:#c30">&#34;</span> /var/vcap/store/log; <span style="color:#069;font-weight:bold">fi</span>; <span style="color:#069;font-weight:bold">done</span>  </code></pre></div>
 <p>3.reap_old_logs 该脚本实现的是：清除保存已超过7天的日志。代码如下：</p>
-<pre><code>#!/bin/bash  
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#099">#!/bin/bash  
+</span><span style="color:#099"></span>
+<span style="color:#366">set</span> -u  
 
-set -u  
+<span style="color:#033">LOG_DIR</span><span style="color:#555">=</span>/var/vcap/store/log  
+<span style="color:#09f;font-style:italic"># Reap logs that are older than 7 days</span>  
+<span style="color:#033">DAYS_TO_KEEP</span><span style="color:#555">=</span><span style="color:#f60">7</span>  
+<span style="color:#366">let</span> <span style="color:#c30">&#34;MIN_TO_KEEP=</span><span style="color:#a00">${</span><span style="color:#033">DAYS_TO_KEEP</span><span style="color:#a00">}</span><span style="color:#c30">*24*60&#34;</span>  
 
-LOG_DIR=/var/vcap/store/log  
-# Reap logs that are older than 7 days  
-DAYS_TO_KEEP=7  
-let &#34;MIN_TO_KEEP=${DAYS_TO_KEEP}*24*60&#34;  
+<span style="color:#09f;font-style:italic"># get the last $DAYS_TO_KEEP date to exclude from the rmdir</span>  
 
-# get the last $DAYS_TO_KEEP date to exclude from the rmdir  
+<span style="color:#033">DAYS_TO_EXCLUDE</span><span style="color:#555">=</span><span style="color:#069;font-weight:bold">$(</span>  
+<span style="color:#069;font-weight:bold">for</span> i in <span style="color:#069;font-weight:bold">$(</span>seq <span style="color:#f60">0</span> <span style="color:#a00">${</span><span style="color:#033">DAYS_TO_KEEP</span><span style="color:#a00">}</span><span style="color:#069;font-weight:bold">)</span>; <span style="color:#069;font-weight:bold">do</span>  
+date -d <span style="color:#c30">&#34;now - </span><span style="color:#033">$i</span><span style="color:#c30"> days&#34;</span> +%Y/%m/%d  
+<span style="color:#069;font-weight:bold">done</span>  
+<span style="color:#069;font-weight:bold">)</span>  
+<span style="color:#09f;font-style:italic"># example output: &#34;2012/09/21|2012/09/20|.....|2012/09/15|2012/09/14&#34;</span>  
+<span style="color:#033">EGREP_FORMAT_DAYS_TO_EXCLUDE</span><span style="color:#555">=</span><span style="color:#069;font-weight:bold">$(</span><span style="color:#366">echo</span> <span style="color:#033">$DAYS_TO_EXCLUDE</span> | tr <span style="color:#c30">&#39; &#39;</span> <span style="color:#c30">&#39;|&#39;</span><span style="color:#069;font-weight:bold">)</span>  
 
-DAYS_TO_EXCLUDE=$(  
-for i in $(seq 0 ${DAYS_TO_KEEP}); do  
-date -d &#34;now - $i days&#34; +%Y/%m/%d  
-done  
-)  
-# example output: &#34;2012/09/21|2012/09/20|.....|2012/09/15|2012/09/14&#34;  
-EGREP_FORMAT_DAYS_TO_EXCLUDE=$(echo $DAYS_TO_EXCLUDE | tr &#39; &#39; &#39;|&#39;)  
+find <span style="color:#a00">${</span><span style="color:#033">LOG_DIR</span><span style="color:#a00">}</span> -mmin +<span style="color:#a00">${</span><span style="color:#033">MIN_TO_KEEP</span><span style="color:#a00">}</span> -name <span style="color:#c30">&#39;*.log.gz&#39;</span> -exec rm -f <span style="color:#c30">&#39;{}&#39;</span> <span style="color:#c30;font-weight:bold">\;</span>  
 
-find ${LOG_DIR} -mmin +${MIN_TO_KEEP} -name &#39;*.log.gz&#39; -exec rm -f &#39;{}&#39; \;  
-
-# Reap empty dirs in 3 passes, clear empty &#39;day&#39; dirs, then &#39;month&#39;  
-# and lastly &#39;year&#39;  
-for i in &#39;/[0-9]{4}/[0-1][0-9]/[0-9]{2}$&#39; \  
-         &#39;/[0-9]{4}/[0-1][0-9]$&#39; \  
-         &#39;/[0-9]{4}$&#39;; do  
-    /usr/bin/find ${LOG_DIR} -type d -empty |  
-      egrep -v &#34;${EGREP_FORMAT_DAYS_TO_EXCLUDE}&#34; |  
-      egrep ${i} |  
-      xargs -r -n 200 rmdir  
-done  </code></pre>
+<span style="color:#09f;font-style:italic"># Reap empty dirs in 3 passes, clear empty &#39;day&#39; dirs, then &#39;month&#39;</span>  
+<span style="color:#09f;font-style:italic"># and lastly &#39;year&#39;</span>  
+<span style="color:#069;font-weight:bold">for</span> i in <span style="color:#c30">&#39;/[0-9]{4}/[0-1][0-9]/[0-9]{2}$&#39;</span> <span style="color:#c30;font-weight:bold">\ </span> 
+         <span style="color:#c30">&#39;/[0-9]{4}/[0-1][0-9]$&#39;</span> <span style="color:#c30;font-weight:bold">\ </span> 
+         <span style="color:#c30">&#39;/[0-9]{4}$&#39;</span>; <span style="color:#069;font-weight:bold">do</span>  
+    /usr/bin/find <span style="color:#a00">${</span><span style="color:#033">LOG_DIR</span><span style="color:#a00">}</span> -type d -empty |  
+      egrep -v <span style="color:#c30">&#34;</span><span style="color:#a00">${</span><span style="color:#033">EGREP_FORMAT_DAYS_TO_EXCLUDE</span><span style="color:#a00">}</span><span style="color:#c30">&#34;</span> |  
+      egrep <span style="color:#a00">${</span><span style="color:#033">i</span><span style="color:#a00">}</span> |  
+      xargs -r -n <span style="color:#f60">200</span> rmdir  
+<span style="color:#069;font-weight:bold">done</span>  </code></pre></div>
 <p>其中，EGREP_FORMAT_DAYS_TO_EXCLUDE是为了获取一个通过‘|’字符串联起来的字符串，随后实现对指定路径进行清除。 以上便是对Cloud Foundry中syslog_aggregator的简单分析。</p>
 
 <h2 id="转载请注明出处"><strong>转载请注明出处。</strong></h2>
@@ -357,14 +364,28 @@ done  </code></pre>
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -410,11 +431,13 @@ done  </code></pre>
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -423,6 +446,9 @@ done  </code></pre>
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -433,18 +459,21 @@ done  </code></pre>
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -453,6 +482,10 @@ done  </code></pre>
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -474,8 +507,46 @@ done  </code></pre>
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -500,23 +571,47 @@ done  </code></pre>
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -568,10 +663,6 @@ done  </code></pre>
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -771,14 +862,14 @@ done  </code></pre>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -842,8 +933,9 @@ done  </code></pre>
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

@@ -8,7 +8,7 @@ if ($.cookie('themeLayout')) {
   $('body').addClass($.cookie('themeLayout'))
 }
 
-$(function () {
+$(document).ready(function() {
   sliderHomepage()
   sliders()
   fullScreenContainer()
@@ -20,8 +20,26 @@ $(function () {
   counters()
   demo()
   contactFormAjax()
+  initCarousel()
 })
 
+function initCarousel() {
+  var index2 = 0;/*初始化一个变量 指向下彪*/
+  //点击点
+  $(".tab-btn .btn").click(function () {
+      index2 = $(this).index();//获取点击该元素下彪
+      $(this).addClass("active").siblings().removeClass("active");
+      $(".pic_item").eq(index2).fadeIn().siblings().fadeOut();
+  });
+
+  var time2 = setInterval(function () {
+    index2 ++;
+    if (index2 >4){ index2 = 0;}
+    $(".pic_item").eq(index2).fadeIn().siblings().fadeOut();
+    $(".tab-btn .btn").eq(index2).addClass("active").siblings().removeClass("active");
+
+  },4000); //定时器 重复
+}
 // Ajax contact
 function contactFormAjax () {
   var form = $('.contact-form-ajax')
@@ -246,6 +264,8 @@ function fullScreenContainer () {
 function utils () {
   /* tooltips */
   $('[data-toggle="tooltip"]').tooltip()
+
+  console.log($('[data-toogle="tooltip"'))
 
   /* click on the box activates the radio */
   $('#checkout').on('click', '.box.shipping-method, .box.payment-method', function () {

@@ -1,15 +1,19 @@
----
-title: Google Kubernetes设计文档之Pod篇
-tags:
-  - Kubernetes
-id: '331'
-date: 2014-12-19 10:46:07
++++
+id = "331"
 
----
+title = "Google Kubernetes设计文档之Pod篇"
+description = "Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。"
+tags = ["Kubernetes"]
+date = "2014-12-19 10:46:07"
+author = "叶瑞浩"
+banner = "img/blogs/331/k8s.jpg"
+categories = ["Kubernetes"]
 
-摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。
++++
 
-<!-- more -->
+摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 
+
+在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。
 
 **1.什么是Pod**
 ============
@@ -53,4 +57,4 @@ Pod的设计并不是为了运行同一个应用的多个实例。
 
 为什么不直接将相近的容器集中管理呢？那种方法虽然提供了集中管理的功能，但却没有Pod所拥有的大部分便利之处，如不提供资源共享和进程间通信，无法保证容器同时开始和结束，不能简化管理等。 
 
-**原文链接：**[Pods](https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/pods.md)（编译/叶瑞浩 审校/孙宏亮、张磊） \[simple-author-box\]
+**原文链接：**[Pods](https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/pods.md)（编译/叶瑞浩 审校/孙宏亮、张磊）

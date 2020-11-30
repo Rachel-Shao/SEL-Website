@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <title>Service Mesh深度学习系列（一）| istio pilot-agent模块分析</title>
-  <meta name="author" content="浙大SEL实验室" />
+  <meta name="author" content="丁轶群" />
   
   
   
@@ -16,7 +16,7 @@
   <meta name="keywords" content="istio, Kubernetes, micro service, service mesh">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="如istio官方关于pilot模块的架构图所示，istio中的agent模块负责的工作包括：1.生成envoy的配置；2.启动envoy；3.监控并管理envoy的运行状况，比如envoy出错时pilot-agent负责重启envoy，或者envoy配置变更后reload envoy。而envoy负责接受所有发往该pod的网络流量，分发所有从pod中发出的网络流量。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -67,11 +72,10 @@
   
     
     
-    
+    <meta property="article:section" content="service mesh">
     <meta property="article:tag" content="istio">
     <meta property="article:tag" content="Kubernetes">
     <meta property="article:tag" content="micro service">
-    <meta property="article:tag" content="service mesh">
     <meta property="article:tag" content="service mesh">
     
     
@@ -84,9 +88,9 @@
   
   <meta name="twitter:title" content="Service Mesh深度学习系列（一）| istio pilot-agent模块分析">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="如istio官方关于pilot模块的架构图所示，istio中的agent模块负责的工作包括：1.生成envoy的配置；2.启动envoy；3.监控并管理envoy的运行状况，比如envoy出错时pilot-agent负责重启envoy，或者envoy配置变更后reload envoy。而envoy负责接受所有发往该pod的网络流量，分发所有从pod中发出的网络流量。">
   
-
+  
 </head>
 
 
@@ -205,8 +209,8 @@
 
                         
                           <p class="text-muted text-uppercase mb-small text-right">
-                            
-                            
+                             <a href="#">丁轶群</a>
+                             | 
                             2018-06-26
                           </p>
                         
@@ -218,7 +222,10 @@
 
 <h2 id="pilot总体架构">pilot总体架构</h2>
 
-<p><img src="https://camo.githubusercontent.com/919e2e3cd8e4267a00035b813df53902864a3388/68747470733a2f2f63646e2e7261776769742e636f6d2f697374696f2f70696c6f742f6d61737465722f646f632f70696c6f742e737667" alt="istio architecture" /> 上面是<a href="https://github.com/istio/old_pilot_repo/blob/master/doc/design.md">官方关于pilot的架构图</a>，因为是old_pilot_repo目录下，可能与最新架构有出入，仅供参考。所谓的pilot包含两个组件：pilot-agent和pilot-discovery。图里的agent对应pilot-agent二进制，proxy对应envoy二进制，它们两个在同一个容器中，discovery service对应pilot-discovery二进制，在另外一个跟应用分开部署的单独的deployment中。</p>
+<p><center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605799556/sel/68747470733a2f2f63646e2e7261776769742e636f6d2f697374696f2f70696c6f742f6d61737465722f646f632f70696c6f742e737667_iurgnw.svg" alt="istio architecture" style="zoom:40%;" />
+</center>
+上面是<a href="https://github.com/istio/old_pilot_repo/blob/master/doc/design.md">官方关于pilot的架构图</a>，因为是old_pilot_repo目录下，可能与最新架构有出入，仅供参考。所谓的pilot包含两个组件：pilot-agent和pilot-discovery。图里的agent对应pilot-agent二进制，proxy对应envoy二进制，它们两个在同一个容器中，discovery service对应pilot-discovery二进制，在另外一个跟应用分开部署的单独的deployment中。</p>
 
 <ol>
 <li><strong>discovery service</strong>：从Kubernetes apiserver list/watch <code>service</code>、<code>endpoint</code>、<code>pod</code>、<code>node</code>等资源信息，监听istio控制平面配置信息（Kubernetes CRD），翻译为envoy可以直接理解的配置格式。</li>
@@ -228,16 +235,17 @@
 </ol>
 
 <blockquote>
-<p>对于模块的命名方法，本文采用模块对应源码main.go所在包名称命名法。其他istio分析文章有其他命名方法。比如pilot-agent也被称为istio pilot，因为它在Kubernetes上的部署形式为一个叫istio-pilot的deployment。</p>
+<p><em>对于模块的命名方法，本文采用模块对应源码main.go所在包名称命名法。其他istio分析文章有其他命名方法。比如pilot-agent也被称为istio pilot，因为它在Kubernetes上的部署形式为一个叫istio-pilot的deployment。</em></p>
 </blockquote>
 
 <h2 id="pilot-agent的部署存在形式">pilot-agent的部署存在形式</h2>
 
-<p>pilot-agent在pilot/cmd包下面，是个单独的二进制。<br />
-pilot-agent跟envoy打包在同一个docker镜像里，镜像由Dockerfile.proxy定义。Makefile（include了tools/istio-docker.mk）把这个dockerfile build成了proxy镜像，也就是Kubernetes里跟应用放在同一个pod下的sidecar。非Kubernetes情况下需要把pilot-agent、envoy跟应用部署在一起，这个就有点“污染”应用的意思了。</p>
+<p>pilot-agent在pilot/cmd包下面，是个单独的二进制。</p>
+
+<p>pilot-agent跟envoy打包在同一个docker镜像里，镜像由Dockerfile.proxy定义。Makefile（include了tools/istio-docker.mk）把这个dockerfile build成了proxy镜像，也就是Kubernetes里跟应用放在同一个pod下的sidecar。非Kubernetes情况下需要把pilot-agent、envoy跟应用部署在一起，这个就有点“污染”应用的意思了。</p>
 
 <blockquote>
-<p>支持v2 api的sidecar镜像为proxyv2，镜像中包含的pilot-agent和envoy二进制文件和proxy镜像中的完全相同，只是使用不同的envoy bootstrap配置（envoy_bootstrap_tmpl.json vs. envoy_bootstrap_v2.json）。但是当前仅完成部分开发工作，makefile中build proxyv2镜像的target默认也不会自动执行。</p>
+<p><em>支持v2 api的sidecar镜像为proxyv2，镜像中包含的pilot-agent和envoy二进制文件和proxy镜像中的完全相同，只是使用不同的envoy bootstrap配置（envoy_bootstrap_tmpl.json vs. envoy_bootstrap_v2.json）。但是当前仅完成部分开发工作，makefile中build proxyv2镜像的target默认也不会自动执行。</em></p>
 </blockquote>
 
 <h2 id="pilot-agent功能简述">pilot-agent功能简述</h2>
@@ -253,7 +261,7 @@ pilot-agent跟envoy打包在同一个docker镜像里，镜像由Dockerfile.proxy
 <p>而envoy负责接受所有发往该pod的网络流量，分发所有从pod中发出的网络流量。</p>
 
 <blockquote>
-<p>根据代码中的sidecar-injector-configmap.yaml（用来配置如何自动化地inject istio sidecar），inject过程中，除了proxy镜像作为sidecar之外，每个pod还会带上initcontainer（Kubernetes中的概念），具体镜像为proxy_init。proxy_init通过注入iptables规则改写流入流出pod的网络流量规则，使得流入流出pod的网络流量重定向到proxy的监听端口，而应用对此无感。</p>
+<p><em>根据代码中的sidecar-injector-configmap.yaml（用来配置如何自动化地inject istio sidecar），inject过程中，除了proxy镜像作为sidecar之外，每个pod还会带上initcontainer（Kubernetes中的概念），具体镜像为proxy_init。proxy_init通过注入iptables规则改写流入流出pod的网络流量规则，使得流入流出pod的网络流量重定向到proxy的监听端口，而应用对此无感。</em></p>
 </blockquote>
 
 <h2 id="pilot-agent主要功能分析之一-生成envoy配置">pilot-agent主要功能分析之一：生成envoy配置</h2>
@@ -264,83 +272,61 @@ pilot-agent跟envoy打包在同一个docker镜像里，镜像由Dockerfile.proxy
 
 <p>pilot-agent的role类型为model包下的Proxy，决定了pilot-agent的“角色”，role包括以下属性：</p>
 
-<ol>
-<li>Type<br />
-pilot-agent有三种运行模式。根据role.Type变量定义，类型为model.Proxy，定义在context.go文件中，允许的3个取值范围为：
+<ul>
+<li><strong>Type</strong><br /></li>
+</ul>
 
-<ol>
-<li>&ldquo;sidecar&rdquo;<br />
-默认值，可以在启动pilot-agent，调用proxy命令时覆盖。Sidecar type is used for sidecar proxies in the application containers</li>
-<li>&ldquo;ingress&rdquo;<br />
-Ingress type is used for cluster ingress proxies</li>
-<li>&ldquo;router&rdquo;<br />
-Router type is used for standalone proxies acting as L7/L4 routers</li>
-</ol></li>
+<p>pilot-agent有三种运行模式。根据role.Type变量定义，类型为model.Proxy，定义在context.go文件中，允许的3个取值范围为</p>
 
-<li><p>IPAddress, ID, Domain<br />
-它们都可以通过pilot-agent的proxy命令的对应flag来提供用户自定义值。如果用户不提供，则会在proxy命令执行时，根据istio连接的服务注册中心（service registry）类型的不同，会采用不同的配置方式。agent当前使用的服务注册中心类型保存在pilot-agent的registry变量里，在init函数中初始化为默认值Kubernetes。当前只处理以下三种情况：</p>
+<ul>
+<li><p>&ldquo;sidecar&rdquo;</p>
+
+<p>默认值，可以在启动pilot-agent，调用proxy命令时覆盖。Sidecar type is used for sidecar proxies in the application containers</p></li>
+
+<li><p>&ldquo;ingress&rdquo;</p>
+
+<p>Ingress type is used for cluster ingress proxies</p></li>
+
+<li><p>&ldquo;router&rdquo;</p>
+
+<p>Router type is used for standalone proxies acting as L7/L4 routers</p></li>
+
+<li><p><strong>IPAddress, ID, Domain</strong></p></li>
+</ul>
+
+<p>它们都可以通过pilot-agent的proxy命令的对应flag来提供用户自定义值。如果用户不提供，则会在proxy命令执行时，根据istio连接的服务注册中心（service registry）类型的不同，会采用不同的配置方式。agent当前使用的服务注册中心类型保存在pilot-agent的registry变量里，在init函数中初始化为默认值Kubernetes。当前只处理以下三种情况：</p>
 
 <ol>
 <li>Kubernetes</li>
 <li>Consul</li>
-<li>Other
-<br /></li>
+<li>Other</li>
 </ol>
 
-<p>registry值</p>
-
-<p>role.IPAddress</p>
-
-<p>rule.ID</p>
-
-<p>role.Domain</p>
-
-<p>Kubernetes</p>
-
-<p>环境变量INSTANCE_IP</p>
-
-<p>环境变量POD_NAME.环境变量POD_NAMESPACE</p>
-
-<p>环境变量POD_NAMESPACE.svc.cluster.local</p>
-
-<p>Consul</p>
-
-<p>private IP,默认127.0.0.1</p>
-
-<p>IPAddress.service.consul</p>
-
-<p>service.consul</p>
-
-<p>Other</p>
-
-<p>private IP,默认127.0.0.1</p>
-
-<p>IPAddress</p>
-
-<p>“”</p></li>
-</ol>
+<p><center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605844452/sel/451605844375_.pic_x2bajk.png"  style="zoom:100%;" />
+</center></p>
 
 <p>其中的private ip通过<code>WaitForPrivateNetwork</code>函数获得。</p>
 
 <blockquote>
-<p>istio需要从服务注册中心（service registry）获取微服务注册的情况。当前版本中istio可以对接的服务注册中心类型包括：</p>
+<p><em>istio需要从服务注册中心（service registry）获取微服务注册的情况。当前版本中istio可以对接的服务注册中心类型包括：</em></p>
 
 <ol>
-<li>&ldquo;Mock&rdquo;<br />
-MockRegistry is a service registry that contains 2 hard-coded test services</li>
-<li>&ldquo;Config&rdquo;<br />
-ConfigRegistry is a service registry that listens for service entries in a backing ConfigStore</li>
-<li>&ldquo;Kubernetes&rdquo;<br />
-KubernetesRegistry is a service registry backed by k8s API server</li>
-<li>&ldquo;Consul&rdquo;<br />
-ConsulRegistry is a service registry backed by Consul</li>
-<li>&ldquo;Eureka&rdquo;<br />
-EurekaRegistry is a service registry backed by Eureka</li>
-<li>&ldquo;CloudFoundry&rdquo;<br />
-CloudFoundryRegistry is a service registry backed by Cloud Foundry.</li>
+<li><em>“Mock”</em>
+<em>MockRegistry is a service registry that contains 2 hard-coded test services</em></li>
+<li><em>“Config”</em>
+<em>ConfigRegistry is a service registry that listens for service entries in a backing ConfigStore</em></li>
+<li><em>“Kubernetes”</em>
+<em>KubernetesRegistry is a service registry backed by k8s API server</em></li>
+<li><em>“Consul”</em>
+<em>ConsulRegistry is a service registry backed by Consul</em></li>
+<li><em>“Eureka”</em>
+<em>EurekaRegistry is a service registry backed by Eureka</em></li>
+<li><em>“CloudFoundry”</em>
+<em>CloudFoundryRegistry is a service registry backed by Cloud Foundry.</em></li>
 </ol>
 
-<p><a href="https://istio.io/about/intro/">官方about文档</a>说当前支持Kubernetes, Nomad with Consul，未来准备支持 Cloud Foundry,Apache Mesos。另外根据<a href="https://istio.io/about/feature-stages/">官方的feature成熟度文档</a>，当前只有Kubernetes的集成达到stable程度，Consul，Eureka和Cloud Foundry都还是alpha水平</p>
+<p><em><a href="https://istio.io/about/intro/">官方about文档</a>说当前支持Kubernetes, Nomad with Consul，未来准备支持 Cloud Foundry,Apache Mesos。另外根据<a href="https://istio.io/about/feature-stages/">官方的feature成熟度文档</a>，当前只有Kubernetes的集成达到stable程度，Consul，Eureka和Cloud Foundry都还是alpha水平</em></p>
 </blockquote>
 
 <h3 id="envoy配置文件及命令行参数">envoy配置文件及命令行参数</h3>
@@ -348,18 +334,17 @@ CloudFoundryRegistry is a service registry backed by Cloud Foundry.</li>
 <p>agent.waitForExit会调用envoy.Run方法启动envoy进程，为此需要获取envoy二进制所在文件系统路径和flag两部分信息：</p>
 
 <ol>
-<li>envoy二进制所在文件系统路径：evony.Run通过proxy.config.BinaryPath变量得知envoy二进制所在的文件系统位置，proxy就是envoy对象，config就是pilot-agent的main方法在一开始初始化的proxyConfig对象。里面的BinaryPath在pilot-agent的init方法中被初始化，初始值来自pilot/pkg/model/context.go的DefaultProxyConfig函数，值是<code>/usr/local/bin/envoy</code></li>
+<li><p>envoy二进制所在文件系统路径：evony.Run通过proxy.config.BinaryPath变量得知envoy二进制所在的文件系统位置，proxy就是envoy对象，config就是pilot-agent的main方法在一开始初始化的proxyConfig对象。里面的BinaryPath在pilot-agent的init方法中被初始化，初始值来自pilot/pkg/model/context.go的DefaultProxyConfig函数，值是<code>/usr/local/bin/envoy</code></p></li>
 
 <li><p>envoy的启动flag形式为下面的startupArgs，包含一个<code>-c</code>指定的配置文件，还有一些flag。除了下面代码片段中展示的这些flag，还可以根据启动agent时的flag，再加上<code>--concurrency</code>, <code>--service-zone</code>等flag。</p>
-
-<p>startupArgs := []string{&ldquo;-c&rdquo;, fname,
-        &ldquo;&ndash;restart-epoch&rdquo;, fmt.Sprint(epoch),
-        &ldquo;&ndash;drain-time-s&rdquo;, fmt.Sprint(int(convertDuration(proxy.config.DrainDuration) / time.Second)),
-        &ldquo;&ndash;parent-shutdown-time-s&rdquo;, fmt.Sprint(int(convertDuration(proxy.config.ParentShutdownDuration) / time.Second)),
-        &ldquo;&ndash;service-cluster&rdquo;, proxy.config.ServiceCluster,
-        &ldquo;&ndash;service-node&rdquo;, proxy.node,
-        &ldquo;&ndash;max-obj-name-len&rdquo;, fmt.Sprint(MaxClusterNameLength),
-    }</p></li>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">startupArgs <span style="color:#555">:=</span> []<span style="color:#078;font-weight:bold">string</span>{<span style="color:#c30">&#34;-c&#34;</span>, fname,
+        <span style="color:#c30">&#34;--restart-epoch&#34;</span>, fmt.<span style="color:#c0f">Sprint</span>(epoch),
+        <span style="color:#c30">&#34;--drain-time-s&#34;</span>, fmt.<span style="color:#c0f">Sprint</span>(<span style="color:#366">int</span>(<span style="color:#c0f">convertDuration</span>(proxy.config.DrainDuration) <span style="color:#555">/</span> time.Second)),
+        <span style="color:#c30">&#34;--parent-shutdown-time-s&#34;</span>, fmt.<span style="color:#c0f">Sprint</span>(<span style="color:#366">int</span>(<span style="color:#c0f">convertDuration</span>(proxy.config.ParentShutdownDuration) <span style="color:#555">/</span> time.Second)),
+        <span style="color:#c30">&#34;--service-cluster&#34;</span>, proxy.config.ServiceCluster,
+        <span style="color:#c30">&#34;--service-node&#34;</span>, proxy.node,
+        <span style="color:#c30">&#34;--max-obj-name-len&#34;</span>, fmt.<span style="color:#c0f">Sprint</span>(MaxClusterNameLength), 
+    }</code></pre></div></li>
 </ol>
 
 <p>关于以上启动envoy的flag及其值的解释：</p>
@@ -381,11 +366,11 @@ CloudFoundryRegistry is a service registry backed by Cloud Foundry.</li>
 </ol>
 
 <p>举个例子的话，根据参考文献中某人实验，第一个envoy进程启动参数为：</p>
-<pre><code>-c /etc/istio/proxy/envoy-rev0.json --restart-epoch 0
---drain-time-s 45 --parent-shutdown-time-s 60
---service-cluster sleep 
---service-node sidecar~172.00.00.000~sleep-55b5877479-rwcct.default~default.svc.cluster.local 
---max-obj-name-len 189 -l info --v2-config-only</code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#555">-</span>c <span style="color:#555">/</span>etc<span style="color:#555">/</span>istio<span style="color:#555">/</span>proxy<span style="color:#555">/</span>envoy<span style="color:#555">-</span>rev0.json <span style="color:#555">--</span>restart<span style="color:#555">-</span>epoch <span style="color:#f60">0</span>
+<span style="color:#555">--</span>drain<span style="color:#555">-</span>time<span style="color:#555">-</span>s <span style="color:#f60">45</span> <span style="color:#555">--</span>parent<span style="color:#555">-</span>shutdown<span style="color:#555">-</span>time<span style="color:#555">-</span>s <span style="color:#f60">60</span>
+<span style="color:#555">--</span>service<span style="color:#555">-</span>cluster sleep 
+<span style="color:#555">--</span>service<span style="color:#555">-</span>node sidecar<span style="color:#a00;background-color:#faa">~</span><span style="color:#f60">172.00.00.000</span><span style="color:#a00;background-color:#faa">~</span>sleep<span style="color:#555">-</span><span style="color:#f60">55</span>b5877479<span style="color:#555">-</span>rwcct.<span style="color:#069;font-weight:bold">default</span><span style="color:#a00;background-color:#faa">~</span><span style="color:#069;font-weight:bold">default</span>.svc.cluster.local 
+<span style="color:#555">--</span>max<span style="color:#555">-</span>obj<span style="color:#555">-</span>name<span style="color:#555">-</span>len <span style="color:#f60">189</span> <span style="color:#555">-</span>l info <span style="color:#555">--</span>v2<span style="color:#555">-</span>config<span style="color:#555">-</span>only</code></pre></div>
 <p>如果使用第三种方式自动生成默认的envoy配置文件，如上面例子中的envoy-rev0.json，那么pilot-agent的proxy命令处理流程中前半部分整理的大量envoy参数中的一部分会被写入这个配置文件中，比如<code>DiscoveryAddress</code>，<code>DiscoveryRefreshDelay</code>，<code>ZipkinAddress</code>，<code>StatsdUdpAddress</code>。</p>
 
 <h3 id="证书文件">证书文件</h3>
@@ -397,22 +382,27 @@ CloudFoundryRegistry is a service registry backed by Cloud Foundry.</li>
 <p>为envoy生成好配置文件之后，pilot-agent还要负责envoy进程的监控与管理工作，包括：</p>
 
 <ol>
-<li>创建envoy对象，结构体包含proxyConfig（前面步骤中为envoy生成的配置信息），role.serviceNode(似乎是agent唯一标识符），loglevel和pilotsan（service account name）</li>
-<li>创建agent对象，包含前面创建的envoy结构体，一个epochs的map，3个channel：configCh, statusCh和abortCh</li>
-<li>创建watcher并启动协程执行watcher.Run<br />
-watcher.Run首先启动协程执行agent.Run（<strong>agent的主循环</strong>），然后调用watcher.Reload(kickstart the proxy with partial state (in case there are no notifications coming))，<strong>Reload会调用agent.ScheduleConfigUpdate，并最终导致第一个envoy进程启动，见后面分析</strong>。然后监控各种证书，如果证书文件发生变化，则调用ScheduleConfigUpdate来reload envoy，然后watcher.retrieveAZ(TODO)</li>
-<li>创建context，调用cmd.WaitSignal以等待进程接收到SIGINT, SIGTERM信号，接受到信号之后通过context通知agent，agent接到通知后调用terminate来kill所有envoy进程，并退出agent进程</li>
+<li><p>创建envoy对象，结构体包含proxyConfig（前面步骤中为envoy生成的配置信息），role.serviceNode(似乎是agent唯一标识符），loglevel和pilotsan（service account name）</p></li>
+
+<li><p>创建agent对象，包含前面创建的envoy结构体，一个epochs的map，3个channel：configCh, statusCh和abortCh</p></li>
+
+<li><p>创建watcher并启动协程执行watcher.Run</p>
+
+<p>watcher.Run首先启动协程执行agent.Run（<strong>agent的主循环</strong>），然后调用watcher.Reload(kickstart the proxy with partial state (in case there are no notifications coming))，<strong>Reload会调用agent.ScheduleConfigUpdate，并最终导致第一个envoy进程启动，见后面分析</strong>。然后监控各种证书，如果证书文件发生变化，则调用ScheduleConfigUpdate来reload envoy，然后watcher.retrieveAZ(TODO)</p></li>
+
+<li><p>创建context，调用cmd.WaitSignal以等待进程接收到SIGINT, SIGTERM信号，接受到信号之后通过context通知agent，agent接到通知后调用terminate来kill所有envoy进程，并退出agent进程</p></li>
 </ol>
 
 <blockquote>
-<p>上面的pilot/pkg/proxy包下的agent中采用Proxy接口管理pilot/pkg/proxy/envoy包下的envoy对象，从理论上来说也可以把envoy换成其他proxy实现管理。不过此事还牵扯discovery service等其他组件。</p>
+<p><em>上面的pilot/pkg/proxy包下的agent中采用Proxy接口管理pilot/pkg/proxy/envoy包下的envoy对象，从理论上来说也可以把envoy换成其他proxy实现管理。不过此事还牵扯discovery service等其他组件。</em></p>
 </blockquote>
 
 <p>上面第三步启动协程执行的agent.Run是agent的主循环，会一直通过监听以下几个channel来监控envoy进程：</p>
 
 <ol>
-<li>agent的configCh:如果配置文件，主要是那些证书文件发生变化，则调用agent.reconcile来reload envoy</li>
-<li>statusCh:这里的status其实就是exitStatus，处理envoy进程退出状态，处理流程如下：
+<li><p>agent的configCh:如果配置文件，主要是那些证书文件发生变化，则调用agent.reconcile来reload envoy</p></li>
+
+<li><p>statusCh:这里的status其实就是exitStatus，处理envoy进程退出状态，处理流程如下：</p>
 
 <ol>
 <li>把刚刚退出的epoch从agent维护的两个map里删了，后面会讲到这两个map。把agent.currentConfig置为agent.latestEpoch对应的config，因为agent在reconcile的过程中只有在desired config和current config不同的时候才会创建新的epoch，所以这里把currentConfig设置为上一个config之后，必然会造成下一次reconcile的时候current与desired不等，从而创建新的envoy</li>
@@ -420,49 +410,61 @@ watcher.Run首先启动协程执行agent.Run（<strong>agent的主循环</strong
 <li>如果exitStatus.err并非errAbort，则log记录epoch异常退出，并给所有当前正在运行的其他epoch进程对应的abortCh发出errAbort，所以后续其他envoy进程也都会被kill掉，并全都往agent.statusCh写入exitStatus，当前的流程会全部再为每个epoch进程走一遍</li>
 <li>如果是其他exitStatus（什么时候会进入这个否则情况？比如exitStatus.err是wait epoch进程得到的正常退出信息，即nil），则log记录envoy正常退出</li>
 <li>调用envoy.Cleanup，删除刚刚退出的envoy进程对应的配置文件，文件路径由ConfigPath和epoch序列号串起来得到</li>
-<li>如果envoy进程为非正常退出，也就是除了“否则”描述的case之外的2中情况，则试图恢复刚刚退出的envoy进程（可见前面向所有其他进程发出errAbort消息的意思，并非永远停止envoy，pilot-agent接下来马上就会重启被abort的envoy）。恢复方式并不是当场启动新的envoy，而是schedule一次reconcile。如果启动不成功，可以在得到exitStatus之后再次schedule（每次间隔时间为 $2^n*200$ 毫秒 ），最多重试10次（budget），如果10次都失败，则退出整个golang的进程（os.Exit）,由容器环境决定如何恢复pilot-agent。所谓的schedule，就是往agent.retry.restart写入一个预定的未来的某个时刻，并扣掉一次budget（budget在每次reconcile之前都会被重置为10），然后就结束当前循环。在下一个开始的时候，会检测agent.retry.restart，如果非空，则计算距离reconcile的时间delay</li>
+<li>如果envoy进程为非正常退出，也就是除了“否则”描述的case之外的2中情况，则试图恢复刚刚退出的envoy进程（可见前面向所有其他进程发出errAbort消息的意思，并非永远停止envoy，pilot-agent接下来马上就会重启被abort的envoy）。恢复方式并不是当场启动新的envoy，而是schedule一次reconcile。如果启动不成功，可以在得到exitStatus之后再次schedule（每次间隔时间为 $2^n*200$ 毫秒 ），最多重试10次（budget），如果10次都失败，则退出整个golang的进程（os.Exit）,由容器环境决定如何恢复pilot-agent。所谓的schedule，就是往agent.retry.restart写入一个预定的未来的某个时刻，并扣掉一次budget（budget在每次reconcile之前都会被重置为10），然后就结束当前循环。在下一个开始的时候，会检测agent.retry.restart，如果非空，则计算距离reconcile的时间delay
+<br /></li>
 </ol></li>
-<li>time.After（delay）:监听是否到时间执行schedule的reconcile了，到了则执行agent.reconcile</li>
-<li>ctx.Done:执行agent.terminate<br />
-terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消息，造成他们全体被kill（Cmd.Kill），然后agent自己return，退出当前的循环，这样就不会有人再去重启envoy</li>
+
+<li><p>time.After（delay）:监听是否到时间执行schedule的reconcile了，到了则执行agent.reconcile</p></li>
+
+<li><p>ctx.Done:执行agent.terminate</p>
+
+<p>terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消息，造成他们全体被kill（Cmd.Kill），然后agent自己return，退出当前的循环，这样就不会有人再去重启envoy</p></li>
 </ol>
 
 <h2 id="pilot-agent主要功能分析之三-envoy启动流程">pilot-agent主要功能分析之三：envoy启动流程</h2>
 
 <ol>
-<li>前面pilot-agent proxy命令处理流程中，watcher.Run会调用agent.ScheduleConfigUpdate，这个方法只是简单地往configCh里写一个新的配置，所谓的配置是所有certificate算出的sha256哈希值</li>
-<li>configCh的这个事件会被agent.Run监控到，然后调用agent.reconcile。</li>
-<li>reconcile方法会<strong>启动协程执行agent.waitForExit从而启动envoy</strong><br />
-看reconcile方法名就知道是用来保证desired config和current config保持一致的。reconcile首先会检查desired config和current config是否一致，如果是的话，就不用启动新的envoy进程。否则就启动新的envoy。在启动过程中，agent维护两个map来管理一堆envoy进程，在调用waitForExit之前会将desiredConfig赋值给currentConfig，表示reconcile工作完成：
+<li><p>前面pilot-agent proxy命令处理流程中，watcher.Run会调用agent.ScheduleConfigUpdate，这个方法只是简单地往configCh里写一个新的配置，所谓的配置是所有certificate算出的sha256哈希值</p></li>
+
+<li><p>configCh的这个事件会被agent.Run监控到，然后调用agent.reconcile。</p></li>
+
+<li><p>reconcile方法会<strong>启动协程执行agent.waitForExit从而启动envoy</strong></p>
+
+<p>看reconcile方法名就知道是用来保证desired config和current config保持一致的。reconcile首先会检查desired config和current config是否一致，如果是的话，就不用启动新的envoy进程。否则就启动新的envoy。在启动过程中，agent维护两个map来管理一堆envoy进程，在调用waitForExit之前会将desiredConfig赋值给currentConfig，表示reconcile工作完成：</p>
 
 <ol>
 <li>第一个map是agent.epochs，它将整数epoch序列号映射到agent.desiredConfig。这个序列号从0开始计数，也就是第一个envoy进程对应epoch 0，后面递增1。但是如果有envoy进程异常退出，它对应的序列号并非是最大的情况下，这个空出来的序列号不会在计算下一个新的epoch序列号时（agent.latestEpoch方法负责计算当前最大的epoch序列号）被优先使用。所以从理论上来说序列号是会被用光的</li>
-<li>第二个map是agent.abortCh，它将epoch序列号映射到与envoy进程一一对应的abortCh。abortCh使得pilot-agent可以在必要时通知对应的envoy进程推出。这个channel初始化buffer大小为常量10，至于为什么需要10个buffer，代码中的注释说buffer aborts to prevent blocking on failing proxy，也就是万一想要abort某个envoy进程，但是envoy卡住了abort不了，有buffer的话，就不会使得管理进程也卡住。</li>
+<li>第二个map是agent.abortCh，它将epoch序列号映射到与envoy进程一一对应的abortCh。abortCh使得pilot-agent可以在必要时通知对应的envoy进程推出。这个channel初始化buffer大小为常量10，至于为什么需要10个buffer，代码中的注释说buffer aborts to prevent blocking on failing proxy，也就是万一想要abort某个envoy进程，但是envoy卡住了abort不了，有buffer的话，就不会使得管理进程也卡住。
+<br /></li>
 </ol></li>
-<li>waitForExit会调用agent.proxy.Run，也就是<strong>envoy的Run方法</strong>，<strong>这里会启动envoy</strong>。envoy的Run方法流程如下：
+
+<li><p>waitForExit会调用agent.proxy.Run，也就是<strong>envoy的Run方法</strong>，<strong>这里会启动envoy</strong>。envoy的Run方法流程如下：</p>
 
 <ol>
-<li>调用exec.Cmd.Start方法(启动了一个新进程)，并将envoy的标准输出和标准错误置为os.Stdout和Stderr。</li>
-<li>持续监听前面说到由agent创建并管理的，并与envoy进程一一对应的abortCh，如果收到abort事件通知，则会调用Cmd.Process.Kill方法杀掉envoy，如果杀进程的过程中发生错误，也会把错误信息log一下，然后把从abortCh读到的事件返回给waitForExit。waitForExit会把该错误再封装一下，加入epoch序列号，然后作为envoy的exitStatus，并写入到agent.statusCh里</li>
-<li>启动一个新的协程来wait刚刚启动的envoy进程，并把得到的结果写到done channel里，envoy结构体的Run方法也会监听done channel，并把得到的结果返回给waitForExit<br />
-这里我们总结启动envoy过程中的协程关系：agent是全局唯一一个agent协程，它在启动每个envoy的时候，会再启动一个waitForExit协程，waitForExit会调用Command.Start启动另外一个进程运行envoy，然后waitForExit负责监听abortCh和envoy进程执行结果。</li>
-</ol></li>
+<li><p>调用exec.Cmd.Start方法(启动了一个新进程)，并将envoy的标准输出和标准错误置为os.Stdout和Stderr。</p></li>
+
+<li><p>持续监听前面说到由agent创建并管理的，并与envoy进程一一对应的abortCh，如果收到abort事件通知，则会调用Cmd.Process.Kill方法杀掉envoy，如果杀进程的过程中发生错误，也会把错误信息log一下，然后把从abortCh读到的事件返回给waitForExit。waitForExit会把该错误再封装一下，加入epoch序列号，然后作为envoy的exitStatus，并写入到agent.statusCh里</p></li>
+
+<li><p>启动一个新的协程来wait刚刚启动的envoy进程，并把得到的结果写到done channel里，envoy结构体的Run方法也会监听done channel，并把得到的结果返回给waitForExit</p></li>
+</ol>
+
+<p>这里我们总结启动envoy过程中的协程关系：agent是全局唯一一个agent协程，它在启动每个envoy的时候，会再启动一个waitForExit协程，waitForExit会调用Command.Start启动另外一个进程运行envoy，然后waitForExit负责监听abortCh和envoy进程执行结果。</p></li>
 </ol>
 
 <blockquote>
-<p>Cmd.Wait只能用于等待由Cmd.Start启动的进程,如果进程结束并范围值为0，则返回nil，如果返回其他值则返回ExitError，也可能在其他情况下返回IO错误等，Wait会释放Cmd所占用的所有资源</p>
+<p><em>Cmd.Wait只能用于等待由Cmd.Start启动的进程,如果进程结束并范围值为0，则返回nil，如果返回其他值则返回ExitError，也可能在其他情况下返回IO错误等，Wait会释放Cmd所占用的所有资源</em></p>
 </blockquote>
 
 <p>每次配置发生变化，都会调用agent.reconcile，也就会启动新的envoy，这样envoy越来越多，老的envoy进程怎么办？pilot-agent代码的注释里已经解释了这问题，原来pilot-agent不用关闭老的envoy，同一台机器上的多个envoy进程会通过unix domain socket互相通讯，即使不同envoy进程运行在不同容器里，也一样能够通讯。而借助这种通讯机制，可以自动实现新envoy进程替换之前的老进程，也就是所谓的envoy hot restart。</p>
 
 <blockquote>
-<p>代码注释原文：Hot restarts are performed by launching a new proxy process with a strictly incremented restart epoch. It is up to the proxy to ensure that older epochs gracefully shutdown and carry over all the necessary state to the latest epoch. The agent does not terminate older epochs.</p>
+<p><em>代码注释原文：Hot restarts are performed by launching a new proxy process with a strictly incremented restart epoch. It is up to the proxy to ensure that older epochs gracefully shutdown and carry over all the necessary state to the latest epoch. The agent does not terminate older epochs.</em></p>
 </blockquote>
 
 <p>而为了触发这种hot restart的机制，让新envoy进程替换之前所有的envoy进程，新启动的envoy进程的epoch序列号必须比之前所有envoy进程的最大epoch序列号大1</p>
 
 <blockquote>
-<p>代码注释原文：The restart protocol matches Envoy semantics for restart epochs: to successfully launch a new Envoy process that will replace the running Envoy processes, the restart epoch of the new process must be exactly 1 greater than the highest restart epoch of the currently running Envoy processes.</p>
+<p><em>代码注释原文：The restart protocol matches Envoy semantics for restart epochs: to successfully launch a new Envoy process that will replace the running Envoy processes, the restart epoch of the new process must be exactly 1 greater than the highest restart epoch of the currently running Envoy processes.</em></p>
 </blockquote>
 
 <h2 id="参考文献">参考文献</h2>
@@ -472,22 +474,34 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
 <li><a href="https://segmentfault.com/a/1190000015171622">istio源码分析——pilot-agent如何管理envoy生命周期</a></li>
 </ol>
 
-<p>[simple-author-box]</p>
-
                         </div>
                         
                         
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -533,11 +547,13 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -546,6 +562,9 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -556,18 +575,21 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -576,6 +598,10 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -597,8 +623,46 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -623,23 +687,47 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -691,10 +779,6 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -894,14 +978,14 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -965,8 +1049,9 @@ terminate方法比较简单，向所有的envoy进程的abortCh发出errAbort消
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

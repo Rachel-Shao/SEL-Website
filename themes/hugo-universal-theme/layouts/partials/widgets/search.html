@@ -31,11 +31,13 @@
                     }
             // search
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       // tip
@@ -44,6 +46,9 @@
                   
                       // clear
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -54,18 +59,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      // console.log(resp)
                       items = resp.getElementsByTagName("item");
                       // search
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -74,6 +82,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      // process head
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     // add
@@ -95,8 +107,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    // function addItem(title, link, time, mark) {
+                    //   image = "img/banner.jpg";
+                    //   document.getElementById("search-tip").style.display = "none";
+                    //   tmpl = "<section class = \"post\">" +
+                    //   "<div class = \"row\">" +
+                    //     "<div class = \"col-md-3\">" +
+                    //       "<div class = \"image\">" +
+                    //         "<a href = \"" + link + "\">" +  
+                    //           "<img src = " + image + " class = \"img-responsice\" alt=\"\">" +
+                    //     "</a></div></div>" +
+                    //     "<article class=\"post\" style=\"border-bottom: 1px solid #e6e6e6;\" >" +
+                    //       "<header class=\"post-header\">" +
+                    //         "<h1 class=\"post-title\"><a class=\"post-link\" href=\"" + link + "\" target=\"_blank\">" + title + "</a></h1>" +
+                    //         "<div class=\"post-meta\">" +
+                    //         " <span class=\"post-time\">" + time + "</span>" +
+                    //         "</div>" +
+                    //         " </header>" +
+                    //         "<div class=\"post-content\">" +
+                    //         "<div class=\"post-summary\">" + mark + "</div>" +
+                    //         "<div class=\"read-more\">" +
+                    //         "<a href=" + link + " class=\"read-more-link\" target=\"_blank\">阅读更多</a>" +
+                    //         "</div>" +
+                    //       " </div>" +
+                    //     "</article>" +
+                    //   "</div>" +
+                    //   "</section>"
+                    //   div = document.createElement("div")
+                    //   div.innerHTML = tmpl;
+                    //   var el = document.getElementById('blog-listing-medium');
+                    //   if (el == null) {
+                    //     el = document.getElementById("blog-post")
+                    //   }
+                    //   el.appendChild(div)
+                    // }
 
         </script>
         <!-- </form> -->

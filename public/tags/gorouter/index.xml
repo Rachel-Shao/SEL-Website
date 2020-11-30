@@ -17,7 +17,7 @@
       <pubDate>Fri, 21 Nov 2014 13:04:13 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/11/21/cloud-foundry%E4%B8%ADgorouter%E5%AF%B9stickysession%E7%9A%84%E6%94%AF%E6%8C%81/</guid>
-      <description>本文即分析Cloud Foundry中gorouter关于StickySession的实现方式。 该部分内容需要对gorouter有一定的了解，可以参见笔者之前的博文：Cloud Foundry中gorouter源码分析 关于StickySession的信息，gorouter所做的工作，主要分为两个部分：如何给HTTP请求添加StickySession、如何通过StickySession辨别应用的具体实例。</description>
+      <description>前言 Cloud Foundry作为业界出众的PaaS平台，在应用的可扩展性方面做得非常优秀。</description>
     </item>
     
     <item>

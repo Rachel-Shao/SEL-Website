@@ -17,7 +17,7 @@
       <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/</guid>
-      <description>kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。 SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.</description>
+      <description>kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。</description>
     </item>
     
   </channel>

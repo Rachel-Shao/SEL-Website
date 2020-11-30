@@ -17,7 +17,7 @@
       <pubDate>Thu, 10 May 2018 10:16:40 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/05/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3docker%E5%AE%B9%E5%99%A8%E5%BC%95%E6%93%8Erunc%E6%89%A7%E8%A1%8C%E6%A1%86%E6%9E%B6/</guid>
-      <description>深入理解Docker容器引擎runC执行框架 1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。 Docker就是基于runC创建的，简单地说，runC是Docker中最为核心的部分，容器的创建，运行，销毁等等操作最终都将通过调用runC完成。下面我们将演示如何使用runC，以最精简的方式创建并运行一个容器。</description>
+      <description>1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。</description>
     </item>
     
     <item>

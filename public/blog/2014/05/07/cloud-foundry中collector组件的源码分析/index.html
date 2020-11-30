@@ -16,7 +16,7 @@
   <meta name="keywords" content="collector, cloudfoundry">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。 本文从collector的功能出发，主要讲述以上两个功能的源码实现。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -81,9 +86,9 @@
   
   <meta name="twitter:title" content="Cloud Foundry中collector组件的源码分析">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。 本文从collector的功能出发，主要讲述以上两个功能的源码实现。">
   
-
+  
 </head>
 
 
@@ -209,204 +214,245 @@
                         
 
                         <div id="post-content">
-                          <p>在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。 本文从collector的功能出发，主要讲述以上两个功能的源码实现。</p>
+                          <p>在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。</p>
 
-<p>发现注册组件 在Cloud Foundry中，每个组件在启动的时候后会以一个component的形式向Cloud Foundry注册，同时也会作为一个组件，向NATS发布一些启动信息。 首先以DEA为例，讲述该组件register与向NATS publish信息的实现。首先看以下/dea/lib/dea/agent.rb中register的代码： [plain] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>VCAP::Component.register(:type =&gt; &#39;DEA&#39;,  
-                   :host =&gt; @local_ip,  
-                   :index =&gt; @config[&#39;index&#39;],  
-                   :config =&gt; @config,  
-                   :port =&gt; status_config[&#39;port&#39;],  
-                   :user =&gt; status_config[&#39;user&#39;],  
-                   :password =&gt; status_config[&#39;password&#39;])  </code></pre>
-<p>这段代码表示，DEA通过VCAP::Component对象中的register方法，实现注册。以下进入vcap-common/lib/vcap/component.rb中的register方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def register(opts)  
-  uuid = VCAP.secure_uuid  
-  ……  
-  auth = [opts[:user] || VCAP.secure_uuid, opts[:password] || VCAP.secure_uuid]  
-  @discover = {  
-    :type =&gt; type,  
-    ……  
-    :credentials =&gt; auth,  
-    :start =&gt; Time.now  
+<p>本文从collector的功能出发，主要讲述以上两个功能的源码实现。</p>
+
+<p>发现注册组件在Cloud Foundry中，每个组件在启动的时候后会以一个component的形式向Cloud Foundry注册，同时也会作为一个组件，向NATS发布一些启动信息。 首先以DEA为例，讲述该组件register与向NATS publish信息的实现。</p>
+
+<p>首先看以下/dea/lib/dea/agent.rb中register的代码： [plain] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#360">VCAP</span><span style="color:#555">::</span><span style="color:#360">Component</span><span style="color:#555">.</span>register(<span style="color:#fc3">:type</span> <span style="color:#555">=&gt;</span> <span style="color:#c30">&#39;DEA&#39;</span>,  
+                   <span style="color:#fc3">:host</span> <span style="color:#555">=&gt;</span> @local_ip,  
+                   <span style="color:#fc3">:index</span> <span style="color:#555">=&gt;</span> @config<span style="color:#555">[</span><span style="color:#c30">&#39;index&#39;</span><span style="color:#555">]</span>,  
+                   <span style="color:#fc3">:config</span> <span style="color:#555">=&gt;</span> @config,  
+                   <span style="color:#fc3">:port</span> <span style="color:#555">=&gt;</span> status_config<span style="color:#555">[</span><span style="color:#c30">&#39;port&#39;</span><span style="color:#555">]</span>,  
+                   <span style="color:#fc3">:user</span> <span style="color:#555">=&gt;</span> status_config<span style="color:#555">[</span><span style="color:#c30">&#39;user&#39;</span><span style="color:#555">]</span>,  
+                   <span style="color:#fc3">:password</span> <span style="color:#555">=&gt;</span> status_config<span style="color:#555">[</span><span style="color:#c30">&#39;password&#39;</span><span style="color:#555">]</span>)  </code></pre></div>
+<p>这段代码表示，DEA通过VCAP::Component对象中的register方法，实现注册。以下进入vcap-common/lib/vcap/component.rb中的register方法：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">register</span>(opts)  
+  uuid <span style="color:#555">=</span> <span style="color:#360">VCAP</span><span style="color:#555">.</span>secure_uuid  
+  <span style="color:#555">...</span> 
+  auth <span style="color:#555">=</span> <span style="color:#555">[</span>opts<span style="color:#555">[</span><span style="color:#fc3">:user</span><span style="color:#555">]</span> <span style="color:#555">||</span> <span style="color:#360">VCAP</span><span style="color:#555">.</span>secure_uuid, opts<span style="color:#555">[</span><span style="color:#fc3">:password</span><span style="color:#555">]</span> <span style="color:#555">||</span> <span style="color:#360">VCAP</span><span style="color:#555">.</span>secure_uuid<span style="color:#555">]</span>  
+  @discover <span style="color:#555">=</span> {  
+    <span style="color:#fc3">:type</span> <span style="color:#555">=&gt;</span> type,  
+    <span style="color:#555">...</span>
+    <span style="color:#fc3">:credentials</span> <span style="color:#555">=&gt;</span> auth,  
+    <span style="color:#fc3">:start</span> <span style="color:#555">=&gt;</span> <span style="color:#360">Time</span><span style="color:#555">.</span>now  
   }  
-  ……  
-  @healthz = &#34;ok\n&#34;.freeze  
+  <span style="color:#555">...</span> 
+  @healthz <span style="color:#555">=</span> <span style="color:#c30">&#34;ok</span><span style="color:#c30;font-weight:bold">\n</span><span style="color:#c30">&#34;</span><span style="color:#555">.</span>freeze  
   start_http_server(host, port, auth, logger)  
-  nats.subscribe(&#39;vcap.component.discover&#39;) do |msg, reply|  
+  nats<span style="color:#555">.</span>subscribe(<span style="color:#c30">&#39;vcap.component.discover&#39;</span>) <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>msg, reply<span style="color:#555">|</span>  
     update_discover_uptime  
-    nats.publish(reply, @discover.to_json)  
-  end  
-  nats.publish(&#39;vcap.component.announce&#39;, @discover.to_json)  
+    nats<span style="color:#555">.</span>publish(reply, @discover<span style="color:#555">.</span>to_json)  
+  <span style="color:#069;font-weight:bold">end</span>  
+  nats<span style="color:#555">.</span>publish(<span style="color:#c30">&#39;vcap.component.announce&#39;</span>, @discover<span style="color:#555">.</span>to_json)  
   @discover  
-end  </code></pre>
-<p>可见，在实现register方法的时候，首先通过传递进来的opts参数，构建一个@discover实例变量，订阅了一个vcap.component.discover的消息，又发布了一个vcap.component.announce的消息。关于collector的发现注册组件的功能中，直接关联的register方法中发布的主题，因为collector通过订阅这个主题的消息，将json化的@discover变量取到，然后做相应的处理。 [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>    def send_data(data)  
-      @adapters.each do |adapter|  
-        begin  
-          adapter.send_data(data)  
-        rescue =&gt; e  
-          Config.logger.warn(&#34;collector.historian-adapter.sending-data-error&#34;, adapter: adapter.class.name, error: e, backtrace: e.backtrace)  
-        end  
-      end  
-    end  </code></pre>
-<p>之前已经涉及了collector组件订阅消息的话题，现在进入collector/lib/collector.rb中，实现消息的订阅还有其他的消息请求： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>@nats = NATS.connect(:uri =&gt; Config.nats_uri) do  
-  Config.logger.info(&#34;collector.nats.connected&#34;)  
-  # Send initially to discover what&#39;s already running  
-  @nats.subscribe(ANNOUNCE_SUBJECT) { |message| process_component_discovery(message) }  
-  @inbox = NATS.create_inbox  
-  @nats.subscribe(@inbox) { |message| process_component_discovery(message) }  
-  @nats.publish(DISCOVER_SUBJECT, &#34;&#34;, @inbox)  
-  @nats.subscribe(COLLECTOR_PING) { |message| process_nats_ping(message.to_f) }  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>可见，在实现register方法的时候，首先通过传递进来的opts参数，构建一个@discover实例变量，订阅了一个vcap.component.discover的消息，又发布了一个vcap.component.announce的消息。关于collector的发现注册组件的功能中，直接关联的register方法中发布的主题，因为collector通过订阅这个主题的消息，将json化的@discover变量取到，然后做相应的处理。</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">    <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">send_data</span>(data)  
+      @adapters<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>adapter<span style="color:#555">|</span>  
+        <span style="color:#069;font-weight:bold">begin</span>  
+          adapter<span style="color:#555">.</span>send_data(data)  
+        <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#555">=&gt;</span> e  
+          <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>warn(<span style="color:#c30">&#34;collector.historian-adapter.sending-data-error&#34;</span>, <span style="color:#fc3">adapter</span>: adapter<span style="color:#555">.</span>class<span style="color:#555">.</span>name, <span style="color:#fc3">error</span>: e, <span style="color:#fc3">backtrace</span>: e<span style="color:#555">.</span>backtrace)  
+        <span style="color:#069;font-weight:bold">end</span>  
+      <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>之前已经涉及了collector组件订阅消息的话题，现在进入collector/lib/collector.rb中，实现消息的订阅还有其他的消息请求：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">@nats <span style="color:#555">=</span> <span style="color:#360">NATS</span><span style="color:#555">.</span>connect(<span style="color:#fc3">:uri</span> <span style="color:#555">=&gt;</span> <span style="color:#360">Config</span><span style="color:#555">.</span>nats_uri) <span style="color:#069;font-weight:bold">do</span>  
+  <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>info(<span style="color:#c30">&#34;collector.nats.connected&#34;</span>)  
+  <span style="color:#09f;font-style:italic"># Send initially to discover what&#39;s already running  </span>
+  @nats<span style="color:#555">.</span>subscribe(<span style="color:#360">ANNOUNCE_SUBJECT</span>) { <span style="color:#555">|</span>message<span style="color:#555">|</span> process_component_discovery(message) }  
+  @inbox <span style="color:#555">=</span> <span style="color:#360">NATS</span><span style="color:#555">.</span>create_inbox  
+  @nats<span style="color:#555">.</span>subscribe(@inbox) { <span style="color:#555">|</span>message<span style="color:#555">|</span> process_component_discovery(message) }  
+  @nats<span style="color:#555">.</span>publish(<span style="color:#360">DISCOVER_SUBJECT</span>, <span style="color:#c30">&#34;&#34;</span>, @inbox)  
+  @nats<span style="color:#555">.</span>subscribe(<span style="color:#360">COLLECTOR_PING</span>) { <span style="color:#555">|</span>message<span style="color:#555">|</span> process_nats_ping(message<span style="color:#555">.</span>to_f) }  
   setup_timers  
-end  </code></pre>
-<p>当collector接收到由ANNOUNCE_SUBJECT主题发布过来的message（也就是json化的@discover变量）后，将该内容传递后方法process_component_discovery。以下是process_component_discovery方法的代码实现： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def process_component_discovery(message)  
-  message = Yajl::Parser.parse(message)  
-  if message[&#34;index&#34;]  
-    Config.logger.debug1(&#34;collector.component.discovered&#34;, type: message[&#34;type&#34;], index: message[&#34;index&#34;], host: message[&#34;host&#34;])  
-    instances = (@components[message[&#34;type&#34;]] ||= {})  
-    instances[message[&#34;host&#34;].split(&#34;:&#34;).first] = {  
-      :host =&gt; message[&#34;host&#34;],  
-      :index =&gt; message[&#34;index&#34;],  
-      :credentials =&gt; message[&#34;credentials&#34;],  
-      :timestamp =&gt; Time.now.to_i  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>当collector接收到由ANNOUNCE_SUBJECT主题发布过来的message（也就是json化的@discover变量）后，将该内容传递后方法process_component_discovery。以下是process_component_discovery方法的代码实现：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">process_component_discovery</span>(message)  
+  message <span style="color:#555">=</span> <span style="color:#360">Yajl</span><span style="color:#555">::</span><span style="color:#360">Parser</span><span style="color:#555">.</span>parse(message)  
+  <span style="color:#069;font-weight:bold">if</span> message<span style="color:#555">[</span><span style="color:#c30">&#34;index&#34;</span><span style="color:#555">]</span>  
+    <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>debug1(<span style="color:#c30">&#34;collector.component.discovered&#34;</span>, <span style="color:#fc3">type</span>: message<span style="color:#555">[</span><span style="color:#c30">&#34;type&#34;</span><span style="color:#555">]</span>, <span style="color:#fc3">index</span>: message<span style="color:#555">[</span><span style="color:#c30">&#34;index&#34;</span><span style="color:#555">]</span>, <span style="color:#fc3">host</span>: message<span style="color:#555">[</span><span style="color:#c30">&#34;host&#34;</span><span style="color:#555">]</span>)  
+    instances <span style="color:#555">=</span> (@components<span style="color:#555">[</span>message<span style="color:#555">[</span><span style="color:#c30">&#34;type&#34;</span><span style="color:#555">]]</span> <span style="color:#555">||=</span> {})  
+    instances<span style="color:#555">[</span>message<span style="color:#555">[</span><span style="color:#c30">&#34;host&#34;</span><span style="color:#555">].</span>split(<span style="color:#c30">&#34;:&#34;</span>)<span style="color:#555">.</span>first<span style="color:#555">]</span> <span style="color:#555">=</span> {  
+      <span style="color:#fc3">:host</span> <span style="color:#555">=&gt;</span> message<span style="color:#555">[</span><span style="color:#c30">&#34;host&#34;</span><span style="color:#555">]</span>,  
+      <span style="color:#fc3">:index</span> <span style="color:#555">=&gt;</span> message<span style="color:#555">[</span><span style="color:#c30">&#34;index&#34;</span><span style="color:#555">]</span>,  
+      <span style="color:#fc3">:credentials</span> <span style="color:#555">=&gt;</span> message<span style="color:#555">[</span><span style="color:#c30">&#34;credentials&#34;</span><span style="color:#555">]</span>,  
+      <span style="color:#fc3">:timestamp</span> <span style="color:#555">=&gt;</span> <span style="color:#360">Time</span><span style="color:#555">.</span>now<span style="color:#555">.</span>to_i  
     }  
-  end  
-rescue =&gt; e  
-  Config.logger.warn(&#34;collector.component.discovery-failure&#34;, error: e.message, backtrace: e.backtrace)  
-end  </code></pre>
-<p>在该方法中，首先对message对象进行解析，若新产生的message对象中index键，则继续往下的操作：在@components对象中，视情况添加一个instance。如贴出的代码，其中两行标注为红色的代码需要理解：首先如果@components[message[&ldquo;type&rdquo;]]不为空，则将@components[message[&ldquo;type&rdquo;]]赋值给instances；若为空的话，那就把@components[message[&ldquo;type&rdquo;]]赋为空，如果之前不存在message[&ldquo;type&rdquo;]这个键的话，那就先创建一个这样的键，然后再赋为空,最后还是将@components[message[&ldquo;type&rdquo;]]赋值给instances。在这里需要注意的是，instances与@components[message[&ldquo;type&rdquo;]]是的首地址是相同的，所以之后给instances添加键值对的时候也是向@components[message[&ldquo;type&rdquo;]]中添加键值对。需要提一下的是：一个instances代表Cloud Foundry中同一种类型的组件，instances中的每一个instance代表该类型组件的一个实际节点，而且可以发现instance是通过IP来设立键的，因此可见，在Cloud Foundry中相同类型的组件是不能或者不建议共存在同一个节点上或者共享一张网卡的。 一般情况下，当Cloud Foundry的组件启动是发布vcap.component.announce消息后，很快在@components中就会有相应的信息，这样的话，也就是实现了“发现注册组件”的功能。 <strong>获取组件varz和healthz并发送</strong> 在以上功能中，collector只是实现了发现组件，只包括组件的ip：port信息，index，crdentials等信息，并不带有其他关于组件运行时产生的数据信息。而通过varz和healthz访问那些注册的组件，正好可以做到这些收集varz和healthz信息。 实现的过程中，首先是使用添加周期性定时器：EM.add_periodic_timer(Config.varz_interval) { fetch_varz }，在一定的周期内，执行fetch_varz方法，以下进入fetch_varz方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def fetch_varz  
-  fetch(:varz) do |http, job, index|  
-    ……  
-  end  
-end  </code></pre>
-<p>进入fetch_varz方法后，首先是调用fetch方法，参数为：varz，可见通过fetch方法会返回三个值，并作为之后的代码块的参数传入。现在进入fetch方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def fetch(type)  
-  @components.each do |job, instances|  
-    instances.each do |index, instance|  
-      next unless credentials_ok?(job, instance)  
-      host = instance[:host]  
-      uri = &#34;http://#{host}/#{type}&#34;  
-      http = EventMachine::HttpRequest.new(uri).get(  
-        :head =&gt; authorization_headers(instance))  
-     ……  
-      http.callback do  
-        begin  
-          yield http, job, instance[:index]  
-        rescue =&gt; e  
-          ……  
-        end  
-      end  
-    end  
-  end  
-end  </code></pre>
-<p>在发现组件该模块中，以及讲解过@components变量的含义，该方法中首先遍历@components中的每一类组件，再遍历每一类组件中的每一个组件实例，对并该组件实例发起获取varz的请求。实现请求的过程中，首先查阅instance的credentails是否具有，然后组件请求的uri，然后通过EventMachine发送http请求，当请求响应返回的时候，通过yield关键字，将http，job以及instance[:index]返回给fetch_varz方法的代码块，fetch_varz代码块的实现如下： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>varz = Yajl::Parser.parse(http.response)  
-now = Time.now.to_i  
+  <span style="color:#069;font-weight:bold">end</span>  
+<span style="color:#069;font-weight:bold">rescue</span> <span style="color:#555">=&gt;</span> e  
+  <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>warn(<span style="color:#c30">&#34;collector.component.discovery-failure&#34;</span>, <span style="color:#fc3">error</span>: e<span style="color:#555">.</span>message, <span style="color:#fc3">backtrace</span>: e<span style="color:#555">.</span>backtrace)  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>在该方法中，首先对message对象进行解析，若新产生的message对象中index键，则继续往下的操作：在@components对象中，视情况添加一个instance。如贴出的代码，其中两行标注为红色的代码需要理解：首先如果@components[message[&ldquo;type&rdquo;]]不为空，则将@components[message[&ldquo;type&rdquo;]]赋值给instances；若为空的话，那就把@components[message[&ldquo;type&rdquo;]]赋为空，如果之前不存在message[&ldquo;type&rdquo;]这个键的话，那就先创建一个这样的键，然后再赋为空,最后还是将@components[message[&ldquo;type&rdquo;]]赋值给instances。在这里需要注意的是，instances与@components[message[&ldquo;type&rdquo;]]是的首地址是相同的，所以之后给instances添加键值对的时候也是向@components[message[&ldquo;type&rdquo;]]中添加键值对。需要提一下的是：一个instances代表Cloud Foundry中同一种类型的组件，instances中的每一个instance代表该类型组件的一个实际节点，而且可以发现instance是通过IP来设立键的，因此可见，在Cloud Foundry中相同类型的组件是不能或者不建议共存在同一个节点上或者共享一张网卡的。</p>
 
-handler = Handler.handler(@historian, job)  
-Config.logger.debug(&#34;collector.job.process&#34;, job: job, handler: handler)  
-ctx = HandlerContext.new(index, now, varz)  
-handler.do_process(ctx)  </code></pre>
-<p>首先对http.response进行解析，然后通过Handler类的handler方法创建一个handler对象，其中需要注意的是调用了一个@historian对象，在Collector对象的初始化中，有代码：@historian = ::Collector::Historian.build。 @historian对象的功能是创建了网络连接，具体代码实现在/collector/lib/collector/historian.rb中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>class Historian  
-    def self.build  
-      historian = new  
-      if Config.tsdb  
-        historian.add_adapter(Historian::Tsdb.new(Config.tsdb_host, Config.tsdb_port))  
-        Config.logger.info(&#34;collector.historian-adapter.added-opentsdb&#34;, host: Config.tsdb_host)  
-      end  
-      if Config.aws_cloud_watch  
-        historian.add_adapter(Historian::CloudWatch.new(Config.aws_access_key_id, Config.aws_secret_access_key))  
-        Config.logger.info(&#34;collector.historian-adapter.added-cloudwatch&#34;)  
-      end  
-      if Config.datadog  
-        historian.add_adapter(Historian::DataDog.new(Config.datadog_api_key, HTTParty))  
-        Config.logger.info(&#34;collector.historian-adapter.added-datadog&#34;)  
-      end  
+<p>一般情况下，当Cloud Foundry的组件启动是发布vcap.component.announce消息后，很快在@components中就会有相应的信息，这样的话，也就是实现了“发现注册组件”的功能。</p>
+
+<p><strong>获取组件varz和healthz并发送</strong></p>
+
+<p>在以上功能中，collector只是实现了发现组件，只包括组件的ip：port信息，index，crdentials等信息，并不带有其他关于组件运行时产生的数据信息。而通过varz和healthz访问那些注册的组件，正好可以做到这些收集varz和healthz信息。</p>
+
+<p>实现的过程中，首先是使用添加周期性定时器：EM.add_periodic_timer(Config.varz_interval) { fetch_varz }，在一定的周期内，执行fetch_varz方法，以下进入fetch_varz方法：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">fetch_varz</span>  
+  fetch(<span style="color:#fc3">:varz</span>) <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>http, job, index<span style="color:#555">|</span>  
+    <span style="color:#555">...</span> 
+  <span style="color:#069;font-weight:bold">end</span>  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>进入fetch_varz方法后，首先是调用fetch方法，参数为：varz，可见通过fetch方法会返回三个值，并作为之后的代码块的参数传入。现在进入fetch方法：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">fetch</span>(type)  
+  @components<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>job, instances<span style="color:#555">|</span>  
+    instances<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>index, instance<span style="color:#555">|</span>  
+      <span style="color:#069;font-weight:bold">next</span> <span style="color:#069;font-weight:bold">unless</span> credentials_ok?(job, instance)  
+      host <span style="color:#555">=</span> instance<span style="color:#555">[</span><span style="color:#fc3">:host</span><span style="color:#555">]</span>  
+      uri <span style="color:#555">=</span> <span style="color:#c30">&#34;http://</span><span style="color:#a00">#{</span>host<span style="color:#a00">}</span><span style="color:#c30">/</span><span style="color:#a00">#{</span>type<span style="color:#a00">}</span><span style="color:#c30">&#34;</span>  
+      http <span style="color:#555">=</span> <span style="color:#360">EventMachine</span><span style="color:#555">::</span><span style="color:#360">HttpRequest</span><span style="color:#555">.</span>new(uri)<span style="color:#555">.</span>get(  
+        <span style="color:#fc3">:head</span> <span style="color:#555">=&gt;</span> authorization_headers(instance))  
+     <span style="color:#555">...</span>  
+      http<span style="color:#555">.</span>callback <span style="color:#069;font-weight:bold">do</span>  
+        <span style="color:#069;font-weight:bold">begin</span>  
+          <span style="color:#069;font-weight:bold">yield</span> http, job, instance<span style="color:#555">[</span><span style="color:#fc3">:index</span><span style="color:#555">]</span>  
+        <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#555">=&gt;</span> e  
+          <span style="color:#555">...</span>  
+        <span style="color:#069;font-weight:bold">end</span>  
+      <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span>  
+  <span style="color:#069;font-weight:bold">end</span>  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>在发现组件该模块中，以及讲解过@components变量的含义，该方法中首先遍历@components中的每一类组件，再遍历每一类组件中的每一个组件实例，对并该组件实例发起获取varz的请求。实现请求的过程中，首先查阅instance的credentails是否具有，然后组件请求的uri，然后通过EventMachine发送http请求，当请求响应返回的时候，通过yield关键字，将http，job以及instance[:index]返回给fetch_varz方法的代码块，fetch_varz代码块的实现如下：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">varz <span style="color:#555">=</span> <span style="color:#360">Yajl</span><span style="color:#555">::</span><span style="color:#360">Parser</span><span style="color:#555">.</span>parse(http<span style="color:#555">.</span>response)  
+now <span style="color:#555">=</span> <span style="color:#360">Time</span><span style="color:#555">.</span>now<span style="color:#555">.</span>to_i  
+
+handler <span style="color:#555">=</span> <span style="color:#360">Handler</span><span style="color:#555">.</span>handler(@historian, job)  
+<span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>debug(<span style="color:#c30">&#34;collector.job.process&#34;</span>, <span style="color:#fc3">job</span>: job, <span style="color:#fc3">handler</span>: handler)  
+ctx <span style="color:#555">=</span> <span style="color:#360">HandlerContext</span><span style="color:#555">.</span>new(index, now, varz)  
+handler<span style="color:#555">.</span>do_process(ctx)  </code></pre></div>
+<p>首先对http.response进行解析，然后通过Handler类的handler方法创建一个handler对象，其中需要注意的是调用了一个@historian对象，在Collector对象的初始化中，有代码：@historian = ::Collector::Historian.build。 @historian对象的功能是创建了网络连接，具体代码实现在/collector/lib/collector/historian.rb中：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">class</span> <span style="color:#0a8;font-weight:bold">Historian</span>  
+    <span style="color:#069;font-weight:bold">def</span> <span style="color:#0a8;font-weight:bold">self</span><span style="color:#555">.</span><span style="color:#c0f">build</span>  
+      historian <span style="color:#555">=</span> <span style="color:#069">new</span>  
+      <span style="color:#069;font-weight:bold">if</span> <span style="color:#360">Config</span><span style="color:#555">.</span>tsdb  
+        historian<span style="color:#555">.</span>add_adapter(<span style="color:#360">Historian</span><span style="color:#555">::</span><span style="color:#360">Tsdb</span><span style="color:#555">.</span>new(<span style="color:#360">Config</span><span style="color:#555">.</span>tsdb_host, <span style="color:#360">Config</span><span style="color:#555">.</span>tsdb_port))  
+        <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>info(<span style="color:#c30">&#34;collector.historian-adapter.added-opentsdb&#34;</span>, <span style="color:#fc3">host</span>: <span style="color:#360">Config</span><span style="color:#555">.</span>tsdb_host)  
+      <span style="color:#069;font-weight:bold">end</span>  
+      <span style="color:#069;font-weight:bold">if</span> <span style="color:#360">Config</span><span style="color:#555">.</span>aws_cloud_watch  
+        historian<span style="color:#555">.</span>add_adapter(<span style="color:#360">Historian</span><span style="color:#555">::</span><span style="color:#360">CloudWatch</span><span style="color:#555">.</span>new(<span style="color:#360">Config</span><span style="color:#555">.</span>aws_access_key_id, <span style="color:#360">Config</span><span style="color:#555">.</span>aws_secret_access_key))  
+        <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>info(<span style="color:#c30">&#34;collector.historian-adapter.added-cloudwatch&#34;</span>)  
+      <span style="color:#069;font-weight:bold">end</span>  
+      <span style="color:#069;font-weight:bold">if</span> <span style="color:#360">Config</span><span style="color:#555">.</span>datadog  
+        historian<span style="color:#555">.</span>add_adapter(<span style="color:#360">Historian</span><span style="color:#555">::</span><span style="color:#360">DataDog</span><span style="color:#555">.</span>new(<span style="color:#360">Config</span><span style="color:#555">.</span>datadog_api_key, <span style="color:#360">HTTParty</span>))  
+        <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>info(<span style="color:#c30">&#34;collector.historian-adapter.added-datadog&#34;</span>)  
+      <span style="color:#069;font-weight:bold">end</span>  
       historian  
-    end  
-    ……  
-end  </code></pre>
-<p>可以看到@Historian对象的创建是添加了三个网络适配器，或者说是三条连接分别是Tsdb,aws_cloud_watch以及DataDog。当之后需要@historian对象发送数据的时候，也就是通过者三条连接，将数据发送出去，本文马上将涉及这一块。 现在回到fetch_varz中，创建为handler实例对象之后，还创建了一个ctx对象，最后通过handler的do_process方法处理了ctx对象，现在进入collector/lib/collector/handler.rb中，查看do_process方法： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def do_process(context)  
-  varz = context.varz  
-  send_metric(&#34;mem_free_bytes&#34;, varz[&#34;mem_free_bytes&#34;], context) if varz[&#34;mem_free_bytes&#34;]  
-  ……  
-  varz.fetch(&#34;log_counts&#34;, {}).each do |level, count|  
-    next unless %w(fatal error warn).include?(level)  
-    send_metric(&#34;log_count&#34;, count, context, {&#34;level&#34; =&gt; level})  
-  end  
-  process(context)  
-end  </code></pre>
-<p>首先解析出varz对象，并通过send_metric方法将数据发送出去，Handler的子类在执行process方法时，都会调用自己覆写的process方法，以DEA为例，collector/lib/collector/handlers/dea.rb中的process方法为： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def process(context)  
-  send_metric(&#34;can_stage&#34;, context.varz[&#34;can_stage&#34;], context)  
-  ……  
-  state_counts(context).each do |state, count|  
-    send_metric(&#34;dea_registry_#{state.downcase}&#34;, count, context)  
-  end  
+    <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#555">...</span>  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>可以看到@Historian对象的创建是添加了三个网络适配器，或者说是三条连接分别是Tsdb,aws_cloud_watch以及DataDog。当之后需要@historian对象发送数据的时候，也就是通过者三条连接，将数据发送出去，本文马上将涉及这一块。</p>
 
-  metrics = registry_usage(context)  
-  send_metric(&#34;dea_registry_mem_reserved&#34;, metrics[:mem], context)  
-  send_metric(&#34;dea_registry_disk_reserved&#34;, metrics[:disk], context)  
-end  </code></pre>
-<p>可以看到其实在process方法也仅仅是将不同组件各自对应的属性值，通过send_metirc方法发送出去。以下进入collector/lib/collector/handler.rb中的send_metric方法中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>   def send_metric(name, value, context, tags = {})  
-     tags.merge!(additional_tags(context))  
-     ……  
-     @historian.send_data({  
-                              key: name,  
-                              timestamp: context.now,  
-                              value: value,  
-                              tags: tags  
+<p>现在回到fetch_varz中，创建为handler实例对象之后，还创建了一个ctx对象，最后通过handler的do_process方法处理了ctx对象，现在进入collector/lib/collector/handler.rb中，查看do_process方法：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">do_process</span>(context)  
+  varz <span style="color:#555">=</span> context<span style="color:#555">.</span>varz  
+  send_metric(<span style="color:#c30">&#34;mem_free_bytes&#34;</span>, varz<span style="color:#555">[</span><span style="color:#c30">&#34;mem_free_bytes&#34;</span><span style="color:#555">]</span>, context) <span style="color:#069;font-weight:bold">if</span> varz<span style="color:#555">[</span><span style="color:#c30">&#34;mem_free_bytes&#34;</span><span style="color:#555">]</span>  
+  <span style="color:#555">...</span> 
+  varz<span style="color:#555">.</span>fetch(<span style="color:#c30">&#34;log_counts&#34;</span>, {})<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>level, count<span style="color:#555">|</span>  
+    <span style="color:#069;font-weight:bold">next</span> <span style="color:#069;font-weight:bold">unless</span> <span style="color:#c30">%w(fatal error warn)</span><span style="color:#555">.</span>include?(level)  
+    send_metric(<span style="color:#c30">&#34;log_count&#34;</span>, count, context, {<span style="color:#c30">&#34;level&#34;</span> <span style="color:#555">=&gt;</span> level})  
+  <span style="color:#069;font-weight:bold">end</span>  
+  process(context)  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>首先解析出varz对象，并通过send_metric方法将数据发送出去，Handler的子类在执行process方法时，都会调用自己覆写的process方法，以DEA为例，collector/lib/collector/handlers/dea.rb中的process方法为：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">process</span>(context)  
+  send_metric(<span style="color:#c30">&#34;can_stage&#34;</span>, context<span style="color:#555">.</span>varz<span style="color:#555">[</span><span style="color:#c30">&#34;can_stage&#34;</span><span style="color:#555">]</span>, context)  
+  <span style="color:#555">...</span> 
+  state_counts(context)<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>state, count<span style="color:#555">|</span>  
+    send_metric(<span style="color:#c30">&#34;dea_registry_</span><span style="color:#a00">#{</span>state<span style="color:#555">.</span>downcase<span style="color:#a00">}</span><span style="color:#c30">&#34;</span>, count, context)  
+  <span style="color:#069;font-weight:bold">end</span>  
+
+  metrics <span style="color:#555">=</span> registry_usage(context)  
+  send_metric(<span style="color:#c30">&#34;dea_registry_mem_reserved&#34;</span>, metrics<span style="color:#555">[</span><span style="color:#fc3">:mem</span><span style="color:#555">]</span>, context)  
+  send_metric(<span style="color:#c30">&#34;dea_registry_disk_reserved&#34;</span>, metrics<span style="color:#555">[</span><span style="color:#fc3">:disk</span><span style="color:#555">]</span>, context)  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>可以看到其实在process方法也仅仅是将不同组件各自对应的属性值，通过send_metirc方法发送出去。以下进入collector/lib/collector/handler.rb中的send_metric方法中：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">   <span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">send_metric</span>(<span style="color:#366">name</span>, value, context, tags <span style="color:#555">=</span> {})  
+     tags<span style="color:#555">.</span>merge!(additional_tags(context))  
+     <span style="color:#555">...</span>  
+     @historian<span style="color:#555">.</span>send_data({  
+                              <span style="color:#fc3">key</span>: <span style="color:#366">name</span>,  
+                              <span style="color:#fc3">timestamp</span>: context<span style="color:#555">.</span>now,  
+                              <span style="color:#fc3">value</span>: value,  
+                              <span style="color:#fc3">tags</span>: tags  
                           })  
-   end  </code></pre>
-<p>在send_metric代码中，最后通过@historian对象中的send_data实现数据的发送，也就是之前说到的，@historian向@adapter的三条连接中，发送相应的数据，在collector/lib/collector/handler.rb中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def send_data(data)  
-  @adapters.each do |adapter|  
-    begin  
-      adapter.send_data(data)  
-    rescue =&gt; e  
-      Config.logger.warn(&#34;collector.historian-adapter.sending-data-error&#34;, adapter: adapter.class.name, error: e, backtrace: e.backtrace)  
-    end  
-  end  
-end  </code></pre>
-<p>以上讲述从获取varz到发送给TSDB等数据存储模块的流程，关于发送的是什么信息，还没有具体深入。这里以router为例，讲述发送的信息的类型。源码于collector/lib/collector/handlers/router.rb中： [ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
-<pre><code>def process(context)  
-  varz = context.varz  
-  send_metric(&#34;router.total_requests&#34;, varz[&#34;requests&#34;], context)  
-  send_metric(&#34;router.total_routes&#34;, varz[&#34;urls&#34;], context)  
-  send_metric(&#34;router.ms_since_last_registry_update&#34;, varz[&#34;ms_since_last_registry_update&#34;], context)  
-  send_metric(&#34;router.bad_requests&#34;, varz[&#34;bad_requests&#34;], context)  
-  send_metric(&#34;router.bad_gateways&#34;, varz[&#34;bad_gateways&#34;], context)  
-  return unless varz[&#34;tags&#34;]  
-  varz[&#34;tags&#34;].each do |key, values|  
-    values.each do |value, metrics|  
-      if key == &#34;component&#34; &amp;&amp; value.start_with?(&#34;dea-&#34;)  
-        # dea_id looks like &#34;dea-1&#34;, &#34;dea-2&#34;, etc  
-        dea_id = value.split(&#34;-&#34;)[1]  
-        # These are app requests, not requests to the dea. So we change the component to &#34;app&#34;.  
-        tags = {:component =&gt; &#34;app&#34;, :dea_index =&gt; dea_id }  
-      else  
-        tags = {key =&gt; value}  
-      end  
-      send_metric(&#34;router.requests&#34;, metrics[&#34;requests&#34;], context, tags)  
-      send_latency_metric(&#34;router.latency.1m&#34;, metrics[&#34;latency&#34;], context, tags)  
-      [&#34;2xx&#34;, &#34;3xx&#34;, &#34;4xx&#34;, &#34;5xx&#34;, &#34;xxx&#34;].each do |status_code|  
-        send_metric(&#34;router.responses&#34;, metrics[&#34;responses_#{status_code}&#34;], context, tags.merge(&#34;status&#34; =&gt; status_code))  
-      end  
-    end  
-  end  
-end  </code></pre>
+   <span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>在send_metric代码中，最后通过@historian对象中的send_data实现数据的发送，也就是之前说到的，@historian向@adapter的三条连接中，发送相应的数据，在collector/lib/collector/handler.rb中：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">send_data</span>(data)  
+  @adapters<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>adapter<span style="color:#555">|</span>  
+    <span style="color:#069;font-weight:bold">begin</span>  
+      adapter<span style="color:#555">.</span>send_data(data)  
+    <span style="color:#069;font-weight:bold">rescue</span> <span style="color:#555">=&gt;</span> e  
+      <span style="color:#360">Config</span><span style="color:#555">.</span>logger<span style="color:#555">.</span>warn(<span style="color:#c30">&#34;collector.historian-adapter.sending-data-error&#34;</span>, <span style="color:#fc3">adapter</span>: adapter<span style="color:#555">.</span>class<span style="color:#555">.</span>name, <span style="color:#fc3">error</span>: e, <span style="color:#fc3">backtrace</span>: e<span style="color:#555">.</span>backtrace)  
+    <span style="color:#069;font-weight:bold">end</span>  
+  <span style="color:#069;font-weight:bold">end</span>  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
+<p>以上讲述从获取varz到发送给TSDB等数据存储模块的流程，关于发送的是什么信息，还没有具体深入。这里以router为例，讲述发送的信息的类型。源码于collector/lib/collector/handlers/router.rb中：</p>
+
+<p>[ruby] view plaincopy在CODE上查看代码片派生到我的代码片</p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#069;font-weight:bold">def</span> <span style="color:#c0f">process</span>(context)  
+  varz <span style="color:#555">=</span> context<span style="color:#555">.</span>varz  
+  send_metric(<span style="color:#c30">&#34;router.total_requests&#34;</span>, varz<span style="color:#555">[</span><span style="color:#c30">&#34;requests&#34;</span><span style="color:#555">]</span>, context)  
+  send_metric(<span style="color:#c30">&#34;router.total_routes&#34;</span>, varz<span style="color:#555">[</span><span style="color:#c30">&#34;urls&#34;</span><span style="color:#555">]</span>, context)  
+  send_metric(<span style="color:#c30">&#34;router.ms_since_last_registry_update&#34;</span>, varz<span style="color:#555">[</span><span style="color:#c30">&#34;ms_since_last_registry_update&#34;</span><span style="color:#555">]</span>, context)  
+  send_metric(<span style="color:#c30">&#34;router.bad_requests&#34;</span>, varz<span style="color:#555">[</span><span style="color:#c30">&#34;bad_requests&#34;</span><span style="color:#555">]</span>, context)  
+  send_metric(<span style="color:#c30">&#34;router.bad_gateways&#34;</span>, varz<span style="color:#555">[</span><span style="color:#c30">&#34;bad_gateways&#34;</span><span style="color:#555">]</span>, context)  
+  <span style="color:#069;font-weight:bold">return</span> <span style="color:#069;font-weight:bold">unless</span> varz<span style="color:#555">[</span><span style="color:#c30">&#34;tags&#34;</span><span style="color:#555">]</span>  
+  varz<span style="color:#555">[</span><span style="color:#c30">&#34;tags&#34;</span><span style="color:#555">].</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>key, values<span style="color:#555">|</span>  
+    values<span style="color:#555">.</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>value, metrics<span style="color:#555">|</span>  
+      <span style="color:#069;font-weight:bold">if</span> key <span style="color:#555">==</span> <span style="color:#c30">&#34;component&#34;</span> <span style="color:#555">&amp;&amp;</span> value<span style="color:#555">.</span>start_with?(<span style="color:#c30">&#34;dea-&#34;</span>)  
+        <span style="color:#09f;font-style:italic"># dea_id looks like &#34;dea-1&#34;, &#34;dea-2&#34;, etc  </span>
+        dea_id <span style="color:#555">=</span> value<span style="color:#555">.</span>split(<span style="color:#c30">&#34;-&#34;</span>)<span style="color:#555">[</span><span style="color:#f60">1</span><span style="color:#555">]</span>  
+        <span style="color:#09f;font-style:italic"># These are app requests, not requests to the dea. So we change the component to &#34;app&#34;.  </span>
+        tags <span style="color:#555">=</span> {<span style="color:#fc3">:component</span> <span style="color:#555">=&gt;</span> <span style="color:#c30">&#34;app&#34;</span>, <span style="color:#fc3">:dea_index</span> <span style="color:#555">=&gt;</span> dea_id }  
+      <span style="color:#069;font-weight:bold">else</span>  
+        tags <span style="color:#555">=</span> {key <span style="color:#555">=&gt;</span> value}  
+      <span style="color:#069;font-weight:bold">end</span>  
+      send_metric(<span style="color:#c30">&#34;router.requests&#34;</span>, metrics<span style="color:#555">[</span><span style="color:#c30">&#34;requests&#34;</span><span style="color:#555">]</span>, context, tags)  
+      send_latency_metric(<span style="color:#c30">&#34;router.latency.1m&#34;</span>, metrics<span style="color:#555">[</span><span style="color:#c30">&#34;latency&#34;</span><span style="color:#555">]</span>, context, tags)  
+      <span style="color:#555">[</span><span style="color:#c30">&#34;2xx&#34;</span>, <span style="color:#c30">&#34;3xx&#34;</span>, <span style="color:#c30">&#34;4xx&#34;</span>, <span style="color:#c30">&#34;5xx&#34;</span>, <span style="color:#c30">&#34;xxx&#34;</span><span style="color:#555">].</span>each <span style="color:#069;font-weight:bold">do</span> <span style="color:#555">|</span>status_code<span style="color:#555">|</span>  
+        send_metric(<span style="color:#c30">&#34;router.responses&#34;</span>, metrics<span style="color:#555">[</span><span style="color:#c30">&#34;responses_</span><span style="color:#a00">#{</span>status_code<span style="color:#a00">}</span><span style="color:#c30">&#34;</span><span style="color:#555">]</span>, context, tags<span style="color:#555">.</span>merge(<span style="color:#c30">&#34;status&#34;</span> <span style="color:#555">=&gt;</span> status_code))  
+      <span style="color:#069;font-weight:bold">end</span>  
+    <span style="color:#069;font-weight:bold">end</span>  
+  <span style="color:#069;font-weight:bold">end</span>  
+<span style="color:#069;font-weight:bold">end</span>  </code></pre></div>
 <p>可见在接收到router的varz信息之后，collector会从中取出过个键值，并进行发送，比如说router的“total_requests”,&ldquo;total_routes&rdquo;,&ldquo;bad_requests&rdquo;,&ldquo;bad_gateways&rdquo;,&ldquo;router.latency.1m&rdquo;,&ldquo;response_2xxx&rdquo;等。也正式collector通过分析varz并王TSDB发送这样的信息，所以TSDB中可以存有这些信息，最终DashBoard可以通过获取TSDB中的信息，并显示给用户，当然用户可以看到router组件的请求数，请求延迟，请求的响应时间等，也就不足为怪了。</p>
 
-<p>综上代码分析，可以得到框架图如下：</p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603620566/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/86/cf-collector_qkwbsl.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603620566/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/86/cf-collector_qkwbsl.png" alt="2014-05-07-100954_694x454_scrot" /></a></p>
+<p>综上代码分析，可以得到框架图如下：
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616362/sel/cf-collector_m70itx.png" alt="" style="zoom:100%;" />
+</center></p>
 
 <p>以上便是Cloud Foundry中collector组件的功能分析。</p>
 
@@ -416,14 +462,28 @@ end  </code></pre>
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -469,11 +529,13 @@ end  </code></pre>
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -482,6 +544,9 @@ end  </code></pre>
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -492,18 +557,21 @@ end  </code></pre>
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -512,6 +580,10 @@ end  </code></pre>
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -533,8 +605,46 @@ end  </code></pre>
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -559,23 +669,47 @@ end  </code></pre>
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -627,10 +761,6 @@ end  </code></pre>
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -830,14 +960,14 @@ end  </code></pre>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -901,8 +1031,9 @@ end  </code></pre>
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

@@ -6,19 +6,10 @@
     <description>Recent content in Kubernetes on 浙大SEL实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 29 Nov 2018 16:55:37 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 11 Oct 2018 20:11:02 +0000</lastBuildDate>
     
 	<atom:link href="https://Rachel-Shao.github.io/tags/kubernetes/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>kubeedge源码分析系列一：总体架构分析</title>
-      <link>https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/</link>
-      <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
-      
-      <guid>https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/</guid>
-      <description>kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。 SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.</description>
-    </item>
     
     <item>
       <title>knative serving开发环境搭建</title>
@@ -80,7 +71,7 @@
       <pubDate>Wed, 30 Nov 2016 18:12:46 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/</guid>
-      <description>全球企业Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图。  从全球企业的贡献排名来看，排名状况基本变化不大，仍然是Google独占鳌头。令人欣喜的是，浙江大学SEL实验室排名又上升了一位，代码贡献量近24万行，总排名超越CoreOS达到世界第六位。这无疑是振奋人心的事情，这意味着越来越多的年轻学术人员投入Kubernetes开源社区建设，这将近一步提高中国在容器云社区的地位。 Kubernetes是当前容器集群编排3大开源方案中社区活跃度最高的。虽然现在正值入冬，但仍然挡不住 Kubernetes掀起全球关注的热潮。Kubernetes体现了Google对海量容器集群管理的经验和精华，这让Kubernetes在容器云计算框架横行天下的年代游刃有余，已经逐步成为了容器云框架中的佼佼者。从Kubernetes开放、自由、持续发展生态圈兼容的态度能看出，Kubernetes正变得越来越自信。 下图为Kubernetes模块代码贡献分析图：  从图中可知：Kubernetes运维和生态圈组件模块代码贡献直追核心模块kubernetes，排名2-4位的模块分别是Kubernetes生态圈、操作和界面。Kubernetes使用者越来越关心容器云框架落地而非仅仅将其作为空中楼阁远观而止。 Kubernetes在国内发展已经超过了3年的时间，但是遗憾的一点，尽管我们拥有世界上最多的开发人员，但是我们常常对社区没有话语权，国内的用户的需求无法对社区上游形 成影响，导致很多本地化定制的需求无法真正的在社区版本代码得到体现。所以如何让中国的声音出现在社区，是我们所有容器云计算人需要思考的问题。更希望越来越多的国内传统IT巨头能够意识到这个问题，投身于开源的事业中。</description>
+      <description>全球企业Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图。</description>
     </item>
     
     <item>
@@ -89,7 +80,7 @@
       <pubDate>Wed, 30 Nov 2016 17:41:43 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/</guid>
-      <description>自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。</description>
+      <description>介绍 本书根据Docker 1.</description>
     </item>
     
     <item>
@@ -107,7 +98,7 @@
       <pubDate>Sun, 09 Aug 2015 11:25:44 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/</guid>
-      <description>解决什么问题 笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。 于是我们就回到最初的需求，到底需要解决什么问题，第一个问题就是，apiserver启动的时候，使用secure模式，参数应该如何设置，相关的机制又是怎样？ 这一部分的issue很多，如果不从源码来分析的话，就只能黑盒化的去尝试各种参数搭配，费时费力，也不确定是否正确，之前就是这样，这几个issue可以供参考： https://github.</description>
+      <description>解决什么问题 笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。</description>
     </item>
     
     <item>
@@ -120,7 +111,7 @@
     </item>
     
     <item>
-      <title>详解k8s中的&#39;4S&#39;: Services Account, Secret, Security Context and Security in Kubernetes</title>
+      <title>4S: Services Account, Secret, Security Context and Security in Kubernetes</title>
       <link>https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/</link>
       <pubDate>Thu, 30 Jul 2015 13:41:07 +0000</pubDate>
       
@@ -152,7 +143,7 @@
       <pubDate>Fri, 02 Jan 2015 10:56:38 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/</guid>
-      <description>摘要：</description>
+      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文描述了Kubernetes中Volumes的使用情况，Volume是一个能够被容器访问的目录。</description>
     </item>
     
     <item>
@@ -170,7 +161,7 @@
       <pubDate>Tue, 23 Dec 2014 10:20:47 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/23/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E6%9C%8D%E5%8A%A1%E7%AF%87/</guid>
-      <description>摘要：</description>
+      <description>摘要： Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。 Pod是创建、调度和管理的最小部署单位，本文详细介绍这些Pod之间的通信和调度。</description>
     </item>
     
     <item>
@@ -179,7 +170,7 @@
       <pubDate>Fri, 19 Dec 2014 10:46:07 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/19/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bpod%E7%AF%87/</guid>
-      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。</description>
+      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。</description>
     </item>
     
     <item>

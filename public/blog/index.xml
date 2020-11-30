@@ -17,7 +17,7 @@
       <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/</guid>
-      <description>kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。 SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.</description>
+      <description>kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。</description>
     </item>
     
     <item>
@@ -30,12 +30,12 @@
     </item>
     
     <item>
-      <title>从contaienrd pull镜像流程分析oci distribution spec</title>
-      <link>https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/</link>
+      <title>从containerd pull镜像流程分析oci distribution spec</title>
+      <link>https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/</link>
       <pubDate>Sun, 05 Aug 2018 19:03:13 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/</guid>
-      <description>oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。为了了解oci所定义的镜像分发协议，本文分析v1.</description>
+      <guid>https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/</guid>
+      <description>oci组织成立以来已经形成了关于image和runtime的两个spec。2018年4月，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的Docker Registry HTTP API V2为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。</description>
     </item>
     
     <item>
@@ -80,7 +80,7 @@
       <pubDate>Thu, 10 May 2018 10:16:40 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/05/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3docker%E5%AE%B9%E5%99%A8%E5%BC%95%E6%93%8Erunc%E6%89%A7%E8%A1%8C%E6%A1%86%E6%9E%B6/</guid>
-      <description>深入理解Docker容器引擎runC执行框架 1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。 Docker就是基于runC创建的，简单地说，runC是Docker中最为核心的部分，容器的创建，运行，销毁等等操作最终都将通过调用runC完成。下面我们将演示如何使用runC，以最精简的方式创建并运行一个容器。</description>
+      <description>1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。</description>
     </item>
     
     <item>
@@ -98,7 +98,7 @@
       <pubDate>Wed, 30 Nov 2016 18:12:46 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2016/11/30/k8s%E4%BB%A3%E7%A0%81%E8%B4%A1%E7%8C%AE%E6%B5%99%E6%B1%9F%E5%A4%A7%E5%AD%A6%E6%8E%92%E5%90%8D%E7%AC%AC%E5%85%AD/</guid>
-      <description>全球企业Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图。  从全球企业的贡献排名来看，排名状况基本变化不大，仍然是Google独占鳌头。令人欣喜的是，浙江大学SEL实验室排名又上升了一位，代码贡献量近24万行，总排名超越CoreOS达到世界第六位。这无疑是振奋人心的事情，这意味着越来越多的年轻学术人员投入Kubernetes开源社区建设，这将近一步提高中国在容器云社区的地位。 Kubernetes是当前容器集群编排3大开源方案中社区活跃度最高的。虽然现在正值入冬，但仍然挡不住 Kubernetes掀起全球关注的热潮。Kubernetes体现了Google对海量容器集群管理的经验和精华，这让Kubernetes在容器云计算框架横行天下的年代游刃有余，已经逐步成为了容器云框架中的佼佼者。从Kubernetes开放、自由、持续发展生态圈兼容的态度能看出，Kubernetes正变得越来越自信。 下图为Kubernetes模块代码贡献分析图：  从图中可知：Kubernetes运维和生态圈组件模块代码贡献直追核心模块kubernetes，排名2-4位的模块分别是Kubernetes生态圈、操作和界面。Kubernetes使用者越来越关心容器云框架落地而非仅仅将其作为空中楼阁远观而止。 Kubernetes在国内发展已经超过了3年的时间，但是遗憾的一点，尽管我们拥有世界上最多的开发人员，但是我们常常对社区没有话语权，国内的用户的需求无法对社区上游形 成影响，导致很多本地化定制的需求无法真正的在社区版本代码得到体现。所以如何让中国的声音出现在社区，是我们所有容器云计算人需要思考的问题。更希望越来越多的国内传统IT巨头能够意识到这个问题，投身于开源的事业中。</description>
+      <description>全球企业Kubernetes开源社区代码贡献排名：浙江大学SEL实验室排名第六。请看来自Stackalytics|Kubernetes community contribution官方网站截图。</description>
     </item>
     
     <item>
@@ -107,7 +107,7 @@
       <pubDate>Wed, 30 Nov 2016 17:41:43 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/</guid>
-      <description>自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。</description>
+      <description>介绍 本书根据Docker 1.</description>
     </item>
     
     <item>
@@ -134,7 +134,7 @@
       <pubDate>Sun, 09 Aug 2015 11:25:44 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/</guid>
-      <description>解决什么问题 笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。 于是我们就回到最初的需求，到底需要解决什么问题，第一个问题就是，apiserver启动的时候，使用secure模式，参数应该如何设置，相关的机制又是怎样？ 这一部分的issue很多，如果不从源码来分析的话，就只能黑盒化的去尝试各种参数搭配，费时费力，也不确定是否正确，之前就是这样，这几个issue可以供参考： https://github.</description>
+      <description>解决什么问题 笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。</description>
     </item>
     
     <item>
@@ -147,7 +147,7 @@
     </item>
     
     <item>
-      <title>详解k8s中的&#39;4S&#39;: Services Account, Secret, Security Context and Security in Kubernetes</title>
+      <title>4S: Services Account, Secret, Security Context and Security in Kubernetes</title>
       <link>https://Rachel-Shao.github.io/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/</link>
       <pubDate>Thu, 30 Jul 2015 13:41:07 +0000</pubDate>
       
@@ -188,7 +188,7 @@
       <pubDate>Fri, 13 Mar 2015 13:54:32 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/</guid>
-      <description>Docker这么火，喜欢技术的朋友可能也会想，如果要自己实现一个资源隔离的容器，应该从哪些方面下手呢？也许你第一反应可能就是chroot命令，这条命令给用户最直观的感觉就是使用后根目录/的挂载点切换了，即文件系统被隔离了。然后，为了在分布式的环境下进行通信和定位，容器必然需要一个独立的IP、端口、路由等等，自然就想到了网络的隔离。同时，你的容器还需要一个独立的主机名以便在网络中标识自己。想到网络，顺其自然就想到通信，也就想到了进程间通信的隔离。可能你也想到了权限的问题，对用户和用户组的隔离就实现了用户权限的隔离。最后，运行在容器中的应用需要有自己的PID,自然也需要与宿主机中的PID进行隔离。 由此，我们基本上完成了一个容器所需要做的六项隔离，Linux内核中就提供了这六种namespace隔离的系统调用，如下表所示。</description>
+      <description>Docker这么火，喜欢技术的朋友可能也会想，如果要自己实现一个资源隔离的容器，应该从哪些方面下手呢？也许你第一反应可能就是chroot命令，这条命令给用户最直观的感觉就是使用后根目录/的挂载点切换了，即文件系统被隔离了。然后，为了在分布式的环境下进行通信和定位，容器必然需要一个独立的IP、端口、路由等等，自然就想到了网络的隔离。同时，你的容器还需要一个独立的主机名以便在网络中标识自己。想到网络，顺其自然就想到通信，也就想到了进程间通信的隔离。可能你也想到了权限的问题，对用户和用户组的隔离就实现了用户权限的隔离。最后，运行在容器中的应用需要有自己的PID,自然也需要与宿主机中的PID进行隔离。</description>
     </item>
     
     <item>
@@ -224,7 +224,7 @@
       <pubDate>Mon, 26 Jan 2015 10:31:13 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/</guid>
-      <description>本文开始介绍docker container的网络模型。</description>
+      <description>1.</description>
     </item>
     
     <item>
@@ -260,7 +260,7 @@
       <pubDate>Mon, 05 Jan 2015 10:52:28 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/</guid>
-      <description>本文介绍docker daemon的网络模型。</description>
+      <description>摘要: Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。</description>
     </item>
     
     <item>
@@ -269,7 +269,7 @@
       <pubDate>Fri, 02 Jan 2015 10:56:38 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/</guid>
-      <description>摘要：</description>
+      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文描述了Kubernetes中Volumes的使用情况，Volume是一个能够被容器访问的目录。</description>
     </item>
     
     <item>
@@ -287,7 +287,7 @@
       <pubDate>Tue, 23 Dec 2014 10:20:47 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/23/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E6%9C%8D%E5%8A%A1%E7%AF%87/</guid>
-      <description>摘要：</description>
+      <description>摘要： Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。 Pod是创建、调度和管理的最小部署单位，本文详细介绍这些Pod之间的通信和调度。</description>
     </item>
     
     <item>
@@ -296,7 +296,7 @@
       <pubDate>Fri, 19 Dec 2014 10:46:07 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/19/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bpod%E7%AF%87/</guid>
-      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。</description>
+      <description>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。CSDN联合浙江大学SEL实验室共同翻译其设计文档，本文为系列的第二篇：Pod。</description>
     </item>
     
     <item>
@@ -314,7 +314,7 @@
       <pubDate>Tue, 16 Dec 2014 16:15:36 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/16/%E7%8E%A9%E8%BD%ACdocker%E9%95%9C%E5%83%8F/</guid>
-      <description>摘要: Docker是基于Go语言开发，通过分层镜像标准化和内核虚拟化技术，使得应用开发者和运维工程师可以以统一的方式跨平台发布应用。镜像是Docker最核心的技术之一，也是应用发布的标准格式。</description>
+      <description>摘要:Docker是基于Go语言开发，通过分层镜像标准化和内核虚拟化技术，使得应用开发者和运维工程师可以以统一的方式跨平台发布应用。镜像是Docker最核心的技术之一，也是应用发布的标准格式。</description>
     </item>
     
     <item>
@@ -332,7 +332,7 @@
       <pubDate>Tue, 09 Dec 2014 13:00:37 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/</guid>
-      <description>本文为《Docker源码分析》系列的第五篇——Docker Server的创建。</description>
+      <description>1.</description>
     </item>
     
     <item>
@@ -350,7 +350,7 @@
       <pubDate>Tue, 02 Dec 2014 18:52:46 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundrys-%E6%96%B0%E5%AE%B9%E5%99%A8%E6%8A%80%E6%9C%AF-a-garden-overview/</guid>
-      <description>CloudFoundry（CF）中很早就使用了VMware研发的Warden容器来负责应用的资源分配隔离和实例调度。可惜的是，这一本来可以成为业界标准和并掀起一阵革命的容器PaaS技术却因为Pivotal的方针路线上的种种原因被后来居上Docker吊打至今。最近CFer有醒悟的迹象，在Warden上进行了大量改进和升级，本文就来一窥CF新容器技术的一些要点。</description>
+      <description>前言 编译自：</description>
     </item>
     
     <item>
@@ -368,7 +368,7 @@
       <pubDate>Tue, 02 Dec 2014 17:19:09 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundry%E4%B8%ADwarden%E7%9A%84%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%AE%9E%E7%8E%B0/</guid>
-      <description>在Cloud Foundry中，当应用开发者的应用由Cloud Foundry的组件DEA来运行时，应用的资源隔离与控制显得尤为重要，而warden的存在很好得解决了这个问题。 Cloud Foundry中warden项目的首要目的是提供一套简易的接口来管理隔离的环境，这些隔离的环境可以被称为“容器”，他们可以在CPU使用，内存使用，磁盘使用以及设备访问权限方面做相应的限制。</description>
+      <description>在Cloud Foundry中，当应用开发者的应用由Cloud Foundry的组件DEA来运行时，应用的资源隔离与控制显得尤为重要，而warden的存在很好得解决了这个问题。</description>
     </item>
     
     <item>
@@ -377,7 +377,7 @@
       <pubDate>Tue, 02 Dec 2014 16:55:44 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/cloud-foundry%E4%B8%ADdea%E4%B8%8Ewarden%E9%80%9A%E4%BF%A1%E5%AE%8C%E6%88%90%E5%BA%94%E7%94%A8%E7%AB%AF%E5%8F%A3%E7%9B%91%E5%90%AC/</guid>
-      <description>在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。 本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。</description>
+      <description>在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。</description>
     </item>
     
     <item>
@@ -386,7 +386,7 @@
       <pubDate>Tue, 02 Dec 2014 13:03:12 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/</guid>
-      <description>本文为《Docker源码分析》第四篇——Docker Daemon之NewDaemon实现，力求帮助广大Docker爱好者更多得理解Docker 的核心——Docker Daemon的实现。 1.</description>
+      <description>前言 Docker的生态系统日趋完善，开发者群体也在日趋庞大，这让业界对Docker持续抱有极其乐观的态度。然而，对于广大开发者而言，使用Docker这项技术已然不是门槛，享受Docker带来的技术福利已不是困难。如今，如何探寻Docker适应的场景，如何发展Docker周边的技术，以及如何弥合Docker新技术与传统物理机或VM技术的鸿沟，已经占据Docker研究者们的思考与实践。</description>
     </item>
     
     <item>
@@ -395,7 +395,7 @@
       <pubDate>Tue, 02 Dec 2014 13:02:44 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/</guid>
-      <description>本文从源码出发，介绍了Docker Daemon的启动流程，并深入分析启动流程中每一步骤的实现细节。Docker的运行真可谓，载体为daemon，调度管理由engine，任务执行靠job。</description>
+      <description>【摘要】 Docker作为业界备受推崇的轻量级虚拟化容器管理引擎，其强大的后台能力全凭Docker Daemon。本文从源码出发，介绍了Docker Daemon的启动流程，并深入分析启动流程中每一步骤的实现细节。Docker的运行真可谓，载体为daemon，调度管理由engine，任务执行靠job。</description>
     </item>
     
     <item>
@@ -413,7 +413,7 @@
       <pubDate>Tue, 02 Dec 2014 10:19:09 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/</guid>
-      <description>本文对docker的整体架构进行介绍。 1 背景 1.</description>
+      <description>1 背景 1.</description>
     </item>
     
     <item>
@@ -422,7 +422,7 @@
       <pubDate>Fri, 21 Nov 2014 13:04:13 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/11/21/cloud-foundry%E4%B8%ADgorouter%E5%AF%B9stickysession%E7%9A%84%E6%94%AF%E6%8C%81/</guid>
-      <description>本文即分析Cloud Foundry中gorouter关于StickySession的实现方式。 该部分内容需要对gorouter有一定的了解，可以参见笔者之前的博文：Cloud Foundry中gorouter源码分析 关于StickySession的信息，gorouter所做的工作，主要分为两个部分：如何给HTTP请求添加StickySession、如何通过StickySession辨别应用的具体实例。</description>
+      <description>前言 Cloud Foundry作为业界出众的PaaS平台，在应用的可扩展性方面做得非常优秀。</description>
     </item>
     
     <item>
@@ -431,7 +431,7 @@
       <pubDate>Thu, 20 Nov 2014 13:03:30 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/11/20/cloud-foundry%E4%B8%ADdea%E5%90%AF%E5%8A%A8%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B%E6%97%B6%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
-      <description>在Cloud Foundry v2中，当应用用户需要启动应用的实例时，用户通过cf CLI向cloud controller发送请求，而cloud controller通过NATS向DEA转发启动请求。真正执行启动事宜的是DEA，DEA主要做的工作为启动一个warden container, 并将droplet等内容拷贝进入container内部，最后配置完指定的环境变量，在这些环境变量下启动应用的启动脚本。 本文将从阐述Cloud Foundry中DEA如何为应用实例的启动配置环境变量。</description>
+      <description>前言 在Cloud Foundry v2中，当应用用户需要启动应用的实例时，用户通过cf CLI向cloud controller发送请求，而cloud controller通过NATS向DEA转发启动请求。真正执行启动事宜的是DEA，DEA主要做的工作为启动一个warden container, 并将droplet等内容拷贝进入container内部，最后配置完指定的环境变量，在这些环境变量下启动应用的启动脚本。</description>
     </item>
     
     <item>
@@ -458,7 +458,7 @@
       <pubDate>Wed, 07 May 2014 10:19:45 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADcollector%E7%BB%84%E4%BB%B6%E7%9A%84%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
-      <description>在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。 本文从collector的功能出发，主要讲述以上两个功能的源码实现。</description>
+      <description>在Cloud Foundry中有一个叫collector的组件，该组件的功能是通过消息总线发现在Cloud Foundry中注册过的各个组件的信息，然后通过varz和healthz接口来查询它们的信息并发送到指定的存储位置。</description>
     </item>
     
     <item>
@@ -467,7 +467,7 @@
       <pubDate>Wed, 07 May 2014 10:19:32 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADsyslog-aggregator%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/</guid>
-      <description>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</description>
+      <description>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。</description>
     </item>
     
     <item>
@@ -476,7 +476,7 @@
       <pubDate>Tue, 15 Apr 2014 15:14:56 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid>
-      <description>在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。 笔者写这篇文档之前，在Github上，Health_Manager_next作为一个单独的项目，存在于Cloud Foundry之下；然而在笔者写这篇文档的时候，Health_Manager_next项目在Cloud Foundry下已经不复存在，然而进入原先的Health_Manager项目，可以发现，Health_Manager项目的项目说明已经成为HealthManager 2.</description>
+      <description>在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。</description>
     </item>
     
     <item>
@@ -494,7 +494,7 @@
       <pubDate>Thu, 03 Apr 2014 14:15:12 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/</guid>
-      <description>Cloud_Controller_NG就是cloud controller next generation的意思。即Cloud Foundry 平台用来管理控制应用和服务的组件。 官方文档是这么解释CCNG的作用的： * 维护一个包含应用、服务、配置信息的数据库(CCDB)。 * 在blobstore中存储应用的packages和droplets。 * 通过NATS和其他组件进行通信，包括Droplet Execution Agents (DEAs)、Service Gateways、和 Health Manager（HM）。 * 其他供用户调用的后端API。 阅读该组件源码，有助于从应用管理的视角理解cloudfoundry的运行过程。 说明： 1.</description>
+      <description>Cloud_Controller_NG就是cloud controller next generation的意思。即Cloud Foundry 平台用来管理控制应用和服务的组件。</description>
     </item>
     
     <item>
@@ -503,7 +503,7 @@
       <pubDate>Mon, 02 Dec 2013 13:04:57 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2013/12/02/%E4%BB%A5nats%E4%B8%BA%E4%B8%BB%E7%BA%BF%E7%9A%84cloudfoundry%E5%8E%9F%E7%90%86/</guid>
-      <description>本文将试图以CloudFoundry中的消息组件NATS为主要线索，以在CF中广泛使用的并发和网络编程框架EventMachine为侧重，来串联整个CF主线功能的工作原理，力求能用简单直接的方式描述出较多的架构细节和系统设计。 需要准备的知识： EventMachine(EM)的基础知识和使用方法，可以参考不久前的介绍：Research on EventMachine 关于NATS源码级别的介绍，可以参考我们之前的这篇文章：Research on NATS</description>
+      <description>本文将试图以CloudFoundry中的消息组件NATS为主要线索，以在CF中广泛使用的并发和网络编程框架EventMachine为侧重，来串联整个CF主线功能的工作原理，力求能用简单直接的方式描述出较多的架构细节和系统设计。</description>
     </item>
     
   </channel>

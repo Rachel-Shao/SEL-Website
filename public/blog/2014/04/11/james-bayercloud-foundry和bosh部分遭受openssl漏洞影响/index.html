@@ -8,15 +8,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <title>[James Bayer]Cloud Foundry和BOSH部分遭受OpenSSL漏洞影响</title>
-  <meta name="author" content="浙大SEL实验室" />
+  <meta name="author" content="丁轶群" />
   
   
   
   
-  <meta name="keywords" content="Bosh, bosh, Cloudfoundry, cloudfoundry, news">
+  <meta name="keywords" content="bosh, cloudfoundry, news">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="James Bayer jbayer@gopivotal.com greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE.">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -67,10 +72,8 @@
   
     
     
-    
-    <meta property="article:tag" content="Bosh">
+    <meta property="article:section" content="Bosh">
     <meta property="article:tag" content="bosh">
-    <meta property="article:tag" content="Cloudfoundry">
     <meta property="article:tag" content="cloudfoundry">
     <meta property="article:tag" content="news">
     
@@ -84,9 +87,9 @@
   
   <meta name="twitter:title" content="[James Bayer]Cloud Foundry和BOSH部分遭受OpenSSL漏洞影响">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="James Bayer jbayer@gopivotal.com greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE.">
   
-
+  
 </head>
 
 
@@ -205,21 +208,49 @@
 
                         
                           <p class="text-muted text-uppercase mb-small text-right">
-                            
-                            
+                             <a href="#">丁轶群</a>
+                             | 
                             2014-04-11
                           </p>
                         
 
                         <div id="post-content">
-                          <p>James Bayer <a href="mailto:jbayer@gopivotal.com">jbayer@gopivotal.com</a> greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE. the short summary is:</p>
+                          <p>James Bayer <a href="mailto:jbayer@gopivotal.com">jbayer@gopivotal.com</a></p>
+
+<p>greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE.</p>
+
+<p>the short summary is:</p>
 
 <ul>
 <li>Ubuntu stemcells based on 10.04 LTS are <strong>NOT VULNERABLE</strong></li>
 <li>CentOS stemcells based on CentOS 6.x are <strong>VULNERABLE</strong></li>
 </ul>
 
-<p>see below for more detail from greg. thanks for putting this together so quickly greg! <em>On Tue, Apr 8, 2014 at 12:15 PM, Greg Oehmen <a href="mailto:goehmen@pivotallabs.com">goehmen@pivotallabs.com</a> wrote:</em> The vulnerability issue related to OpenSSL has recently been exposed. See a full description here: <a href="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160">https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160</a> and here: <a href="http://heartbleed.com/">http://heartbleed.com/</a> In terms of the exposure that BOSH stemcells are experiencing, here are the OpenSSL versions and their specific exposure: OpenSSL 1.0.1 through 1.0.1f (inclusive) are vulnerable OpenSSL 1.0.1g is NOT vulnerable OpenSSL 1.0.0 branch is NOT vulnerable OpenSSL 0.9.8 branch is NOT vulnerable <strong>Bug was introduced to OpenSSL in December 2011 and has been out in the wild since OpenSSL release 1.0.1 on 14th of March 2012. OpenSSL 1.0.1g released on 7th of April 2014 fixes the bug.</strong> BOSH UBUNTU STEMCELLS The BOSH ubuntu stemcell <strong>uses OpenSSL 0.9.8k and thus is not vulnerable.</strong> BOSH team currently has stories in the backlog (<a href="https://www.pivotaltracker.com/story/show/69022850">https://www.pivotaltracker.com/story/show/69022850</a> and <a href="https://www.pivotaltracker.com/story/show/62015812">https://www.pivotaltracker.com/story/show/62015812</a>) to migrate to ubuntu 14.04 for both AWS and Vsphere for the new Go agent. The team will be verifying that the new 14.04 stemcells will have OpenSSL 1.0.1g or higher. But again note that current ubuntu stemcells are NOT vulnerable. BOSH CENTOS STEMCELLS The BOSH centos stemcell <strong>uses OpenSSL 1.0.1e and thus is vulnerable.</strong> THe BOSH team currently has a story in the backlog (<a href="https://www.pivotaltracker.com/story/show/69106298">https://www.pivotaltracker.com/story/show/69106298</a>) to upgrade the centos stemcell as soon as centos.org announces a patched version of centos. I will send out communication when we confirm that a patched version of centos is available to the BOSH team and when a fixed stemcell is GA. Best, Greg &ndash; Greg Oehmen Cloud Foundry Product Manager - Bosh Pivotal</p>
+<p>see below for more detail from greg. thanks for putting this together so quickly greg!</p>
+
+<p><em>On Tue, Apr 8, 2014 at 12:15 PM, Greg Oehmen <a href="mailto:goehmen@pivotallabs.com">goehmen@pivotallabs.com</a> wrote:</em></p>
+
+<p>The vulnerability issue related to OpenSSL has recently been exposed. See a full description here: <a href="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160">https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2014-0160</a> and here: <a href="http://heartbleed.com/">http://heartbleed.com/</a></p>
+
+<p>In terms of the exposure that BOSH</p>
+
+<p>stemcells are experiencing, here are the OpenSSL versions and their specific exposure: OpenSSL 1.0.1 through 1.0.1f (inclusive) are vulnerable OpenSSL 1.0.1g is NOT vulnerable OpenSSL 1.0.0 branch is NOT vulnerable OpenSSL 0.9.8 branch is NOT vulnerable <strong>Bug was introduced to OpenSSL in December 2011 and has been out in the wild since OpenSSL release 1.0.1 on 14th of March 2012. OpenSSL 1.0.1g released on 7th of April 2014 fixes the bug.</strong></p>
+
+<p>BOSH UBUNTU STEMCELLS</p>
+
+<p>The BOSH ubuntu stemcell <strong>uses OpenSSL 0.9.8k and thus is not vulnerable.</strong></p>
+
+<p>BOSH team currently has stories in the backlog (<a href="https://www.pivotaltracker.com/story/show/69022850">https://www.pivotaltracker.com/story/show/69022850</a> and <a href="https://www.pivotaltracker.com/story/show/62015812">https://www.pivotaltracker.com/story/show/62015812</a>) to migrate to ubuntu 14.04 for both AWS and Vsphere for the new Go agent. The team will be verifying that the new 14.04 stemcells will have OpenSSL 1.0.1g or higher. But again note that current ubuntu stemcells are NOT vulnerable.</p>
+
+<p>BOSH CENTOS STEMCELLS</p>
+
+<p>The BOSH centos stemcell <strong>uses OpenSSL 1.0.1e and thus is vulnerable.</strong></p>
+
+<p>THe BOSH team currently has a story in the backlog (<a href="https://www.pivotaltracker.com/story/show/69106298">https://www.pivotaltracker.com/story/show/69106298</a>) to upgrade the centos stemcell as soon as centos.org announces a patched version of centos. I will send out communication when we confirm that a patched version of centos is available to the BOSH team and when a fixed stemcell is GA.</p>
+
+<p>Best, Greg</p>
+
+<p>&ndash; Greg Oehmen Cloud Foundry Product Manager - Bosh Pivotal</p>
 
                         </div>
                         
@@ -227,14 +258,28 @@
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -280,11 +325,13 @@
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -293,6 +340,9 @@
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -303,18 +353,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -323,6 +376,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -344,8 +401,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -370,23 +465,47 @@
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -438,10 +557,6 @@
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -641,14 +756,14 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -712,8 +827,9 @@
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

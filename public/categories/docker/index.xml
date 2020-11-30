@@ -17,7 +17,7 @@
       <pubDate>Thu, 10 May 2018 10:16:40 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2018/05/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3docker%E5%AE%B9%E5%99%A8%E5%BC%95%E6%93%8Erunc%E6%89%A7%E8%A1%8C%E6%A1%86%E6%9E%B6/</guid>
-      <description>深入理解Docker容器引擎runC执行框架 1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。 Docker就是基于runC创建的，简单地说，runC是Docker中最为核心的部分，容器的创建，运行，销毁等等操作最终都将通过调用runC完成。下面我们将演示如何使用runC，以最精简的方式创建并运行一个容器。</description>
+      <description>1 简介 根据官方的定义：runC是一个根据OCI标准创建并运行容器的CLI tool。</description>
     </item>
     
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Wed, 30 Nov 2016 17:41:43 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/</guid>
-      <description>自Docker容器与容器云第1版出版以来，销量达到10000多本，得到了广大技术人员的认可，并且翻译成繁体，进入台湾市场。本书对Docker和Kubernetes的源码解析深入细致，是国内Docker界的良心之作。 经过作者们多年的实践经验积累及近一年的精心准备，浙江大学SEL实验室出版的《Docker容器与容器云》第2版，终于与我们见面了。</description>
+      <description>介绍 本书根据Docker 1.</description>
     </item>
     
     <item>
@@ -45,6 +45,15 @@
       
       <guid>https://Rachel-Shao.github.io/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/</guid>
       <description>随着容器技术发展的愈发火热，Linux基金会于2015年6月成立OCI（Open Container Initiative）组织，旨在围绕容器格式和运行时制定一个开放的工业化标准。该组织一成立便得到了包括谷歌、微软、亚马逊、华为等一系列云计算厂商的支持。而runC就是Docker贡献出来的，按照该开放容器格式标准（OCF, Open Container Format）制定的一种具体实现。</description>
+    </item>
+    
+    <item>
+      <title>tutum-agent原理浅析</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/</link>
+      <pubDate>Tue, 23 Jun 2015 11:14:25 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/</guid>
+      <description>tutum-aget是tutum提供的一个开源代理引擎。当你把tutum-agent安装在你本地机器上以后，你就可以把本地的机器节点添加到云端，让tutum来帮你统一进行管理。你随时随地都可以登陆tutum网站获得如下功能。</description>
     </item>
     
     <item>
@@ -71,7 +80,7 @@
       <pubDate>Fri, 13 Mar 2015 13:54:32 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/</guid>
-      <description>Docker这么火，喜欢技术的朋友可能也会想，如果要自己实现一个资源隔离的容器，应该从哪些方面下手呢？也许你第一反应可能就是chroot命令，这条命令给用户最直观的感觉就是使用后根目录/的挂载点切换了，即文件系统被隔离了。然后，为了在分布式的环境下进行通信和定位，容器必然需要一个独立的IP、端口、路由等等，自然就想到了网络的隔离。同时，你的容器还需要一个独立的主机名以便在网络中标识自己。想到网络，顺其自然就想到通信，也就想到了进程间通信的隔离。可能你也想到了权限的问题，对用户和用户组的隔离就实现了用户权限的隔离。最后，运行在容器中的应用需要有自己的PID,自然也需要与宿主机中的PID进行隔离。 由此，我们基本上完成了一个容器所需要做的六项隔离，Linux内核中就提供了这六种namespace隔离的系统调用，如下表所示。</description>
+      <description>Docker这么火，喜欢技术的朋友可能也会想，如果要自己实现一个资源隔离的容器，应该从哪些方面下手呢？也许你第一反应可能就是chroot命令，这条命令给用户最直观的感觉就是使用后根目录/的挂载点切换了，即文件系统被隔离了。然后，为了在分布式的环境下进行通信和定位，容器必然需要一个独立的IP、端口、路由等等，自然就想到了网络的隔离。同时，你的容器还需要一个独立的主机名以便在网络中标识自己。想到网络，顺其自然就想到通信，也就想到了进程间通信的隔离。可能你也想到了权限的问题，对用户和用户组的隔离就实现了用户权限的隔离。最后，运行在容器中的应用需要有自己的PID,自然也需要与宿主机中的PID进行隔离。</description>
     </item>
     
     <item>
@@ -93,6 +102,15 @@
     </item>
     
     <item>
+      <title>Docker源码分析（七）：Docker Container网络 （上）</title>
+      <link>https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/</link>
+      <pubDate>Mon, 26 Jan 2015 10:31:13 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/</guid>
+      <description>1.</description>
+    </item>
+    
+    <item>
       <title>Docker网络详解及pipework源码解读与实践</title>
       <link>https://Rachel-Shao.github.io/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/</link>
       <pubDate>Fri, 16 Jan 2015 14:20:20 +0000</pubDate>
@@ -107,7 +125,7 @@
       <pubDate>Mon, 05 Jan 2015 10:52:28 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/</guid>
-      <description>本文介绍docker daemon的网络模型。</description>
+      <description>摘要: Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。</description>
     </item>
     
     <item>
@@ -116,7 +134,34 @@
       <pubDate>Tue, 16 Dec 2014 16:15:36 +0000</pubDate>
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/16/%E7%8E%A9%E8%BD%ACdocker%E9%95%9C%E5%83%8F/</guid>
-      <description>摘要: Docker是基于Go语言开发，通过分层镜像标准化和内核虚拟化技术，使得应用开发者和运维工程师可以以统一的方式跨平台发布应用。镜像是Docker最核心的技术之一，也是应用发布的标准格式。</description>
+      <description>摘要:Docker是基于Go语言开发，通过分层镜像标准化和内核虚拟化技术，使得应用开发者和运维工程师可以以统一的方式跨平台发布应用。镜像是Docker最核心的技术之一，也是应用发布的标准格式。</description>
+    </item>
+    
+    <item>
+      <title>Docker源码分析（五）：Docker Server的创建</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/</link>
+      <pubDate>Tue, 09 Dec 2014 13:00:37 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/09/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%94docker-server%E7%9A%84%E5%88%9B%E5%BB%BA/</guid>
+      <description>1.</description>
+    </item>
+    
+    <item>
+      <title>Docker源码分析（四）：Docker Daemon之NewDaemon实现</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Tue, 02 Dec 2014 13:03:12 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%9B%9Bdocker-daemon%E4%B9%8Bnewdaemon%E5%AE%9E%E7%8E%B0/</guid>
+      <description>前言 Docker的生态系统日趋完善，开发者群体也在日趋庞大，这让业界对Docker持续抱有极其乐观的态度。然而，对于广大开发者而言，使用Docker这项技术已然不是门槛，享受Docker带来的技术福利已不是困难。如今，如何探寻Docker适应的场景，如何发展Docker周边的技术，以及如何弥合Docker新技术与传统物理机或VM技术的鸿沟，已经占据Docker研究者们的思考与实践。</description>
+    </item>
+    
+    <item>
+      <title>Docker源码分析（三）：Docker Daemon启动</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/</link>
+      <pubDate>Tue, 02 Dec 2014 13:02:44 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%89docker-daemon%E5%90%AF%E5%8A%A8/</guid>
+      <description>【摘要】 Docker作为业界备受推崇的轻量级虚拟化容器管理引擎，其强大的后台能力全凭Docker Daemon。本文从源码出发，介绍了Docker Daemon的启动流程，并深入分析启动流程中每一步骤的实现细节。Docker的运行真可谓，载体为daemon，调度管理由engine，任务执行靠job。</description>
     </item>
     
     <item>
@@ -126,6 +171,15 @@
       
       <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%BA%8Cdocker-client%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/</guid>
       <description>1.</description>
+    </item>
+    
+    <item>
+      <title>Docker源码分析（一）：Docker架构</title>
+      <link>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/</link>
+      <pubDate>Tue, 02 Dec 2014 10:19:09 +0000</pubDate>
+      
+      <guid>https://Rachel-Shao.github.io/blog/2014/12/02/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%80docker%E6%9E%B6%E6%9E%84/</guid>
+      <description>1 背景 1.</description>
     </item>
     
   </channel>

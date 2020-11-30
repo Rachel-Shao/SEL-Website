@@ -16,7 +16,7 @@
   <meta name="keywords" content="cloudfoundry">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="Blue-Green Deployments on Cloud Foundry (利用CloudFoundry实现蓝绿发布)">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -80,9 +85,9 @@
   
   <meta name="twitter:title" content="Blue-Green Deployments on Cloud Foundry (利用CloudFoundry实现蓝绿发布)">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="Blue-Green Deployments on Cloud Foundry (利用CloudFoundry实现蓝绿发布)">
   
-
+  
 </head>
 
 
@@ -217,10 +222,10 @@
 <p>We’ll begin with a basic Spring application named ms-spr-demo. This app takes users to a simple web page announcing the ubiquitous “Hello World!” message. We’ll utilize the cf command-line interface to push the application:</p>
 
 <p><strong>这里先向CF PUSH一个很简单的打印“Hello World”的应用：</strong></p>
-<pre><code>$ cf push --path build/libs/cf-demo.war  
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ cf push --path build/libs/cf-demo.war  
 Name&gt; ms-spr-demo  
 
-Instances&gt; 1  
+Instances&gt; <span style="color:#f60">1</span>  
 
 Memory Limit&gt; 512M  
 
@@ -233,22 +238,22 @@ Subdomain&gt; ms-spr-demo
 1: cfapps.io  
 2: mattstine.com  
 3: none  
-Domain&gt; 1  
+Domain&gt; <span style="color:#f60">1</span>  
 
 Creating route ms-spr-demo.cfapps.io... OK  
 Binding ms-spr-demo.cfapps.io to ms-spr-demo... OK  
 
-Create services for application?&gt; n  
+Create services <span style="color:#069;font-weight:bold">for</span> application?&gt; n  
 
 Save configuration?&gt; y  
 
 Saving to manifest.yml... OK  
 Uploading ms-spr-demo... OK  
 Starting ms-spr-demo... OK  
------&gt; Downloaded app package (9.5M)  
+-----&gt; Downloaded app package <span style="color:#555">(</span>9.5M<span style="color:#555">)</span>  
 Installing java.  
 Downloading JDK...  
-Copying openjdk-1.7.0\_25.tar.gz from the buildpack cache ...  
+Copying openjdk-1.7.0_25.tar.gz from the buildpack cache ...  
 Unpacking JDK to .jdk  
 Downloading Tomcat: apache-tomcat-7.0.41.tar.gz  
 Copying apache-tomcat-7.0.41.tar.gz from the buildpack cache ...  
@@ -256,7 +261,7 @@ Unpacking Tomcat to .tomcat
 Copying mysql-connector-java-5.1.12.jar from the buildpack cache ...  
 Copying postgresql-9.0-801.jdbc4.jar from the buildpack cache ...  
 Copying auto-reconfiguration-0.6.8.jar from the buildpack cache ...  
------&gt; Uploading droplet (48M)  
+-----&gt; Uploading droplet <span style="color:#555">(</span>48M<span style="color:#555">)</span>  
 -----&gt; Uploaded droplet  
 Checking ms-spr-demo...  
 Staging in progress...  
@@ -266,100 +271,107 @@ Staging in progress...
 Staging in progress...  
 Staging in progress...  
 Staging in progress...  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  1/1 instances: 1 running  
-OK  </code></pre>
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  0/1 instances: <span style="color:#f60">1</span> starting  
+  1/1 instances: <span style="color:#f60">1</span> running  
+OK  </code></pre></div>
 <p>The end result of this <code>cf push</code> event is that an application is now serving requests at <code>http://ms-spr-demo.cfapps.io</code>. The following graphic shows the state of our system, with the CF Router sending traffic to our application:</p>
 
 <p><strong>这个应用的实例将被映射到 <code>http://ms-spr-demo.cfapps.io</code> 这个域名上，如下所示：</strong></p>
 
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-1_kzscth.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-1_kzscth.png" alt="CF-BG-1" /></a></p>
-
-<p>Next, we make a slight change to our application. Rather that saying “Hello World!” we decide to make it say “Goodbye World!” We build a new war file for the application. Rather than letting <code>cf</code> prompt us this time, we’ll make use of the <code>manifest.yml</code> file that we saved from our previous push. However, we’ll rename the application and provide a new route. Take a look:</p>
+<p><center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616360/sel/CF-BG-1_nrswoh.png" alt="CF-BG-1" style="zoom:100%;" />
+</center>
+Next, we make a slight change to our application. Rather that saying “Hello World!” we decide to make it say “Goodbye World!” We build a new war file for the application. Rather than letting <code>cf</code> prompt us this time, we’ll make use of the <code>manifest.yml</code> file that we saved from our previous push. However, we’ll rename the application and provide a new route. Take a look:</p>
 
 <p><strong>接下来，我们对应用源码做了修改，使之打印“Goodbye World”，然后使用第一次部署时生成的<code>manifest.yml</code>来进行PUSH，不过，这一次我们将源码部署成一个新应用并映射了新域名：</strong></p>
-<pre><code>--- applications: - name: ms-spr-demo-green   memory: 512M   instances: 1
-url: ms-spr-demo-green.cfapps.io   path: build/libs/cf-demo.war </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#555">---</span> <span style="color:#fc3">applications</span>: <span style="color:#555">-</span> <span style="color:#366">name</span>: ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green   <span style="color:#fc3">memory</span>: <span style="color:#f60">512</span>M   <span style="color:#fc3">instances</span>: <span style="color:#f60">1</span>
+<span style="color:#fc3">url</span>: ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">.</span>cfapps<span style="color:#555">.</span>io   <span style="color:#fc3">path</span>: build<span style="color:#555">/</span>libs<span style="color:#555">/</span>cf<span style="color:#555">-</span>demo<span style="color:#555">.</span>war </code></pre></div>
 <p>As you can see, we’re calling our new application version <code>ms-spr-demo-green</code> and we’re mapping it to the URL <code>ms-spr-demo-green.cfapps.io</code>. Let’s push the application:</p>
 
 <p><strong>下面开始PUSH：</strong></p>
-<pre><code>Using manifest file manifest.yml  
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#360">Using</span> manifest file manifest<span style="color:#555">.</span>yml  
 
-Creating ms-spr-demo-green... OK  
+<span style="color:#360">Creating</span> ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">...</span> <span style="color:#360">OK</span>  
 
-1: ms-spr-demo-green  
-2: none  
-Subdomain&gt; ms-spr-demo-green  
+<span style="color:#f60">1</span>: ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green  
+<span style="color:#f60">2</span>: none  
+<span style="color:#360">Subdomain</span><span style="color:#555">&gt;</span> ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green  
 
-1: cfapps.io  
-2: mattstine.com  
-3: none  
-Domain&gt; 1  
+<span style="color:#f60">1</span>: cfapps<span style="color:#555">.</span>io  
+<span style="color:#f60">2</span>: mattstine<span style="color:#555">.</span>com  
+<span style="color:#f60">3</span>: none  
+<span style="color:#360">Domain</span><span style="color:#555">&gt;</span> <span style="color:#f60">1</span>  
 
-Creating route ms-spr-demo-green.cfapps.io... OK  
-Binding ms-spr-demo-green.cfapps.io to ms-spr-demo-green... OK  
-Uploading ms-spr-demo-green... OK  
-Starting ms-spr-demo-green... OK  
------&gt; Downloaded app package (9.5M)  
-Installing java.  
-Downloading JDK...  
-Copying openjdk-1.7.0\_25.tar.gz from the buildpack cache ...  
-Unpacking JDK to .jdk  
-Downloading Tomcat: apache-tomcat-7.0.41.tar.gz  
-Copying apache-tomcat-7.0.41.tar.gz from the buildpack cache ...  
-Unpacking Tomcat to .tomcat  
-Copying mysql-connector-java-5.1.12.jar from the buildpack cache ...  
-Copying postgresql-9.0-801.jdbc4.jar from the buildpack cache ...  
-Copying auto-reconfiguration-0.6.8.jar from the buildpack cache ...  
------&gt; Uploading droplet (48M)  
------&gt; Uploaded droplet  
-Checking ms-spr-demo-green...  
-Staging in progress...  
+<span style="color:#360">Creating</span> route ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">.</span>cfapps<span style="color:#555">.</span>io<span style="color:#555">...</span> <span style="color:#360">OK</span>  
+<span style="color:#360">Binding</span> ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">.</span>cfapps<span style="color:#555">.</span>io to ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">...</span> <span style="color:#360">OK</span>  
+<span style="color:#360">Uploading</span> ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">...</span> <span style="color:#360">OK</span>  
+<span style="color:#360">Starting</span> ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">...</span> <span style="color:#360">OK</span>  
+<span style="color:#555">-----&gt;</span> <span style="color:#360">Downloaded</span> app package (<span style="color:#f60">9</span><span style="color:#555">.</span><span style="color:#f60">5</span>M)  
+<span style="color:#360">Installing</span> java<span style="color:#555">.</span>  
+<span style="color:#360">Downloading</span> <span style="color:#360">JDK</span><span style="color:#555">...</span>  
+<span style="color:#360">Copying</span> openjdk<span style="color:#555">-</span><span style="color:#f60">1</span><span style="color:#555">.</span><span style="color:#f60">7</span><span style="color:#555">.</span><span style="color:#f60">0_25</span><span style="color:#555">.</span>tar<span style="color:#555">.</span>gz from the buildpack cache <span style="color:#555">...</span>  
+<span style="color:#360">Unpacking</span> <span style="color:#360">JDK</span> to <span style="color:#555">.</span>jdk  
+<span style="color:#360">Downloading</span> <span style="color:#fc3">Tomcat</span>: apache<span style="color:#555">-</span>tomcat<span style="color:#555">-</span><span style="color:#f60">7</span><span style="color:#555">.</span><span style="color:#f60">0</span><span style="color:#555">.</span><span style="color:#f60">41</span><span style="color:#555">.</span>tar<span style="color:#555">.</span>gz  
+<span style="color:#360">Copying</span> apache<span style="color:#555">-</span>tomcat<span style="color:#555">-</span><span style="color:#f60">7</span><span style="color:#555">.</span><span style="color:#f60">0</span><span style="color:#555">.</span><span style="color:#f60">41</span><span style="color:#555">.</span>tar<span style="color:#555">.</span>gz from the buildpack cache <span style="color:#555">...</span>  
+<span style="color:#360">Unpacking</span> <span style="color:#360">Tomcat</span> to <span style="color:#555">.</span>tomcat  
+<span style="color:#360">Copying</span> mysql<span style="color:#555">-</span>connector<span style="color:#555">-</span>java<span style="color:#555">-</span><span style="color:#f60">5</span><span style="color:#555">.</span><span style="color:#f60">1</span><span style="color:#555">.</span><span style="color:#f60">12</span><span style="color:#555">.</span>jar from the buildpack cache <span style="color:#555">...</span>  
+<span style="color:#360">Copying</span> postgresql<span style="color:#555">-</span><span style="color:#f60">9</span><span style="color:#555">.</span><span style="color:#f60">0</span><span style="color:#555">-</span><span style="color:#f60">801</span><span style="color:#555">.</span>jdbc4<span style="color:#555">.</span>jar from the buildpack cache <span style="color:#555">...</span>  
+<span style="color:#360">Copying</span> auto<span style="color:#555">-</span>reconfiguration<span style="color:#555">-</span><span style="color:#f60">0</span><span style="color:#555">.</span><span style="color:#f60">6</span><span style="color:#555">.</span><span style="color:#f60">8</span><span style="color:#555">.</span>jar from the buildpack cache <span style="color:#555">...</span>  
+<span style="color:#555">-----&gt;</span> <span style="color:#360">Uploading</span> droplet (<span style="color:#f60">48</span>M)  
+<span style="color:#555">-----&gt;</span> <span style="color:#360">Uploaded</span> droplet  
+<span style="color:#360">Checking</span> ms<span style="color:#555">-</span>spr<span style="color:#555">-</span>demo<span style="color:#555">-</span>green<span style="color:#555">...</span>  
+<span style="color:#360">Staging</span> <span style="color:#069;font-weight:bold">in</span> progress<span style="color:#555">...</span>  
 
-Staging in progress...  
-Staging in progress...  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  0/1 instances: 1 starting  
-  1/1 instances: 1 running  
-OK  </code></pre>
+<span style="color:#360">Staging</span> <span style="color:#069;font-weight:bold">in</span> progress<span style="color:#555">...</span>  
+<span style="color:#360">Staging</span> <span style="color:#069;font-weight:bold">in</span> progress<span style="color:#555">...</span>  
+  <span style="color:#f60">0</span><span style="color:#555">/</span><span style="color:#f60">1</span> <span style="color:#fc3">instances</span>: <span style="color:#f60">1</span> starting  
+  <span style="color:#f60">0</span><span style="color:#555">/</span><span style="color:#f60">1</span> <span style="color:#fc3">instances</span>: <span style="color:#f60">1</span> starting  
+  <span style="color:#f60">0</span><span style="color:#555">/</span><span style="color:#f60">1</span> <span style="color:#fc3">instances</span>: <span style="color:#f60">1</span> starting  
+  <span style="color:#f60">1</span><span style="color:#555">/</span><span style="color:#f60">1</span> <span style="color:#fc3">instances</span>: <span style="color:#f60">1</span> running  
+<span style="color:#360">OK</span>  </code></pre></div>
 <p>We now have two instances of the application running, each of them using distinct routes:</p>
 
 <p><strong>PUSH完成之后，两个应用都运行在CF上并且按照下述方式分配域名：</strong></p>
 
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-2_vh2gut.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-2_vh2gut.png" alt="CF-BG-2" /></a></p>
+<p><center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616360/sel/CF-BG-2_pwgfgp.png" alt="CF-BG-3" style="zoom:100%;" />
+</center></p>
 
 <p>Now it’s time for the magic to happen. We’ll map our original URL route (<code>ms-spr-demo.cfapps.io</code>) to our “green” instance. This is accomplished very simply by using <code>cf</code>:</p>
 
 <p><strong>这时，我们将老应用（蓝色）的域名ms-spr-demo.cfapps.io同时映射到新应用（绿色）上：</strong></p>
-<pre><code> cf map --app ms-spr-demo-green --host ms-spr-demo --domain cfapps.io Binding ms-spr-demo.cfapps.io to ms-spr-demo-green... OK </code></pre>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"> cf map --app ms-spr-demo-green --host ms-spr-demo --domain cfapps.io Binding ms-spr-demo.cfapps.io to ms-spr-demo-green... OK </code></pre></div>
 <p>The CF router immediately begins to load balance requests between each instance of the application, as shown here:</p>
 
-<p><strong>此时的域名映射如下图所示：</strong></p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-31_miuoqn.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023134/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-31_miuoqn.png" alt="CF-BG-3" /></a></p>
+<p><strong>此时的域名映射如下图所示：</strong>
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616360/sel/CF-BG-31_e1rpt9.png" alt="CF-BG-3" style="zoom:100%;" />
+</center></p>
 
 <p>Now our router will send requests to <code>ms-spr-demo.cfapps.io</code> to both instances of the application, while <code>ms-spr-demo-green.cfapps.io</code> only services the “green” instance. Once we determine that all is well, it’s time to stop routing requests to the “blue” instance. This is just as simple using <code>cf</code>:</p>
 
 <p><strong>这样，ms-spr-demo.cfapps.io将流量导向了蓝绿两个应用，而ms-spr-demo-green.cfapps.io则只将流量导向新部署的绿色应用。这也是我们对绿色应用进行测试和观察的好时机（我们还可以调节蓝色和绿色应用的实例数目来进行流量分配比），一旦我们能够确定绿色应用能够正常的对外服务，接可以将蓝色应用实例切断了：</strong></p>
-<pre><code> cf unmap --url ms-spr-demo.cfapps.io --app ms-spr-demo Unbinding ms-spr-demo.cfapps.io from ms-spr-demo... OK </code></pre>
-<p>Our “blue” instance is now no longer receiving any web traffic:</p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/v1603023135/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-4_aizfrv.png"><img src="https://res.cloudinary.com/feesuper/image/upload/v1603023135/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/244/CF-BG-4_aizfrv.png" alt="CF-BG-4" /></a></p>
+<div class="highlight"><pre style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"> cf unmap --url ms-spr-demo.cfapps.io --app ms-spr-demo Unbinding ms-spr-demo.cfapps.io from ms-spr-demo... OK </code></pre></div>
+<p>Our “blue” instance is now no longer receiving any web traffic:
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616361/sel/CF-BG-4_vkjlr5.png" alt="CF-BG-4" style="zoom:100%;" />
+</center></p>
 
 <p>We can now decomission our “blue” instance, or we can leave it around for a period of time in case we decide we need to roll back our changes. The important thing is that our customers suffered absolutely no downtime!</p>
 
 <p><strong>这样，ms-spr-demo.cfapps.io ms-spr-demo-green.cfapps.io都将流量导向了绿色应用，我们可以删除旧的蓝色应用或者保留一段时间以防意外情况。最后，我们可以把ms-spr-demo-green.cfapps.io这个测试域名也删除。</strong> <strong>整个发布过程，用户没有感受到任何宕机或者服务重启。</strong></p>
 
-<p>附录 Martin Fowler大神提出的蓝绿发布： One particular practice associated with Continuous Delivery is <code>Blue-Green Deployments</code>. Martin Fowler describes these very well at the link provided, but I’ll summarize briefly here:</p>
+<p>附录 Martin Fowler大神提出的蓝绿发布：</p>
+
+<p>One particular practice associated with Continuous Delivery is <code>Blue-Green Deployments</code>. Martin Fowler describes these very well at the link provided, but I’ll summarize briefly here:</p>
 
 <ul>
 <li>Cut-over to a new software version is tricky, and must be quick in order to minimize downtime events.</li>
@@ -376,14 +388,28 @@ OK  </code></pre>
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -429,11 +455,13 @@ OK  </code></pre>
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -442,6 +470,9 @@ OK  </code></pre>
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -452,18 +483,21 @@ OK  </code></pre>
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -472,6 +506,10 @@ OK  </code></pre>
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -493,8 +531,46 @@ OK  </code></pre>
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -519,23 +595,47 @@ OK  </code></pre>
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -587,10 +687,6 @@ OK  </code></pre>
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -790,14 +886,14 @@ OK  </code></pre>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -861,8 +957,9 @@ OK  </code></pre>
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

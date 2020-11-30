@@ -1,23 +1,25 @@
----
-title: knative serving开发环境搭建
-tags:
-  - istio
-  - Kubernetes
-  - Kubernetes
-  - serverless
-  - service mesh
-id: '972'
-banner: "img/blogs/972/knative serving.png"
-date: 2018-10-11 20:11:02
----
++++
+id = "972"
+
+title = "knative serving开发环境搭建"
+description = "knative serving开发环境搭建。本文基官方knative serving的开发环境搭建文档，加自己的实践，给出以下knative serving开发环境的搭建方案。开始之前请确保已按上面的开发环境搭建文档搭好Kubernetes(1.10以上)和istio。"
+tags = ["istio","Kubernetes","serverless"]
+date = "2018-10-11 20:11:02"
+author = "丁轶群"
+banner = "img/blogs/972/knative serving.png"
+categories = ["Kubernetes","service mesh"]
+
++++
 
 本文基官方knative serving的[开发环境搭建文档](https://github.com/knative/serving/blob/master/DEVELOPMENT.md)，加自己的实践，给出以下knative serving开发环境的搭建方案。  
+
 开始之前请确保已按上面的开发环境搭建文档搭好Kubernetes(1.10以上)和istio。
 
 安装开源docker registry
 -------------------
 
 knative serving组件采用ko实现自动化的镜像构建，并将构建好的镜像上传到指定镜像仓库中。因此我们需要安装一个简单的开发用私有镜像仓库。  
+
 按照[这个docker官方文档](https://docs.docker.com/registry/deploying)，下载并启动镜像仓库：
 
 ```shell
@@ -25,6 +27,7 @@ docker run -d -e REGISTRY_HTTP_ADDR=0.0.0.0:5000 -p 5000:5000   --name registry 
 ```
 
 只有制定了bind address为0.0.0.0才能让kubernetes集群中的其他节点也能访问到该registry。  
+
 注意上面的镜像仓库默认对外提供http服务，如果需要提供https服务，则首先准备好https证书，然后按照[这篇docker官方文档](https://docs.docker.com/registry/deploying/#run-an-externally-accessible-registry)配置镜像仓库。由于我们手头没有https证书，因此在这里不配置镜像仓库的https服务。
 
 修改所有需要访问私有镜像仓库的docker daemon配置文件

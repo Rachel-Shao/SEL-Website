@@ -16,7 +16,7 @@
   <meta name="keywords" content="Docker">
   
   
-  <meta name="description" content="">
+  <meta name="description" content="Docker风暴席卷全球，并非偶然。如今的云计算时代下，轻量级容器技术与灵活的镜像技术相结合，似乎颠覆了以往的软件交付模式，为持续集成（Continuous Integration, CI）与持续交付（Continuous Delivery, CD）的发展带来了全新的契机。">
 
   <meta name="generator" content="Hugo 0.74.2" />
 
@@ -24,8 +24,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -80,9 +85,9 @@
   
   <meta name="twitter:title" content="Docker源码分析（九）：Docker镜像">
   
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="Docker风暴席卷全球，并非偶然。如今的云计算时代下，轻量级容器技术与灵活的镜像技术相结合，似乎颠覆了以往的软件交付模式，为持续集成（Continuous Integration, CI）与持续交付（Continuous Delivery, CD）的发展带来了全新的契机。">
   
-
+  
 </head>
 
 
@@ -228,9 +233,10 @@
 
 <p>传统来说，Linux操作系统内核启动时，内核首先会挂载一个只读（read-only）的rootfs，当系统检测其完整性之后，决定是否将其切换为读写（read-write）模式，或者最后在rootfs之上另行挂载一种文件系统并忽略rootfs。Docker架构下，依然沿用Linux中rootfs的思想。当Docker Daemon为Docker Container挂载rootfs的时候，与传统Linux内核类似，将其设定为只读（read-only）模式。在rootfs挂载完毕之后，和Linux内核不一样的是，Docker Daemon没有将Docker Container的文件系统设为读写（read-write）模式，而是利用Union mount的技术，在这个只读的rootfs之上再挂载一个读写（read-write）的文件系统，挂载时该读写（read-write）文件系统内空无一物。</p>
 
-<p>举一个Ubuntu容器启动的例子。假设用户已经通过Docker Registry下拉了Ubuntu:14.04的镜像，并通过命令docker run –it ubuntu:14.04 /bin/bash将其启动运行。则Docker Daemon为其创建的rootfs以及容器可读写的文件系统可参见图2.1：</p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_666/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image1_t1il6p.jpg"><img src="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_666/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image1_t1il6p.jpg" alt="30" /></a></p>
+<p>举一个Ubuntu容器启动的例子。假设用户已经通过Docker Registry下拉了Ubuntu:14.04的镜像，并通过命令docker run –it ubuntu:14.04 /bin/bash将其启动运行。则Docker Daemon为其创建的rootfs以及容器可读写的文件系统可参见图2.1：
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616374/sel/image1_rhpw84.jpg" alt="" style="zoom:70%;" />
+</center></p>
 
 <p>图2.1 Ubuntu 14.04容器rootfs示意图</p>
 
@@ -242,9 +248,10 @@
 
 <p>一般情况下，通过某种文件系统挂载内容至挂载点的话，挂载点目录中原先的内容将会被隐藏。而Union mount则不会将挂载点目录中的内容隐藏，反而是将挂载点目录中的内容和被挂载的内容合并，并为合并后的内容提供一个统一独立的文件系统视角。通常来讲，被合并的文件系统中只有一个会以读写（read-write）模式挂载，而其他的文件系统的挂载模式均为只读（read-only）。实现这种Union mount技术的文件系统一般被称为Union Filesystem，较为常见的有UnionFS、AUFS、OverlayFS等。</p>
 
-<p>Docker实现容器文件系统Union mount时，提供多种具体的文件系统解决方案，如Docker早版本沿用至今的的AUFS，还有在docker 1.4.0版本中开始支持的OverlayFS等。 更深入的了解Union mount，可以使用AUFS文件系统来进一步阐述上文中ubuntu:14.04容器文件系统的例子。如图2.2：</p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image2_gy0hv8.jpg"><img src="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image2_gy0hv8.jpg" alt="31" /></a></p>
+<p>Docker实现容器文件系统Union mount时，提供多种具体的文件系统解决方案，如Docker早版本沿用至今的的AUFS，还有在docker 1.4.0版本中开始支持的OverlayFS等。 更深入的了解Union mount，可以使用AUFS文件系统来进一步阐述上文中ubuntu:14.04容器文件系统的例子。如图2.2：
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616383/sel/image2_vqtcyn.jpg" alt="" style="zoom:40%;" />
+</center></p>
 
 <p>图2.2 AUFS挂载Ubuntu 14.04文件系统示意图</p>
 
@@ -264,9 +271,10 @@
 
 <p>Docker中image的概念，非常巧妙的解决了以上的问题。最为简单的解释image，就是 Docker容器中只读文件系统rootfs的一部分。换言之，实际上Docker容器的rootfs可以由多个image来构成。多个image构成rootfs的方式依然沿用Union mount技术。</p>
 
-<p>多个Image构成rootfs的示意图如图2.3（图中，rootfs中每一层image中的内容划分只为了阐述清楚rootfs由多个image构成，并不代表实际情况中rootfs中的内容划分）：</p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_731/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image3_sdwaie.jpg"><img src="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_731/v1604304365/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image3_sdwaie.jpg" alt="32" /></a></p>
+<p>多个Image构成rootfs的示意图如图2.3（图中，rootfs中每一层image中的内容划分只为了阐述清楚rootfs由多个image构成，并不代表实际情况中rootfs中的内容划分）：
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616374/sel/image3_nm00hq.jpg" alt="" style="zoom:40%;" />
+</center></p>
 
 <p>图2.3容器rootfs多image构成图</p>
 
@@ -274,9 +282,10 @@
 
 <p>基于以上的概念，Docker Image中又抽象出两种概念：Parent Image以及Base Image。除了容器rootfs最底层的image，其余image都依赖于其底下的一个或多个image，而Docker中将下一层的image称为上一层image的Parent Image。以图2.3为例，imageID_0是imageID_1的Parent Image，imageID_2是imageID_3的Parent Image，而imageID_0没有Parent Image。对于最下层的image，即没有Parent Image的镜像，在Docker中习惯称之为Base Image。</p>
 
-<p>通过image的形式，原先较为臃肿的rootfs被逐渐打散成轻便的多层。Image除了轻便的特性，同时还有上文提到的只读特性，如此一来，在不同的容器、不同的rootfs中image完全可以用来复用。 多image组织关系与复用关系如图2.4（图中镜像名称的举例只为将image之间的关系阐述清楚，并不代表实际情况中相应名称image之间的关系）：</p>
-
-<p><a href="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304366/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image4_zrl34l.jpg"><img src="https://res.cloudinary.com/feesuper/image/upload/c_scale,w_760/v1604304366/sel%E5%AE%9E%E9%AA%8C%E5%AE%A4%E5%8D%9A%E5%AE%A2/blogs/549/image4_zrl34l.jpg" alt="33" /></a></p>
+<p>通过image的形式，原先较为臃肿的rootfs被逐渐打散成轻便的多层。Image除了轻便的特性，同时还有上文提到的只读特性，如此一来，在不同的容器、不同的rootfs中image完全可以用来复用。 多image组织关系与复用关系如图2.4（图中镜像名称的举例只为将image之间的关系阐述清楚，并不代表实际情况中相应名称image之间的关系）：
+<center>
+<img src="https://res.cloudinary.com/rachel725/image/upload/v1605616378/sel/image4_xcqqpi.jpg" alt="" style="zoom:50%;" />
+</center></p>
 
 <p>图2.4 多image组织关系示意图</p>
 
@@ -296,7 +305,7 @@
 
 <p>Docker风暴席卷全球，并非偶然。如今的云计算时代下，轻量级容器技术与灵活的镜像技术相结合，似乎颠覆了以往的软件交付模式，为持续集成（Continuous Integration, CI）与持续交付（Continuous Delivery, CD）的发展带来了全新的契机。 理解Docker的“镜像”技术，有助于Docker爱好者更好的使用、创建以及交付Docker镜像。基于此，本文从Docker镜像的4个重要概念入手，介绍了Docker镜像中包含的内容，涉及到的技术，还有重要的特性。Docker引入优秀的“镜像”技术时，着实使容器的使用变得更为便利，也拓宽了Docker的使用范畴。然而，于此同时，我们也应该理性地看待镜像技术引入时，是否会带来其它的副作用。关于镜像技术的其它思考，《Docker源码分析系列》将在后续另文分析。</p>
 
-<h2 id="5-参考文献"><strong>5.参考文献</strong></h2>
+<h2 id="4-参考文献"><strong>4.参考文献</strong></h2>
 
 <p><a href="http://www.csdn.net/article/2014-09-24/2821832">http://www.csdn.net/article/2014-09-<sup>24</sup>&frasl;<sub>2821832</sub></a></p>
 
@@ -320,14 +329,28 @@
                         
                         
                         
-                        <div id="SOHUCS"></div>
-                        <script charset="utf-8" type="text/javascript" src="https://cy-cdn.kuaizhan.com/upload/changyan.js" ></script>
+                        
+
+                        
+                        <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+                        <script src="https://unpkg.com/gitalk@latest/dist/gitalk.min.js"></script> 
+                        <script type="text/javascript" src="/assets/js/md5.min.js"></script>
+                        <div id="gitalk-container"></div>     
                         <script type="text/javascript">
-                          window.changyan.api.config({
-                          appid: 'cyuX8hDAj',
-                          conf: 'prod_4e1f40d37469ca7d81688963c063f0f7'
-                          });
-                        </script>
+                            var gitalk = new Gitalk({
+                              clientID: '835183d2dcbd1167ac28', 
+                            
+                              clientSecret: 'd873919fac3cc76921ee0800172c2279bc612f8d', 
+                            
+                              repo: 'Sel-Website-talk',
+                              owner: 'Peeknut',
+                              admin: ['Peeknut','Rachel-Shao'],
+                              id: location.href.split("/").pop().substring(0, 49),      
+                              distractionFreeMode: false  
+                            })
+                            gitalk.render('gitalk-container')
+                        </script> 
+                        
 
                     </div>
                     
@@ -373,11 +396,13 @@
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -386,6 +411,9 @@
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -396,18 +424,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -416,6 +447,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -437,8 +472,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -463,23 +536,47 @@
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -531,10 +628,6 @@
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -734,14 +827,14 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -805,8 +898,9 @@
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>

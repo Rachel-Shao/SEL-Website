@@ -2049,10 +2049,12 @@ fieldset[disabled] .btn-template-primary.active {
 #blog-homepage .post .video {
   margin-bottom: 10px;
 }
+#blog-post .post .read-more,
 #blog-listing-big .post .read-more,
 #blog-homepage .post .read-more {
   text-align: right;
 }
+#blog-post .post,
 #blog-listing-medium .post {
   margin-bottom: 60px;
 }

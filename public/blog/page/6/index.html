@@ -22,8 +22,13 @@
   <link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
 
   
-  <link rel="stylesheet" href="//use.fontawesome.com/releases/v5.11.2/css/all.css">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  
+  
+  
+  
+
+  <link href="/css/all.css" rel="stylesheet">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
   
   <link href="/css/animate.css" rel="stylesheet">
@@ -71,7 +76,7 @@
   
   <meta name="twitter:description" content="">
   
-
+  
 </head>
 
 
@@ -219,7 +224,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</p>
+                                    
+                                    <p class="intro">在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。 syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。 </p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/05/07/cloud-foundry%E4%B8%ADsyslog-aggregator%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -233,7 +239,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/44/health_manager.jpg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -242,6 +248,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">Health_Manager2.0源码分析</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/cloudfoundry/">Cloudfoundry</a>
                                           
                                           
 
@@ -252,7 +264,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。 笔者写这篇文档之前，在Github上，Health_Manager_next作为一个单独的项目，存在于Cloud Foundry之下；然而在笔者写这篇文档的时候，Health_Manager_next项目在Cloud Foundry下已经不复存在，然而进入原先的Health_Manager项目，可以发现，Health_Manager项目的项目说明已经成为HealthManager 2.</p>
+                                    
+                                    <p class="intro">在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。笔者写这篇文档之前，在Github上，Health_Manager_next作为一个单独的项目，存在于Cloud Foundry之下；然而在笔者写这篇文档的时候，Health_Manager_next项目在Cloud Foundry下已经不复存在，然而进入原先的Health_Manager项目，可以发现，Health_Manager项目的项目说明已经成为HealthManager 2.0，因此可见之前的Health_Manager_next项目，也就是HealthManager 2.0如今改名为Health_Manager项目，并覆盖Cloud Foundry v1版本的Health_Manager项目。下文对于该部分的称呼全部使用Health_Manager，而非之前的Health_Manager_next。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -266,7 +279,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/33/openssl.jpg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -275,6 +288,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/">[James Bayer]Cloud Foundry和BOSH部分遭受OpenSSL漏洞影响</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">丁轶群</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/bosh/">Bosh</a>
                                           
                                           
 
@@ -285,7 +304,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">James Bayer jbayer@gopivotal.</p>
+                                    
+                                    <p class="intro">James Bayer [jbayer@gopivotal.com](mailto:jbayer@gopivotal.com) greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE.</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -299,7 +319,7 @@
                                   <div class="image">
                                       <a href="https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/">
                                           
-                                          <img src="/img/banner.jpg" class="img-responsive" alt="">
+                                          <img src="/img/blogs/10/cloud_controller_ng.jpg" class="img-responsive" alt="">
                                           
                                       </a>
                                   </div>
@@ -308,6 +328,12 @@
                                     <h2><a href="https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/">Cloud_Controller_NG源码阅读记录</a></h2>
                                     <div class="clearfix">
                                         <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/cloud_controller_ng/">cloud_controller_ng</a>
                                           
                                           
 
@@ -318,7 +344,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">Cloud_Controller_NG就是cloud controller next generation的意思。即Cloud Foundry 平台用来管理控制应用和服务的组件。 官方文档是这么解释CCNG的作用的： * 维护一个包含应用、服务、配置信息的数据库(CCDB)。 * 在blobstore中存储应用的packages和droplets。 * 通过NATS和其他组件进行通信，包括Droplet Execution Agents (DEAs)、Service Gateways、和 Health Manager（HM）。 * 其他供用户调用的后端API。 阅读该组件源码，有助于从应用管理的视角理解cloudfoundry的运行过程。 说明： 1.</p>
+                                    
+                                    <p class="intro">Cloud_Controller_NG就是cloud controller next generation的意思。即Cloud Foundry 平台用来管理控制应用和服务的组件。官方文档是这么解释CCNG的作用的： * 维护一个包含应用、服务、配置信息的数据库(CCDB)。 * 在blobstore中存储应用的packages和droplets。 * 通过NATS和其他组件进行通信，包括Droplet Execution Agents (DEAs)、Service Gateways、和 Health Manager（HM）。 * 其他供用户调用的后端API。阅读该组件源码，有助于从应用管理的视角理解cloudfoundry的运行过程。</p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2014/04/03/ontroller-ng%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%E8%AE%B0%E5%BD%95/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -357,7 +384,8 @@
                                         </p>
                                         
                                     </div>
-                                    <p class="intro">本文将试图以CloudFoundry中的消息组件NATS为主要线索，以在CF中广泛使用的并发和网络编程框架EventMachine为侧重，来串联整个CF主线功能的工作原理，力求能用简单直接的方式描述出较多的架构细节和系统设计。 需要准备的知识： EventMachine(EM)的基础知识和使用方法，可以参考不久前的介绍：Research on EventMachine 关于NATS源码级别的介绍，可以参考我们之前的这篇文章：Research on NATS</p>
+                                    
+                                    <p class="intro">本文将试图以CloudFoundry中的消息组件NATS为主要线索，以在CF中广泛使用的并发和网络编程框架EventMachine为侧重，来串联整个CF主线功能的工作原理，力求能用简单直接的方式描述出较多的架构细节和系统设计。 </p>
                                     <p class="read-more"><a href="https://Rachel-Shao.github.io/blog/2013/12/02/%E4%BB%A5nats%E4%B8%BA%E4%B8%BB%E7%BA%BF%E7%9A%84cloudfoundry%E5%8E%9F%E7%90%86/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
@@ -421,11 +449,13 @@
                     }
             
             function search() {
+                    
                       key = document.getElementById("search-key").value;
                       if (key === "") {
                         
                         return;
                       }
+                      key = key.toLowerCase();
                       document.getElementById("search-key").value = "";
                   
                       
@@ -434,6 +464,9 @@
                   
                       
                       var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
                       var childs = el.childNodes;
                       for (var i = childs.length - 1; i >= 0; i--) {
                         el.removeChild(childs[i]);
@@ -444,18 +477,21 @@
                       xmltext.open("GET", "/index.xml", false);
                       xmltext.send();
                       resp = xmltext.responseXML;
+                      
                       items = resp.getElementsByTagName("item");
                       
                       var i = 0;
                       haveResult = false;
                       while (i < items.length) {
                         txt = items[i].getElementsByTagName("title")[0].innerHTML + items[i].getElementsByTagName("description")[0].innerHTML
+                        txt = txt.toLowerCase();
                         if (txt.indexOf(key) > -1) {
                           haveResult = true;
                           title = items[i].getElementsByTagName("title")[0].innerHTML;
                           link = items[i].getElementsByTagName("link")[0].innerHTML;
                           time = items[i].getElementsByTagName("pubDate")[0].innerHTML;
                           mark = items[i].getElementsByTagName("description")[0].innerHTML;
+                          time = time.slice(0, -5);
                           addItem(title, link, time, mark)
                         }
                         i++;
@@ -464,6 +500,10 @@
                         document.getElementById("search-tip").innerText = "搜索完毕，未发现结果 ...";
                         document.getElementById("search-tip").style.display = "block";
                       }
+
+                      
+                      var el = document.getElementById("blog-head");
+                      el.innerHTML="Blogs"
                     }
                   
                     
@@ -485,8 +525,46 @@
                         "</article>"
                       div = document.createElement("div")
                       div.innerHTML = tmpl;
-                      document.getElementById('blog-listing-medium').appendChild(div)
+                      var el = document.getElementById('blog-listing-medium');
+                      if (el == null) {
+                        el = document.getElementById("blog-post")
+                      }
+                      el.appendChild(div)
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
 
         </script>
         
@@ -511,23 +589,47 @@
             
             
             <li>
-                <a href="/categories/cloudfoundry">cloudfoundry (12)</a>
+                <a href="/categories/bosh">bosh (1)</a>
             </li>
             
             <li>
-                <a href="/categories/contaienrd">contaienrd (1)</a>
+                <a href="/categories/cloud_controller_ng">cloud_controller_ng (1)</a>
             </li>
             
             <li>
-                <a href="/categories/docker">docker (13)</a>
+                <a href="/categories/cloudfoundry">cloudfoundry (15)</a>
             </li>
             
             <li>
-                <a href="/categories/kubernetes">kubernetes (1)</a>
+                <a href="/categories/containerd">containerd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/docker">docker (19)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/etcd">etcd (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/haproxy">haproxy (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/healthmanager">healthmanager (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/service-mesh">service-mesh (4)</a>
             </li>
             
         </ul>
@@ -579,10 +681,6 @@
             
             <li>
                 <a href="/tags/cgroups"><i class="fas fa-tags"></i> cgroups</a>
-            </li>
-            
-            <li>
-                <a href="/tags/cloud_controller_ng"><i class="fas fa-tags"></i> cloud_controller_ng</a>
             </li>
             
             <li>
@@ -781,14 +879,14 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从contaienrd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtaienrd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从contaienrd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="https://Rachel-Shao.github.io/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
                     </div>
                 </div>
                 
@@ -852,8 +950,9 @@
     
 
     
-<script src="//code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script src="//cdn.bootcdn.net/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
