@@ -1,11 +1,11 @@
 # 网站的根URL
 # baseURL = "https://Rachel-Shao.github.io/"
-baseURL = "https://www.sel.zju.edu.cn/"
+baseURL = "http://www.sel.zju.edu.cn/"
 # 首页的标题
 title = "浙大SEL实验室"
 # 默认的语言
-languageCode = "zh-CN"
-defaultContentLanguage = "zh-CN"
+languageCode = "zh-cn"
+defaultContentLanguage = "zh-cn"
 
 ## 评论部分
 # 值为空的话则不启用disqus，因为需要翻墙才能访问，所以我们不启用
@@ -109,6 +109,7 @@ summaryLength = 1  # 摘要显示的段落数
 
 [Permalinks]
     blog = "/blog/:year/:month/:day/:filename/"
+    
 
 # 是否启用右侧的小工具
 [params.widgets]

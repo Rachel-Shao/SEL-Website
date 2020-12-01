@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>cf-release on 浙大SEL实验室</title>
-    <link>https://www.sel.zju.edu.cn/tags/cf-release/</link>
+    <link>http://www.sel.zju.edu.cn/tags/cf-release/</link>
     <description>Recent content in cf-release on 浙大SEL实验室</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-CN</language>
+    <language>zh-cn</language>
     <lastBuildDate>Wed, 17 Dec 2014 16:03:01 +0000</lastBuildDate>
     
-	<atom:link href="https://www.sel.zju.edu.cn/tags/cf-release/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://www.sel.zju.edu.cn/tags/cf-release/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>cf-release结构解析</title>
-      <link>https://www.sel.zju.edu.cn/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</link>
+      <link>http://www.sel.zju.edu.cn/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Wed, 17 Dec 2014 16:03:01 +0000</pubDate>
       
-      <guid>https://www.sel.zju.edu.cn/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</guid>
+      <guid>http://www.sel.zju.edu.cn/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</guid>
       <description>&lt;h2 id=&#34;1-制作时的cf-release结构解析&#34;&gt;1. 制作时的cf-release结构解析&lt;/h2&gt;
 
 &lt;p&gt;此处指的release统一为CloudFoundry官方给出的&lt;a href=&#34;https://github.com/cloudfoundry/cf-release&#34;&gt;cf-release&lt;/a&gt;，不做修改。&lt;/p&gt;
