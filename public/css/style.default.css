@@ -69,7 +69,7 @@ button i[class^="fa"] {
   color: #38a7bb;
 }
 .text-uppercase {
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: 0.08em;
 }
 @media (max-width: 991px) {

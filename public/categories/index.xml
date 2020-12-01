@@ -2,111 +2,111 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on 浙大SEL实验室</title>
-    <link>https://Rachel-Shao.github.io/categories/</link>
+    <link>https://www.sel.zju.edu.cn/categories/</link>
     <description>Recent content in Categories on 浙大SEL实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Thu, 29 Nov 2018 16:55:37 +0000</lastBuildDate>
     
-	<atom:link href="https://Rachel-Shao.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.sel.zju.edu.cn/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Kubernetes</title>
-      <link>https://Rachel-Shao.github.io/categories/kubernetes/</link>
+      <link>https://www.sel.zju.edu.cn/categories/kubernetes/</link>
       <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/kubernetes/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/kubernetes/</guid>
       <description></description>
     </item>
     
     <item>
       <title>service mesh</title>
-      <link>https://Rachel-Shao.github.io/categories/service-mesh/</link>
+      <link>https://www.sel.zju.edu.cn/categories/service-mesh/</link>
       <pubDate>Thu, 11 Oct 2018 20:11:02 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/service-mesh/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/service-mesh/</guid>
       <description></description>
     </item>
     
     <item>
       <title>containerd</title>
-      <link>https://Rachel-Shao.github.io/categories/containerd/</link>
+      <link>https://www.sel.zju.edu.cn/categories/containerd/</link>
       <pubDate>Sun, 05 Aug 2018 19:03:13 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/containerd/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/containerd/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Docker</title>
-      <link>https://Rachel-Shao.github.io/categories/docker/</link>
+      <link>https://www.sel.zju.edu.cn/categories/docker/</link>
       <pubDate>Thu, 10 May 2018 10:16:40 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/docker/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/docker/</guid>
       <description></description>
     </item>
     
     <item>
       <title>network</title>
-      <link>https://Rachel-Shao.github.io/categories/network/</link>
+      <link>https://www.sel.zju.edu.cn/categories/network/</link>
       <pubDate>Wed, 14 Mar 2018 11:23:35 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/network/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/network/</guid>
       <description></description>
     </item>
     
     <item>
       <title>etcd</title>
-      <link>https://Rachel-Shao.github.io/categories/etcd/</link>
+      <link>https://www.sel.zju.edu.cn/categories/etcd/</link>
       <pubDate>Sun, 01 Feb 2015 15:27:24 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/etcd/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/etcd/</guid>
       <description></description>
     </item>
     
     <item>
       <title>cloudfoundry</title>
-      <link>https://Rachel-Shao.github.io/categories/cloudfoundry/</link>
+      <link>https://www.sel.zju.edu.cn/categories/cloudfoundry/</link>
       <pubDate>Wed, 17 Dec 2014 16:03:01 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/cloudfoundry/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/cloudfoundry/</guid>
       <description></description>
     </item>
     
     <item>
       <title>haproxy</title>
-      <link>https://Rachel-Shao.github.io/categories/haproxy/</link>
+      <link>https://www.sel.zju.edu.cn/categories/haproxy/</link>
       <pubDate>Tue, 28 Oct 2014 17:02:26 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/haproxy/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/haproxy/</guid>
       <description></description>
     </item>
     
     <item>
       <title>healthmanager</title>
-      <link>https://Rachel-Shao.github.io/categories/healthmanager/</link>
+      <link>https://www.sel.zju.edu.cn/categories/healthmanager/</link>
       <pubDate>Tue, 15 Apr 2014 15:14:56 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/healthmanager/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/healthmanager/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Bosh</title>
-      <link>https://Rachel-Shao.github.io/categories/bosh/</link>
+      <link>https://www.sel.zju.edu.cn/categories/bosh/</link>
       <pubDate>Fri, 11 Apr 2014 10:49:01 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/bosh/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/bosh/</guid>
       <description></description>
     </item>
     
     <item>
       <title>cloud_controller_ng</title>
-      <link>https://Rachel-Shao.github.io/categories/cloud_controller_ng/</link>
+      <link>https://www.sel.zju.edu.cn/categories/cloud_controller_ng/</link>
       <pubDate>Thu, 03 Apr 2014 14:15:12 +0000</pubDate>
       
-      <guid>https://Rachel-Shao.github.io/categories/cloud_controller_ng/</guid>
+      <guid>https://www.sel.zju.edu.cn/categories/cloud_controller_ng/</guid>
       <description></description>
     </item>
     

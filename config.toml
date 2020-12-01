@@ -1,5 +1,6 @@
 # 网站的根URL
-baseURL = "https://Rachel-Shao.github.io/"
+# baseURL = "https://Rachel-Shao.github.io/"
+baseURL = "https://www.sel.zju.edu.cn/"
 # 首页的标题
 title = "浙大SEL实验室"
 # 默认的语言
@@ -97,7 +98,7 @@ summaryLength = 1  # 摘要显示的段落数
     about_us = "<p><strong>关于我们：<strong> <p>浙大SEL实验室</p><p>地址：杭州市浙大路38号曹光彪西楼405室</p><p><strong></strong>"
     address = """<p><strong>联系我们: 
                                     <p>团队负责人：丁轶群 yiqunding@zju.edu.cn</p>
-                                    <p>网站维护人：冯志凌 502361391@qq.com</p>                
+                                    <p>网站维护人：刘佳文 839809484@qq.com</p>                
     </strong>"""
     copyright = "Copyright ©️ 2020 SEL Laboratory , ZJ University all rights reserved."
 
