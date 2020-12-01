@@ -20,6 +20,8 @@ categories = [ "cloudfoundry" ]
 
 1.1 通过载入cf-release文件夹下config/final.yml文件，获得需要下载release文件的远程服务器网址，默认使用的提供商是s3，地址是：blob.cfblob.com 
 
+<!--more-->
+
 <center>
 <img src="https://res.cloudinary.com/rachel725/image/upload/v1605616363/sel/cf1_pmdlgm.jpg" alt="link" style="zoom:50%;" />
 </center>

@@ -17,6 +17,8 @@ James Bayer [jbayer@gopivotal.com](mailto:jbayer@gopivotal.com)
 
 greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE. 
 
+<!--more-->
+
 the short summary is:
 
 *   Ubuntu stemcells based on 10.04 LTS are **NOT VULNERABLE**

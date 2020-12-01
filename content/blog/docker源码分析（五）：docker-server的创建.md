@@ -18,6 +18,8 @@ categories = ["Docker"]
 
 Docker架构中，Docker Server是Docker Daemon的重要组成部分。Docker Server最主要的功能是：接受用户通过Docker Client发送的请求，并按照相应的路由规则实现路由分发。 
 
+<!--more-->
+
 同时，Docker Server具备十分优秀的用户友好性，多种通信协议的支持大大降低Docker用户使用Docker的门槛。除此之外，Docker Server设计实现了详尽清晰的API接口，以供Docker用户选择使用。通信安全方面，Docker Server可以提供安全传输层协议（TLS），保证数据的加密传输。并发处理方面，Docker Daemon大量使用了Golang中的goroutine，大大提高了服务端的并发处理能力。 
 
 本文为《Docker源码分析》系列的第五篇——Docker Server的创建。

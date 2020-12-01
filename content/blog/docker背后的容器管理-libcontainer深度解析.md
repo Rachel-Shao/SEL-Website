@@ -14,6 +14,8 @@ categories = [ "Docker" ]
 
 libcontainer 是Docker中用于容器管理的包，它基于Go语言实现，通过管理`namespaces`、`cgroups`、`capabilities`以及文件系统来进行容器控制。你可以使用libcontainer创建容器，并对容器进行生命周期管理。
 
+<!--more-->
+
 > 容器是一个可管理的执行环境，与主机系统共享内核，可与系统中的其他容器进行隔离。
 
 在2013年Docker刚发布的时候，它是一款基于LXC的开源容器管理引擎。把LXC复杂的容器创建与使用方式简化为Docker自己的一套命令体系。随着Docker的不断发展，它开始有了更为远大的目标，那就是反向定义容器的实现标准，将底层实现都抽象化到libcontainer的接口。这就意味着，底层容器的实现方式变成了一种可变的方案，无论是使用namespace、cgroups技术抑或是使用systemd等其他方案，只要实现了libcontainer定义的一组接口，Docker都可以运行。这也为Docker实现全面的跨平台带来了可能。

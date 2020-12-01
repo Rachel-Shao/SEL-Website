@@ -14,7 +14,7 @@ categories = [ "Docker" ]
 
 随着容器技术发展的愈发火热，Linux基金会于2015年6月成立[OCI（Open Container Initiative）](https://www.opencontainers.org/)组织，旨在围绕容器格式和运行时制定一个开放的工业化标准。该组织一成立便得到了包括谷歌、微软、亚马逊、华为等一系列云计算厂商的支持。而runC就是Docker贡献出来的，按照该开放容器格式标准（OCF, Open Container Format）制定的一种具体实现。
 
-
+<!--more-->
 
 1\. 容器格式标准是什么？
 --------------

@@ -24,6 +24,8 @@ categories = [ "cloudfoundry" ]
 
 CloudFoundry（CF）中很早就使用了VMware研发的Warden容器来负责应用的资源分配隔离和实例调度。可惜的是，这一本来可以成为业界标准和并掀起一阵革命的容器PaaS技术却因为Pivotal的方针路线上的种种原因被后来居上Docker吊打至今。最近CFer有醒悟的迹象，在Warden上进行了大量改进和升级，本文就来一窥CF新容器技术的一些要点。
 
+<!--more-->
+
 
 **Warden和Garden**
 -----------------

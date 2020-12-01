@@ -16,6 +16,8 @@ categories = [ "cloudfoundry" ]
 
 为了提高Cloud Foundry router的可用性，Cloud Foundry开源社区不久前推出了gorouter。gorouter采用现阶段比较新颖的go作为编程语言，并重新设计了原有的组件架构。由于go语言本身的特性，gorouter处理并发请求的能力大大超过了router，甚至在同种实验环境下，性能是原先router的20倍左右。 
 
+<!--more-->
+
 由于gorouter的高性能，笔者也抱着期待的心态去接触go，当然还有gorouter。本文不会从go语言语法的角度入手gorouter，所以有一些go语言的基础再来看本文，是有必要的。本文主要是对gorouter的源码的简单解读，另外还包含一些笔者对gorouter的看法。 
 
 **gorouter的程序组织形式** 

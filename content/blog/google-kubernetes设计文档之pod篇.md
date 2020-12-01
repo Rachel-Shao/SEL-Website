@@ -15,6 +15,8 @@ categories = ["Kubernetes"]
 
 在Kubernetes中，创建、调度和管理的最小部署单位是Pod，而不是容器。
 
+<!--more-->
+
 **1.什么是Pod**
 ============
 

@@ -18,6 +18,8 @@ categories = ["Kubernetes"]
 
 于是我们就回到最初的需求，到底需要解决什么问题，第一个问题就是，apiserver启动的时候，使用secure模式，参数应该如何设置，相关的机制又是怎样？ 
 
+<!--more-->
+
 这一部分的issue很多，如果不从源码来分析的话，就只能黑盒化的去尝试各种参数搭配，费时费力，也不确定是否正确，之前就是这样，这几个issue可以供参考： 
 
 https://github.com/GoogleCloudPlatform/kubernetes/issues/10159#issuecomment-113955582 

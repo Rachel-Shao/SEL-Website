@@ -15,6 +15,8 @@ categories = [ "cloudfoundry" ]
 
 本文从collector的功能出发，主要讲述以上两个功能的源码实现。 
 
+<!--more-->
+
 发现注册组件在Cloud Foundry中，每个组件在启动的时候后会以一个component的形式向Cloud Foundry注册，同时也会作为一个组件，向NATS发布一些启动信息。 首先以DEA为例，讲述该组件register与向NATS publish信息的实现。
 
 首先看以下/dea/lib/dea/agent.rb中register的代码： \[plain\] view plaincopy在CODE上查看代码片派生到我的代码片

@@ -17,7 +17,7 @@
       <pubDate>Thu, 30 Jul 2015 13:41:07 +0000</pubDate>
       
       <guid>https://www.sel.zju.edu.cn/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/</guid>
-      <description>Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</description>
+      <description>&lt;p&gt;Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。&lt;/p&gt;</description>
     </item>
     
   </channel>

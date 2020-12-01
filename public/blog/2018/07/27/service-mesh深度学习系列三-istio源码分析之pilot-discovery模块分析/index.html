@@ -216,11 +216,7 @@
                         
 
                         <div id="post-content">
-                          
-
-<p>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</p>
-
-<hr />
+                          <p>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</p>
 
 <h2 id="pilot总体架构">pilot总体架构</h2>
 
@@ -488,7 +484,6 @@
 </ol>
 
 <p>discovery server在获取endpoint之后，将他们封装在<code>DiscoveryResponse</code>中，将<code>DiscoveryResponse</code>的类型（即<code>TypeUrl</code>）设置为<code>type.googleapis.com/envoy.api.v2.ClusterLoadAssignment</code>，<code>Nonce</code>设置为当前时间（nonce的解释见本文前面部分）, 启动单独的协程通过与Envoy建立的双向stream gRPC连接发送给Envoy，发送超时为5秒</p>
-
                         </div>
                         
                         

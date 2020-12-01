@@ -17,6 +17,8 @@ categories = [ "Docker" ]
 
 如今，Docker作为业界领先的轻量级虚拟化容器管理引擎，给全球开发者提供了一种新颖、便捷的软件集成测试与部署之道。在团队开发软件时，Docker可以提供可复用的运行环境、灵活的资源配置、便捷的集成测试方法以及一键式的部署方式。可以说，Docker的优势在简化持续集成、运维部署方面体现得淋漓尽致，它完全让开发者从前者中解放出来，把精力真正地倾注在开发上。 
 
+<!--more-->
+
 然而，把Docker的功能发挥到极致，并非一件易事。在深刻理解Docker架构的情况下，熟练掌握Docker Client的使用也非常有必要。前者可以参阅[《Docker源码分析》系列之Docker架构篇](http://www.sel.zju.edu.cn/?p=112)，而本文主要针对后者，从源码的角度分析Docker Client，力求帮助开发者更深刻的理解Docker Client的具体实现，最终更好的掌握Docker Client的使用方法。即本文为《Docker源码分析》系列的第二篇——Docker Client篇。
 
 **2\. Docker Client源码分析章节安排**

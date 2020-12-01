@@ -16,6 +16,8 @@ categories = ["Kubernetes"]
 
 当然，容器运行时并非只有Docker一种，包括CoreOS的rkt，hyper.sh的runV，Google的gvisor，以及本文的主角PouchContainer，都包含了完整的容器操作，能够用来创建特性各异的容器。不同的容器运行时有着各自独特的优点，能够满足不同用户的需求，因此Kubernetes支持多种容器运行时势在必行。 
 
+<!--more-->
+
 最初，Kubernetes原生内置了对Docker的调用接口，之后社区又在Kubernetes 1.3中集成了rkt的接口，使其成为了Docker以外，另一个可选的容器运行时。不过，此时不论是对于Docker还是对于rkt的调用都是和Kubernetes的核心代码强耦合的，这无疑会带来如下两方面的问题：
 
 1.  新兴的容器运行时，例如PouchContainer这样的后起之秀，加入Kubernetes生态难度颇大。容器运行时的开发者必须对于Kubernetes的代码（至少是Kubelet）有着非常深入的理解，才能顺利完成两者之间的对接。

@@ -17,7 +17,11 @@
       <pubDate>Wed, 17 Dec 2014 16:03:01 +0000</pubDate>
       
       <guid>https://www.sel.zju.edu.cn/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</guid>
-      <description>1.</description>
+      <description>&lt;h2 id=&#34;1-制作时的cf-release结构解析&#34;&gt;1. 制作时的cf-release结构解析&lt;/h2&gt;
+
+&lt;p&gt;此处指的release统一为CloudFoundry官方给出的&lt;a href=&#34;https://github.com/cloudfoundry/cf-release&#34;&gt;cf-release&lt;/a&gt;，不做修改。&lt;/p&gt;
+
+&lt;p&gt;1.1 通过载入cf-release文件夹下config/final.yml文件，获得需要下载release文件的远程服务器网址，默认使用的提供商是s3，地址是：blob.cfblob.com&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -26,7 +30,9 @@
       <pubDate>Fri, 11 Apr 2014 10:49:01 +0000</pubDate>
       
       <guid>https://www.sel.zju.edu.cn/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/</guid>
-      <description>James Bayer jbayer@gopivotal.</description>
+      <description>&lt;p&gt;James Bayer &lt;a href=&#34;mailto:jbayer@gopivotal.com&#34;&gt;jbayer@gopivotal.com&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE.&lt;/p&gt;</description>
     </item>
     
   </channel>

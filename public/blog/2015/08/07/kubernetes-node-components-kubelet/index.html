@@ -214,9 +214,7 @@
                         
 
                         <div id="post-content">
-                          
-
-<p>kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</p>
+                          <p>kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</p>
 
 <h1 id="1-brief-introduction-of-kubelet"><strong>1. Brief introduction of kubelet</strong></h1>
 
@@ -647,7 +645,6 @@ kl.podManager.<span style="color:#c0f">UpdatePods</span>(u, podSyncTypes)</code>
 <h2 id="3-summary"><strong>3. Summary</strong></h2>
 
 <p>总之，从宏观角度上而言，kubelet进行的工作就是从apiserver/file/http中获取pod更新的信息，并且定期进行sync pod。其中有大量的工作都涉及了channel的使用，也希望读者在阅读的过程中能够加以注意。</p>
-
                         </div>
                         
                         

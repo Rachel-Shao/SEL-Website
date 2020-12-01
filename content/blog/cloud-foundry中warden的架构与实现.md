@@ -16,6 +16,8 @@ categories = [ "cloudfoundry" ]
 
 Cloud Foundry中warden项目的首要目的是提供一套简易的接口来管理隔离的环境，这些隔离的环境可以被称为“容器”，他们可以在CPU使用，内存使用，磁盘使用以及设备访问权限方面做相应的限制。 
 
+<!--more-->
+
 本文将从四个方面进行探讨分析warden的实现：
 
 1.  warden的功能介绍及框架实现

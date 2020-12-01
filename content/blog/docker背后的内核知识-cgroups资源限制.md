@@ -3,7 +3,7 @@
 id= "574"
 
 title = "Docker背后的内核知识——cgroups资源限制"
-description = "当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助"
+description = "当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助。"
 tags= [ "Docker" , "cgroups" ]
 date= "2015-04-22 10:03:07"
 author = "孙健波"
@@ -14,7 +14,9 @@ categories = [ "Docker" ]
 
 ## 摘要
 
-当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助
+当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助。
+
+<!--more-->
 
 
 ## 正文

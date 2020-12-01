@@ -17,7 +17,11 @@
       <pubDate>Wed, 17 Dec 2014 16:03:01 +0000</pubDate>
       
       <guid>https://www.sel.zju.edu.cn/blog/2014/12/17/cf-release%E7%BB%93%E6%9E%84%E8%A7%A3%E6%9E%90/</guid>
-      <description>1.</description>
+      <description>&lt;h2 id=&#34;1-制作时的cf-release结构解析&#34;&gt;1. 制作时的cf-release结构解析&lt;/h2&gt;
+
+&lt;p&gt;此处指的release统一为CloudFoundry官方给出的&lt;a href=&#34;https://github.com/cloudfoundry/cf-release&#34;&gt;cf-release&lt;/a&gt;，不做修改。&lt;/p&gt;
+
+&lt;p&gt;1.1 通过载入cf-release文件夹下config/final.yml文件，获得需要下载release文件的远程服务器网址，默认使用的提供商是s3，地址是：blob.cfblob.com&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -14,6 +14,8 @@ categories = [ "Docker" ]
 
 Docker作为目前最火的轻量级容器技术，有很多令人称道的功能，如Docker的镜像管理。然而，Docker同样有着很多不完善的地方，网络方面就是Docker比较薄弱的部分。因此，我们有必要深入了解Docker的网络知识，以满足更高的网络需求。本文首先介绍了Docker自身的4种网络工作方式，然后通过3个样例 —— 将Docker容器配置到本地网络环境中、单主机Docker容器的VLAN划分、多主机Docker容器的VLAN划分，演示了如何使用[pipework](https://github.com/jpetazzo/pipework)帮助我们进行复杂的网络设置，以及pipework是如何工作的。
 
+<!--more-->
+
 
 1\. **Docker的4种网络模式**
 ----------

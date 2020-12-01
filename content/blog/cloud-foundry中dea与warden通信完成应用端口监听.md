@@ -14,6 +14,8 @@ categories = [ "cloudfoundry" ]
 
 在Cloud Foundry v2版本中，DEA为一个用户应用运行的控制模块，而应用的真正运行都是依附于warden。更具体的来说，是DEA接收到Cloud Controller的请求；DEA发送请求给warden server；warden server创建warden container并将用户应用droplet等环境配置好；DEA发送应用启动请求至warden serve；最后warden container执行启动脚本启动应用。 
 
+<!--more-->
+
 本文主要具体描述，DEA如何与warden交互，以保证最终用户的应用可以成功绑定某一个端口，实现用户应用对外提供服务。 
 
 

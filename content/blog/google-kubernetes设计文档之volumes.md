@@ -13,6 +13,8 @@ categories = ["Kubernetes"]
 
 **摘要：**Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文描述了Kubernetes中Volumes的使用情况，Volume是一个能够被容器访问的目录。
 
+<!--more-->
+
 
 **Volumes**
 ===========

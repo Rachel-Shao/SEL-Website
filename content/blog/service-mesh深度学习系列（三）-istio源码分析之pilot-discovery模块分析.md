@@ -12,7 +12,7 @@ categories = ["service mesh"]
 +++
 本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。
 
------
+<!--more-->
 
 
 pilot总体架构

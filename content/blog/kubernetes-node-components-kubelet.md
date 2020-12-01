@@ -13,6 +13,8 @@ categories = ["Kubernetes"]
 
 kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.
 
+<!--more-->
+
 **1\. Brief introduction of kubelet**
 =====================================
 

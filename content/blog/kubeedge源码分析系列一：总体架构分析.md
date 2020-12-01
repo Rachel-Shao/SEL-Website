@@ -13,7 +13,11 @@ categories = ["Kubernetes"]
 
 kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。 
 
+<!--more-->
+
 SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.1后的commit `31e562bc`。
+
+
 
 总体架构，kubeedge中的各种模块
 -------------------

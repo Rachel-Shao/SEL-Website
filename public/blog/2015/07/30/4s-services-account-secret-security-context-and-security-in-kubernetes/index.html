@@ -214,9 +214,7 @@
                         
 
                         <div id="post-content">
-                          
-
-<p>Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</p>
+                          <p>Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</p>
 
 <h2 id="1-集群安全-security-in-kubernetes"><strong>1. 集群安全（Security in Kubernetes)</strong></h2>
 
@@ -441,7 +439,6 @@ secrets:
 </ul>
 
 <p>这个概念具体如何使用在k8s场景中基本上可以认为在servicAccount中的securityContext label下，目前代码只实现了capabilities和privileged，在此不展开说明。</p>
-
                         </div>
                         
                         

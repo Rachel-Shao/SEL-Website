@@ -20,6 +20,8 @@ categories = [ "Docker" ]
 
 Docker就是基于runC创建的，简单地说，runC是Docker中最为核心的部分，容器的创建，运行，销毁等等操作最终都将通过调用runC完成。下面我们将演示如何使用runC，以最精简的方式创建并运行一个容器。
 
+<!--more-->
+
 ### 1.1 利用runC运行busybox容器
 
 下载并编译runC

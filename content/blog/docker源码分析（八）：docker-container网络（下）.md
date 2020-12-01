@@ -18,6 +18,8 @@ categories = [ "Docker" ]
 
 Docker目前支持4种网络模式，分别是bridge、host、container、none，Docker开发者可以根据自己的需求来确定最适合自己应用场景的网络模式。 从Docker Container网络创建流程图中可以看到，创建流程第一个涉及的Docker模块即为Docker Client。当然，这也十分好理解，毕竟Docker Container网络环境的创建需要由用户发起，用户根据自身对容器的需求，选择网络模式，并将其通过Docker Client传递给Docker Daemon。
 
+<!--more-->
+
 本节，即从Docker Client源码的角度，分析如何配置Docker Container的网络模式，以及Docker Client内部如何处理这些网络模式参数。 需要注意的是：配置Docker Container网络环境与创建Docker Container网络环境有一些区别。区别是：配置网络环境指用户通过向Docker Client传递网络参数，实现Docker Container网络环境参数的配置，这部分配置由Docker Client传递至Docker Daemon，并由Docker Daemon保存；创建网络环境指，用户通过Docker Client向Docker Daemon发送容器启动命令之后，Docker Daemon根据之前保存的网络参数，实现Docker Container的启动，并在启动过程中完成Docker Container网络环境的创建。 以上的基本知识，理解下文的Docker Container网络环境创建流程。
 
 

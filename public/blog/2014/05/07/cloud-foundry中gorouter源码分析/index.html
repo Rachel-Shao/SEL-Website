@@ -214,9 +214,7 @@
                         
 
                         <div id="post-content">
-                          
-
-<p>在Cloud Foundry v1版本中，router作为路由节点，转发所有进入Cloud Foundry的请求。由于开发语言为ruby，故router接受并处理并发请求的能力受到语言层的限制。虽然在v1版本中，router曾经有过一定的优化，采用lua脚本代替原先的ruby脚本，由lua来分析请求，使得一部分请求不再经过ruby代码，而直接去DEA访问应用，但是，一旦router暴露在大量的访问请求下，性能依旧是不尽如人意.</p>
+                          <p>在Cloud Foundry v1版本中，router作为路由节点，转发所有进入Cloud Foundry的请求。由于开发语言为ruby，故router接受并处理并发请求的能力受到语言层的限制。虽然在v1版本中，router曾经有过一定的优化，采用lua脚本代替原先的ruby脚本，由lua来分析请求，使得一部分请求不再经过ruby代码，而直接去DEA访问应用，但是，一旦router暴露在大量的访问请求下，性能依旧是不尽如人意.</p>
 
 <p>为了提高Cloud Foundry router的可用性，Cloud Foundry开源社区不久前推出了gorouter。gorouter采用现阶段比较新颖的go作为编程语言，并重新设计了原有的组件架构。由于go语言本身的特性，gorouter处理并发请求的能力大大超过了router，甚至在同种实验环境下，性能是原先router的20倍左右。</p>
 
@@ -554,7 +552,6 @@ type tableEntry struct {
 <h2 id="转载请注明出处"><strong>转载请注明出处。</strong></h2>
 
 <p>这篇文档更多出于我本人的理解，肯定在一些地方存在不足和错误。如果你对这方面感兴趣，并有更好的想法和建议，也请联系我。</p>
-
                         </div>
                         
                         

@@ -13,6 +13,8 @@ categories = [ "Kubernetes" ]
 
 Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。
 
+<!--more-->
+
 
 ## **1\. 集群安全（Security in Kubernetes)**
 

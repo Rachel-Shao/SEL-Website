@@ -13,6 +13,8 @@ categories = ["Kubernetes"]
 
 Kubelet是Google Kubernetes 集群minion工作节点上的一个重要组件.本文将作者阅读代码和亲身的使用经验相结合带你深入理解kubelet. 因为kubernetes代码处在火热迭代开发中,版本日新月异, 本文的源代码来自2014年12月22日github上kubernetes的master最新代码, commit id 119fe37f064905d, 由于kubelet代码量大,变量多,所以文中展示的代码有删节,省略的部分用...表示. 
 
+<!--more-->
+
 **文章内容分为一下几个部分:**
 
 1.  **Kubelet简介**

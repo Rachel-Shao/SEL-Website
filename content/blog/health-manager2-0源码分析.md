@@ -15,6 +15,8 @@ categories = ["Cloudfoundry","healthmanager"]
 
 笔者写这篇文档之前，在Github上，Health\_Manager\_next作为一个单独的项目，存在于Cloud Foundry之下；然而在笔者写这篇文档的时候，Health\_Manager\_next项目在Cloud Foundry下已经不复存在，然而进入原先的Health\_Manager项目，可以发现，Health\_Manager项目的项目说明已经成为HealthManager 2.0，因此可见之前的Health\_Manager\_next项目，也就是HealthManager 2.0如今改名为Health\_Manager项目，并覆盖Cloud Foundry v1版本的Health\_Manager项目。下文对于该部分的称呼全部使用Health\_Manager，而非之前的Health\_Manager\_next。 
 
+<!--more-->
+
 # 1\. Health\_Manager概述 
 
 在Cloud Foundry中，Health\_Manager主要负责监控应用的状态，并且保证应该在DEA中运行的应用的确在运行，还有这些应用的实例数量，实例版本都符合预期的状况。 

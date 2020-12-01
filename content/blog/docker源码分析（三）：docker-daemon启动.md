@@ -15,7 +15,7 @@ categories = ["Docker"]
 
 Docker作为业界备受推崇的轻量级虚拟化容器管理引擎，其强大的后台能力全凭Docker Daemon。本文从源码出发，介绍了Docker Daemon的启动流程，并深入分析启动流程中每一步骤的实现细节。Docker的运行真可谓，载体为daemon，调度管理由engine，任务执行靠job。
 
-
+<!--more-->
 
 **1 前言**
 ========

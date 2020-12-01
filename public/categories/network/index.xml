@@ -17,7 +17,9 @@
       <pubDate>Wed, 14 Mar 2018 11:23:35 +0000</pubDate>
       
       <guid>https://www.sel.zju.edu.cn/blog/2018/03/14/%E6%8A%80%E6%9C%AF%E5%B9%B2%E8%B4%A7%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3flannel/</guid>
-      <description>根据官网的描述，flannel是一个专为kubernetes定制的三层网络解决方案，主要用于解决容器的跨主机通信问题。</description>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;根据官网的描述，flannel是一个专为kubernetes定制的三层网络解决方案，主要用于解决容器的跨主机通信问题。&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;</description>
     </item>
     
   </channel>

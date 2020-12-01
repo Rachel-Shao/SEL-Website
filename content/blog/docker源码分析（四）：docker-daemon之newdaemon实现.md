@@ -15,6 +15,8 @@ categories = ["Docker"]
 
 Docker的生态系统日趋完善，开发者群体也在日趋庞大，这让业界对Docker持续抱有极其乐观的态度。然而，对于广大开发者而言，使用Docker这项技术已然不是门槛，享受Docker带来的技术福利已不是困难。如今，如何探寻Docker适应的场景，如何发展Docker周边的技术，以及如何弥合Docker新技术与传统物理机或VM技术的鸿沟，已经占据Docker研究者们的思考与实践。 
 
+<!--more-->
+
 本文为《Docker源码分析》第四篇——Docker Daemon之NewDaemon实现，力求帮助广大Docker爱好者更多得理解Docker 的核心——Docker Daemon的实现。
 
 **1\. NewDaemon作用简介**

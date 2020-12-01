@@ -15,7 +15,7 @@ categories = ["Docker"]
 
 **摘要:** Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。
 
-
+<!--more-->
 
 **前言**
 ======

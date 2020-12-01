@@ -14,6 +14,8 @@ categories = [ "cloudfoundry" ]
 
 本文将试图以CloudFoundry中的消息组件NATS为主要线索，以在CF中广泛使用的并发和网络编程框架EventMachine为侧重，来串联整个CF主线功能的工作原理，力求能用简单直接的方式描述出较多的架构细节和系统设计。 
 
+<!--more-->
+
 需要准备的知识： EventMachine(EM)的基础知识和使用方法，可以参考不久前的介绍：Research on EventMachine 关于NATS源码级别的介绍，可以参考我们之前的这篇文章：Research on NATS
 
 一、以NATS为线索部署CloudFoundry的更多细节

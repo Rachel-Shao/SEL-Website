@@ -17,6 +17,8 @@ _1 Kube-proxy 简介_
 
 *2 Kube-proxy代码解读*
 
+<!--more-->
+
 # **1 Kube-proxy简介** 
 
 Kube-proxy网络代理运行在每个minion节点上。网上很多人所说这个proxy是kubernetes里的SDN组件，我本人并不这么认为, 我认为可以把他看成是一个高级的反向代理．它的功能反映了定义在每个节点上Kubernetes API中的Services信息，并且可以做简单的TCP流转发或在一组服务后端做round robin的流转发．服务端点目前通过与docker link 兼容的环境变量指定的端口被发现, 这些端口由服务代理打开．目前，用户必须在代理上选择一个端口以暴露服务. 

@@ -19,6 +19,8 @@ categories = [ "cloudfoundry" ]
 
 We’ll begin with a basic Spring application named ms-spr-demo. This app takes users to a simple web page announcing the ubiquitous “Hello World!” message. We’ll utilize the cf command-line interface to push the application: 
 
+<!--more-->
+
 **这里先向CF PUSH一个很简单的打印“Hello World”的应用：**
 
 ```shell

@@ -20,6 +20,8 @@ Cloud Foundry作为业界出众的PaaS平台，在应用的可扩展性方面做
 
 大致来说，可以认为是共同分担访问压力，但是也不是针对所有该应用的访问，都进行均衡，分发到不同的应用实例处。譬如：当Cloud Foundry的访问用户访问应用时，第一次的访问，gorouter会将请求分发到应用的某个实例处，但是如果该用户之后的访问都是有状态的，不希望之后的访问会被分发到该应用的其他实例处。针对以上这种情况，Cloud Foundry提供了自己的解决方案，使用StickySession的方式，保证请求依旧分发给指定的应用实例。
 
+<!--more-->
+
 本文即分析Cloud Foundry中gorouter关于StickySession的实现方式。
 
 该部分内容需要对gorouter有一定的了解，可以参见笔者之前的博文：Cloud Foundry中gorouter源码分析

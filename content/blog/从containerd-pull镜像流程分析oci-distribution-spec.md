@@ -13,7 +13,11 @@ categories = [ "containerd" ]
 
 oci组织成立以来已经形成了关于image和runtime的两个spec。[2018年4月](https://www.linuxfoundation.org/press-release/2018/04/open-container-initiative-announces-distribution-specification-project/)，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的[Docker Registry HTTP API V2](https://github.com/docker/distribution/blob/5cb406d511b7b9163bff9b6439072e4892e5ae3b/docs/spec/api.md)为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。
 
+<!--more-->
+
 为了了解oci所定义的镜像分发协议，本文分析v1.1.0的containerd代码pull流程，tag创建时间为2018年4月23日。
+
+
 
 pull操作的cli命令解释
 --------------

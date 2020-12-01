@@ -16,6 +16,8 @@ categories = [ "cloudfoundry" ]
 
 syslog\_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog\_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog\_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog\_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog\_aggregator会将其清除。 
 
+<!--more-->
+
 以下是对syslog\_aggregator实现的简单分析： syslog\_aggregator组件主要包括monit模块，日志管理模块。
 
 

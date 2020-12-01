@@ -213,9 +213,7 @@
                         
 
                         <div id="post-content">
-                          
-
-<p>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文为其设计文档系列的第一篇：安全。</p>
+                          <p>摘要：Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文为其设计文档系列的第一篇：安全。</p>
 
 <h1 id="1-设计目标"><strong>1.设计目标</strong></h1>
 
@@ -243,7 +241,6 @@
 <p>Kubernetes pod scheduler负责从pod中读取数据并将其注入pod所在集群的minion节点中。它需要的最低限度的权限有，查看pod ID（用以生成binding）、pod当前状态、分配给pod的资源信息等。Pod scheduler不需要修改pods或查看其它资源的权限，只需要创建binding的权限。Pod scheduler不需要删除binding的权限，除非它接管了宕机机器上原有组件的重定位工作。在这样的情况下，scheduler可能需要对用户或者项目容器信息的读取权限来决定重定位pod的优先位置。</p>
 
 <p><strong>原文链接：</strong><a href="https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/design/security.md">Security in Kubernetes</a>（编译/何思玫 审校/孙宏亮）</p>
-
                         </div>
                         
                         

@@ -460,7 +460,9 @@
                             
                              2014-05-07
                             </p>
-                            <p class="intro">在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。</p>
+                            <p class="intro"><p>在Cloud Foundry中，用来收集Cloud Foundry各组件日志信息的组件，名为syslog_aggregator。</p>
+
+<p>syslog_aggregator可以做到方便的收集Cloud Foundry中所有组件的日志信息，并将这些信息进行初步处理，比如说：将不同月份产生的日志，进行分类存储；另外还对同一月份内产生的日志，将其通过不同的日期进行分类。这样的话，当Cloud Foundry平台的开发者，在运营该平台时需要查看Cloud Foundry中某一个组件产生的日志时，可以方便的查找到对应日期的日志。syslog_aggregator除了可以对日志进行分组件，分月份，分日期进行存储外，还提供一些对日志进行打包或剪枝的功能，比如：syslog_aggregator会将一定期限内的日志，进行压缩，以达到节省存储空间的功能；另外syslog_aggregator还会定期对日志进行清除，比如只保存一定期限时间长度的日志，当日志超过该时限，syslog_aggregator会将其清除。</p></p>
                             <p class="read-more">
                               <a href="https://www.sel.zju.edu.cn/blog/2014/05/07/cloud-foundry%E4%B8%ADsyslog-aggregator%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90/" class="btn btn-template-main">阅读更多</a>
                               
@@ -495,7 +497,9 @@
                             
                              2014-04-15
                             </p>
-                            <p class="intro">在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。</p>
+                            <p class="intro"><p>在Cloud Foundry v2版本中，Health_Manager_next已经替代v1版本中的Health_Manager。</p>
+
+<p>笔者写这篇文档之前，在Github上，Health_Manager_next作为一个单独的项目，存在于Cloud Foundry之下；然而在笔者写这篇文档的时候，Health_Manager_next项目在Cloud Foundry下已经不复存在，然而进入原先的Health_Manager项目，可以发现，Health_Manager项目的项目说明已经成为HealthManager 2.0，因此可见之前的Health_Manager_next项目，也就是HealthManager 2.0如今改名为Health_Manager项目，并覆盖Cloud Foundry v1版本的Health_Manager项目。下文对于该部分的称呼全部使用Health_Manager，而非之前的Health_Manager_next。</p></p>
                             <p class="read-more">
                               <a href="https://www.sel.zju.edu.cn/blog/2014/04/15/health-manager2-0%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="btn btn-template-main">阅读更多</a>
                               
@@ -530,7 +534,9 @@
                             
                              2014-04-11
                             </p>
-                            <p class="intro">James Bayer jbayer@gopivotal.</p>
+                            <p class="intro"><p>James Bayer <a href="mailto:jbayer@gopivotal.com">jbayer@gopivotal.com</a></p>
+
+<p>greg oehmen (BOSH PM) has put together an excellent explanation on how Cloud Foundry and BOSH stemcells are affected by the OpenSSL heartbleed the CVE.</p></p>
                             <p class="read-more">
                               <a href="https://www.sel.zju.edu.cn/blog/2014/04/11/james-bayercloud-foundry%E5%92%8Cbosh%E9%83%A8%E5%88%86%E9%81%AD%E5%8F%97openssl%E6%BC%8F%E6%B4%9E%E5%BD%B1%E5%93%8D/" class="btn btn-template-main">阅读更多</a>
                               

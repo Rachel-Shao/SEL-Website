@@ -18,6 +18,8 @@ categories = [ "cloudfoundry" ]
 
 本文将从阐述Cloud Foundry中DEA如何为应用实例的启动配置环境变量。
 
+<!--more-->
+
 
 ## **DEA接收应用启动请求及其执行流程**
 

@@ -21,6 +21,8 @@ categories = ["Docker"]
 
 Docker是Docker公司开源的一个基于轻量级虚拟化技术的容器引擎项目,整个项目基于Go语言开发，并遵从Apache 2.0协议。目前，Docker可以在容器内部快速自动化部署应用，并可以通过内核虚拟化技术（namespaces及cgroups等）来提供容器的资源隔离与安全保障等。由于Docker通过操作系统层的虚拟化实现隔离，所以Docker容器在运行时，不需要类似虚拟机（VM）额外的操作系统开销，提高资源利用率，并且提升诸如IO等方面的性能。 
 
+<!--more-->
+
 由于众多新颖的特性以及项目本身的开放性，Docker在不到两年的时间里迅速获得诸多厂商的青睐，其中更是包括Google、Microsoft、VMware等业界行业领导者。Google在今年六月份推出了Kubernetes，提供Docker容器的调度服务，而今年8月Microsoft宣布Azure上支持Kubernetes，随后传统虚拟化巨头VMware宣布与Docker强强合作。今年9月中旬，Docker更是获得4000万美元的C轮融资，以推动分布式应用方面的发展。 
 
 从目前的形势来看，Docker的前景一片大好。本系列文章从源码的角度出发，详细介绍Docker的架构、Docker的运行以及Docker的卓越特性。本文是Docker源码分析系列的第一篇———Docker架构篇。
