@@ -66,7 +66,7 @@
   
   
   
-  <meta property="og:updated_time" content="2018-11-29T16:55:37Z">
+  <meta property="og:updated_time" content="2021-09-13T10:00:11Z">
   
 
   
@@ -215,8 +215,7 @@
                         <div class="col-sm-5 right">
                             <h1>浙大SEL实验室</h1>
                             <ul class="list-style-none">
-  <li>浙大SEL实验室网站正在进行初期建设！</li>
-  <li>如发现存在问题请联系：</li>
+  <li>如有问题请联系：</li>
   <li>刘同学：839809484@qq.com</li>
   <li>陈同学：421224811@qq.com</li>
   <li>邵同学：1224051120@qq.com</li>
@@ -244,12 +243,17 @@
                                         
                                         <img class="img-lunbo" src="img/homePage/pic_4.jpg" alt="">
                                     </li>
+                                    <li class="pic_item" style="display: none; ; position: absolute; top: 0px; left: 0px;">
+                                        
+                                        <img class="img-lunbo" src="img/homePage/pic_5.jpg" alt="">
+                                    </li>
 
                                 </ul>
                             </div>
                             <div class="tab-btn">
                                 <ul>
                                     <li class="btn active"></li>
+                                    <li class="btn"></li>
                                     <li class="btn"></li>
                                     <li class="btn"></li>
                                     <li class="btn"></li>
@@ -346,7 +350,7 @@
                                 <div class="name-picture">
                                     <img class="" alt="" src="http://www.sel.zju.edu.cn/img/testimonials/person1.png">
                                     <h5>丁轶群</h5>
-                                    <p>杭州谐云科技首席科学家</p>
+                                    <p>SEL实验室创始人</p>
                                 </div>
                             </div>
                         </div>
@@ -363,7 +367,7 @@
                                 <div class="name-picture">
                                     <img class="" alt="" src="http://www.sel.zju.edu.cn/img/testimonials/person2.png">
                                     <h5>才振功</h5>
-                                    <p>杭州谐云科技VP</p>
+                                    <p>浙江大学副研究员 SEL实验室指导老师</p>
                                 </div>
                             </div>
                         </div>
@@ -441,30 +445,28 @@
                         <div class="top">
                             <div class="image" style="overflow:hidden">
                                 
-                                <img src="/img/blogs/123/docker2.png" class="img-responsive" alt="" >
+                                <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="" >
                                 
                             </div>
                             <div class="bg"></div>
                             <div class="text">
                                 <p class="buttons">
-                                    <a href="http://www.sel.zju.edu.cn/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
+                                    <a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
                                 </p>
                             </div>
                         </div>
 
                         <div class="content">
-                            <h4><a href="http://www.sel.zju.edu.cn/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/">《Docker容器与容器云》第2版推荐</a></h4>
+                            <h4><a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h4>
                             <p class="author-category">
                             
                              <a href="#">丁轶群</a>
                             
-                             2016-11-30
+                             2018-08-05
                             </p>
-                            <p class="intro"><h2 id="介绍">介绍</h2>
-
-<p>本书根据Docker 1.10版和Kubernetes 1.2版对第1版进行了全面更新，从实践者的角度出发，以Docker和Kubernetes为重点，沿着“基本用法介绍”到“核心原理解读”到“高级实践技巧”的思路，一本书讲透当前主流的容器和容器云技术，有助于读者在实际场景中利用Docker容器和容器云解决问题并启发新的思考。</p></p>
+                            <p class="intro"><p>oci组织成立以来已经形成了关于image和runtime的两个spec。<a href="https://www.linuxfoundation.org/press-release/2018/04/open-container-initiative-announces-distribution-specification-project/">2018年4月</a>，作为与registry交互的镜像分发协议也进入了oci标准化的工作范围。oci以当前被广泛采用的<a href="https://github.com/docker/distribution/blob/5cb406d511b7b9163bff9b6439072e4892e5ae3b/docs/spec/api.md">Docker Registry HTTP API V2</a>为基础，构建了oci distribution spec。containerd当前同时支持docker版的和oci版的registry api。</p></p>
                             <p class="read-more">
-                              <a href="http://www.sel.zju.edu.cn/blog/2016/11/30/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E7%AC%AC2%E7%89%88%E6%8E%A8%E8%8D%90/" class="btn btn-template-main">阅读更多</a>
+                              <a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/" class="btn btn-template-main">阅读更多</a>
                               
                             </p>
                         </div>
@@ -478,28 +480,28 @@
                         <div class="top">
                             <div class="image" style="overflow:hidden">
                                 
-                                <img src="/img/blogs/635/docker.png" class="img-responsive" alt="" >
+                                <img src="/img/blogs/761/PilotAdapters.png" class="img-responsive" alt="" >
                                 
                             </div>
                             <div class="bg"></div>
                             <div class="text">
                                 <p class="buttons">
-                                    <a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E6%8E%A8%E8%8D%90/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
+                                    <a href="http://www.sel.zju.edu.cn/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
                                 </p>
                             </div>
                         </div>
 
                         <div class="content">
-                            <h4><a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E6%8E%A8%E8%8D%90/">《Docker容器与容器云》推荐</a></h4>
+                            <h4><a href="http://www.sel.zju.edu.cn/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">Service Mesh深度学习系列（三）| xds协议解密</a></h4>
                             <p class="author-category">
                             
                              <a href="#">丁轶群</a>
                             
-                             2015-10-21
+                             2018-07-27
                             </p>
-                            <p class="intro"><p>《Docker容器与容器云》是Kubernetes社区核心开发者张磊博士及其技术团队近年来PaaS方面积累，全书不仅描述了容器与容器云技术，还融入了实验室四年来对云计算各个层面的理解。该书是国内第一本对Docker原理进行深度解析的书籍，也是第一本结合PaaS对各类容器云进行深度剖析，并着重深入分析Kubernetes原理的书籍。</p></p>
+                            <p class="intro"><p>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</p></p>
                             <p class="read-more">
-                              <a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E5%AE%B9%E5%99%A8%E4%B8%8E%E5%AE%B9%E5%99%A8%E4%BA%91%E6%8E%A8%E8%8D%90/" class="btn btn-template-main">阅读更多</a>
+                              <a href="http://www.sel.zju.edu.cn/blog/2018/07/27/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%89-istio%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8Bpilot-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-main">阅读更多</a>
                               
                             </p>
                         </div>
@@ -513,28 +515,28 @@
                         <div class="top">
                             <div class="image" style="overflow:hidden">
                                 
-                                <img src="/img/blogs/633/logo_oci.png" class="img-responsive" alt="" >
+                                <img src="/img/blogs/825/pilot.svg" class="img-responsive" alt="" >
                                 
                             </div>
                             <div class="bg"></div>
                             <div class="text">
                                 <p class="buttons">
-                                    <a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
+                                    <a href="http://www.sel.zju.edu.cn/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
                                 </p>
                             </div>
                         </div>
 
                         <div class="content">
-                            <h4><a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/">Docker背后的标准化容器执行引擎——runC</a></h4>
+                            <h4><a href="http://www.sel.zju.edu.cn/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">Service Mesh深度学习系列（二）| istio pilot模块分析</a></h4>
                             <p class="author-category">
                             
-                             <a href="#">孙健波</a>
+                             <a href="#">丁轶群</a>
                             
-                             2015-10-21
+                             2018-07-13
                             </p>
-                            <p class="intro"><p>随着容器技术发展的愈发火热，Linux基金会于2015年6月成立<a href="https://www.opencontainers.org/">OCI（Open Container Initiative）</a>组织，旨在围绕容器格式和运行时制定一个开放的工业化标准。该组织一成立便得到了包括谷歌、微软、亚马逊、华为等一系列云计算厂商的支持。而runC就是Docker贡献出来的，按照该开放容器格式标准（OCF, Open Container Format）制定的一种具体实现。</p></p>
+                            <p class="intro"><p>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</p></p>
                             <p class="read-more">
-                              <a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/" class="btn btn-template-main">阅读更多</a>
+                              <a href="http://www.sel.zju.edu.cn/blog/2018/07/13/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%BA%8C-istio-discovery%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-main">阅读更多</a>
                               
                             </p>
                         </div>
@@ -548,32 +550,28 @@
                         <div class="top">
                             <div class="image" style="overflow:hidden">
                                 
-                                <img src="/img/blogs/609/k8s_arch.png" class="img-responsive" alt="" >
+                                <img src="/img/blogs/831/pilot.svg" class="img-responsive" alt="" >
                                 
                             </div>
                             <div class="bg"></div>
                             <div class="text">
                                 <p class="buttons">
-                                    <a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
+                                    <a href="http://www.sel.zju.edu.cn/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-transparent-primary"><i class="fas fa-link"></i>点击了解</a>
                                 </p>
                             </div>
                         </div>
 
                         <div class="content">
-                            <h4><a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/">kubernetes apiserver源码分析——api请求的认证过程</a></h4>
+                            <h4><a href="http://www.sel.zju.edu.cn/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/">Service Mesh深度学习系列（一）| istio pilot-agent模块分析</a></h4>
                             <p class="author-category">
                             
-                             <a href="#">王哲</a>
+                             <a href="#">丁轶群</a>
                             
-                             2015-08-09
+                             2018-06-26
                             </p>
-                            <p class="intro"><h2 id="解决什么问题"><strong>解决什么问题</strong></h2>
-
-<p>笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。</p>
-
-<p>于是我们就回到最初的需求，到底需要解决什么问题，第一个问题就是，apiserver启动的时候，使用secure模式，参数应该如何设置，相关的机制又是怎样？</p></p>
+                            <p class="intro"><p>本文分析的istio代码版本为0.8.0，commit为0cd8d67，commit时间为2018年6月18日。</p></p>
                             <p class="read-more">
-                              <a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/" class="btn btn-template-main">阅读更多</a>
+                              <a href="http://www.sel.zju.edu.cn/blog/2018/06/26/service-mesh%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97%E4%B8%80-istio-pilot-agent%E6%A8%A1%E5%9D%97%E5%88%86%E6%9E%90/" class="btn btn-template-main">阅读更多</a>
                               
                             </p>
                         </div>
@@ -691,40 +689,40 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="http://www.sel.zju.edu.cn/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
+                        <a href="http://www.sel.zju.edu.cn/blog/2021/09/13/%E4%BB%8Ekarmada-api%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90%E5%A4%9A%E4%BA%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E5%BA%94%E7%94%A8%E8%B5%84%E6%BA%90%E7%BC%96%E6%8E%92%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
                           
-                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/18/karmada.jpg" class="img-responsive" alt="从karmada API角度分析多云环境下的应用资源编排：设计与实现">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="http://www.sel.zju.edu.cn/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">kubeedge源码分析系列一：总体架构分析</a></h5>
+                        <h5><a href="http://www.sel.zju.edu.cn/blog/2021/09/13/%E4%BB%8Ekarmada-api%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90%E5%A4%9A%E4%BA%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E5%BA%94%E7%94%A8%E8%B5%84%E6%BA%90%E7%BC%96%E6%8E%92%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">从karmada API角度分析多云环境下的应用资源编排：设计与实现</a></h5>
                     </div>
                 </div>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="http://www.sel.zju.edu.cn/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+                        <a href="http://www.sel.zju.edu.cn/blog/2021/08/23/karmada%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">
                           
-                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/17/karmada-arch.png" class="img-responsive" alt="karmada上手指南">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="http://www.sel.zju.edu.cn/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">knative serving开发环境搭建</a></h5>
+                        <h5><a href="http://www.sel.zju.edu.cn/blog/2021/08/23/karmada%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">karmada上手指南</a></h5>
                     </div>
                 </div>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="http://www.sel.zju.edu.cn/blog/2021/05/13/openyurt%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%BA%8Cyurttunnel-serveragent/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/16/process.png" class="img-responsive" alt="openyurt源码分析系列（二）：yurttunnel server/agent">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="http://www.sel.zju.edu.cn/blog/2021/05/13/openyurt%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%BA%8Cyurttunnel-serveragent/">openyurt源码分析系列（二）：yurttunnel server/agent</a></h5>
                     </div>
                 </div>
                 

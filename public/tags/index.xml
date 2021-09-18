@@ -6,10 +6,37 @@
     <description>Recent content in Tags on 浙大SEL实验室</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 29 Nov 2018 16:55:37 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 13 Sep 2021 10:00:11 +0000</lastBuildDate>
     
 	<atom:link href="http://www.sel.zju.edu.cn/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>karmada</title>
+      <link>http://www.sel.zju.edu.cn/tags/karmada/</link>
+      <pubDate>Mon, 13 Sep 2021 10:00:11 +0000</pubDate>
+      
+      <guid>http://www.sel.zju.edu.cn/tags/karmada/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>openyurt</title>
+      <link>http://www.sel.zju.edu.cn/tags/openyurt/</link>
+      <pubDate>Thu, 13 May 2021 10:00:11 +0000</pubDate>
+      
+      <guid>http://www.sel.zju.edu.cn/tags/openyurt/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubeedge</title>
+      <link>http://www.sel.zju.edu.cn/tags/kubeedge/</link>
+      <pubDate>Mon, 25 Jan 2021 10:05:11 +0000</pubDate>
+      
+      <guid>http://www.sel.zju.edu.cn/tags/kubeedge/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>cloudnative</title>
@@ -26,15 +53,6 @@
       <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
       
       <guid>http://www.sel.zju.edu.cn/tags/edgecomputing/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>kubeedge</title>
-      <link>http://www.sel.zju.edu.cn/tags/kubeedge/</link>
-      <pubDate>Thu, 29 Nov 2018 16:55:37 +0000</pubDate>
-      
-      <guid>http://www.sel.zju.edu.cn/tags/kubeedge/</guid>
       <description></description>
     </item>
     

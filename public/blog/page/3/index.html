@@ -66,7 +66,7 @@
   
   
   
-  <meta property="og:updated_time" content="2018-11-29T16:55:37Z">
+  <meta property="og:updated_time" content="2021-09-13T10:00:11Z">
   
 
   
@@ -197,6 +197,326 @@
                             <div class="row">
                                 <div class="col-md-3">
                                   <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/">
+                                          
+                                          <img src="/img/blogs/633/logo_oci.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/">Docker背后的标准化容器执行引擎——runC</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/"><i class="far fa-calendar"></i> 2015-10-21</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">本文从OCI组织的成立开始讲起，描述了开放容器格式的标准及其宗旨，这其实就是runC的由来。继而针对具体的runC特性及其启动进行了详细介绍。OCI的成立表明了社区及各大厂商对容器技术的肯定以及加快容器技术发展进步的强烈决心，相信在不久的将来，符合OCI标准的开放容器项目会越来越多，容器技术将更加欣欣向荣地不断前进。</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/10/21/docker%E8%83%8C%E5%90%8E%E7%9A%84%E6%A0%87%E5%87%86%E5%8C%96%E5%AE%B9%E5%99%A8%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E-runc/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/">
+                                          
+                                          <img src="/img/blogs/609/k8s_arch.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/">kubernetes apiserver源码分析——api请求的认证过程</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">王哲</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/"><i class="far fa-calendar"></i> 2015-08-09</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">apiserver相当于是k8集群的一个入口，不论通过kubectl还是使用remote api 直接控制，都要经过apiserver。apiserver说白了就是一个server负责监听指定的端口，之后处理不同的请求。笔者之前希望全面分析一下k8apiserver的源码，后来发现这样并不十分有效，其一没有针对性，其二由于代码本身比较复杂，涉及到的功能较多，面面俱到也不太现实。本文通过分析apiserver的源码解析apiserver启动的时候，参数应该如何设置，相关的机制又是怎样？</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/08/09/kubernetes-apiserver%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-api%E8%AF%B7%E6%B1%82%E7%9A%84%E8%AE%A4%E8%AF%81%E8%BF%87%E7%A8%8B/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/08/07/kubernetes-node-components-kubelet/">
+                                          
+                                          <img src="/img/blogs/595/kubelet.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/08/07/kubernetes-node-components-kubelet/">kubernetes node components - kubelet</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">何思玫</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/08/07/kubernetes-node-components-kubelet/"><i class="far fa-calendar"></i> 2015-08-07</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">kubelet作为k8s集群node上的重要组件，一直饱受关注。下面请随笔者一起walk through the code.</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/08/07/kubernetes-node-components-kubelet/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/">
+                                          
+                                          <img src="/img/blogs/588/Kubernetes_Security.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/">4S: Services Account, Secret, Security Context and Security in Kubernetes</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">何思玫</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/"><i class="far fa-calendar"></i> 2015-07-30</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">Service Account, Secrets和Security Contexts作为保证kubernetes集群Security的策略被引入，相关代码一直处于快速变更与迭代中。本文谨从design和初级实践的视角对其进行概略性的分析，以飨读者。</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/07/30/4s-services-account-secret-security-context-and-security-in-kubernetes/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
+                                          
+                                          <img src="/img/blogs/583/tutum.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">tutum-agent原理浅析</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/"><i class="far fa-calendar"></i> 2015-06-23</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">tutum-aget是tutum提供的一个开源代理引擎。当你把tutum-agent安装在你本地机器上以后，你就可以把本地的机器节点添加到云端，让tutum来帮你统一进行管理。你随时随地都可以登陆tutum网站获得如下功能。1.启停Docker容器。2.动态伸缩容器实例数量。3.监控容器状态、容器CPU/Memory/Disk/Bandwidth使用量。4.查看容器日志、操作记录。5.与tutum其他服务结合的衍生功能（部署应用、绑定服务等）。</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/06/23/tutum-agent%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/06/03/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-libcontainer%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/">
+                                          
+                                          <img src="/img/blogs/577/libcontainer1.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/06/03/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-libcontainer%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/">Docker背后的容器管理——libcontainer深度解析</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/06/03/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-libcontainer%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/"><i class="far fa-calendar"></i> 2015-06-03</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">本文主要介绍了Docker容器管理的方式libcontainer，从libcontainer的使用到源码实现方式。我们深入到容器进程内部，感受到了libcontainer较为全面的设计。总体而言，libcontainer本身主要分为三大块工作内容，一是容器的创建及初始化，二是容器生命周期管理，三则是进程管理，调用方为Docker的execdriver。容器的监控主要通过cgroups的状态统计信息，未来会加入进程追踪等更丰富的功能。另一方面，libcontainer在安全支持方面也为用户尽可能多的提供了支持和选择。遗憾的是，容器安全的配置需要用户对系统安全本身有足够高的理解，user namespace也尚未支持，可见libcontainer依旧有很多工作要完善。但是Docker社区的火热也自然带动了大家对libcontainer的关注，相信在不久的将来，libcontainer就会变得更安全、更易用。</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/06/03/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-libcontainer%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/04/22/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-cgroups%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/">
+                                          
+                                          <img src="/img/blogs/574/namespacecgroups.jpg" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/04/22/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-cgroups%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/">Docker背后的内核知识——cgroups资源限制</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/04/22/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-cgroups%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/"><i class="far fa-calendar"></i> 2015-04-22</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">当我们谈论Docker时，我们常常会聊到Docker的实现方式。很多开发者都会知道，Docker的本质实际上是宿主机上的一个进程，通过namespace实现了资源隔离，通过cgroup实现了资源限制，通过UnionFS实现了Copy on Write的文件操作。但是当我们再深入一步的提出，namespace和cgroup实现细节时，知道的人可能就所剩无几了。本文在docker基础研究工作中着重对内核的cgroup技术做了细致的分析和梳理，希望能对读者深入理解Docker有所帮助。</p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/04/22/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-cgroups%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
+                                      <a href="http://www.sel.zju.edu.cn/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/">
+                                          
+                                          <img src="/img/blogs/556/namespace.png" class="img-responsive" alt="">
+                                          
+                                      </a>
+                                  </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/">Docker背后的内核知识——Namespace资源隔离</a></h2>
+                                    <div class="clearfix">
+                                        <p class="author-category">
+                                          
+                                           作者：<a href="#">孙健波</a>
+                                          
+                                          
+                                          
+                                          | 归档于 <a href="/categories/docker/">Docker</a>
+                                          
+                                          
+
+                                        </p>
+                                        
+                                        <p class="date-comments">
+                                            <a href="http://www.sel.zju.edu.cn/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/"><i class="far fa-calendar"></i> 2015-03-13</a>
+                                        </p>
+                                        
+                                    </div>
+                                    
+                                    <p class="intro">本文从namespace使用的API开始，结合Docker逐步对六个namespace进行讲解。相信把讲解过程中所有的代码整合起来，你也能实现一个属于自己的“shell”容器了。虽然namespace技术使用起来非常简单，但是要真正把容器做到安全易用却并非易事。PID namespace中，我们要实现一个完善的init进程来维护好所有进程；network namespace中，我们还有复杂的路由表和iptables规则没有配置；user namespace中还有很多权限上的问题需要考虑等等。其中有些方面Docker已经做的很好，有些方面也才刚刚开始。希望通过本文，能为大家更好的理解Docker背后运行的原理提供帮助。 </p>
+                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/03/13/docker%E8%83%8C%E5%90%8E%E7%9A%84%E5%86%85%E6%A0%B8%E7%9F%A5%E8%AF%86-namespace%E8%B5%84%E6%BA%90%E9%9A%94%E7%A6%BB/" class="btn btn-template-main">继续阅读</a>
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        
+                        <section class="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                  <div class="image">
                                       <a href="http://www.sel.zju.edu.cn/blog/2015/03/12/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%9Ddocker%E9%95%9C%E5%83%8F/">
                                           
                                           <img src="/img/blogs/549/image1.jpg" class="img-responsive" alt="">
@@ -267,326 +587,6 @@
                                     
                                     <p class="intro">如何使用Docker Container的网络，一直是工业界倍加关心的问题。本文将从Linux内核原理的角度阐述了什么是Docker Container，并对Docker Container 4种不同的网络模式进行了初步的介绍，最终贯穿Docker 架构中的多个模块，如Docker Client、Docker Daemon、execdriver以及libcontainer，深入分析Docker Container网络的实现步骤。</p>
                                     <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/03/12/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ABdocker-container%E7%BD%91%E7%BB%9C%E4%B8%8B/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/02/01/etcd%E4%BB%8E%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%B0%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E7%9A%84%E5%85%A8%E6%96%B9%E4%BD%8D%E8%A7%A3%E8%AF%BB/">
-                                          
-                                          <img src="/img/blogs/523/etcd.png" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/02/01/etcd%E4%BB%8E%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%B0%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E7%9A%84%E5%85%A8%E6%96%B9%E4%BD%8D%E8%A7%A3%E8%AF%BB/">etcd：从应用场景到实现原理的全方位解读</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">孙健波</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/etcd/">etcd</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/02/01/etcd%E4%BB%8E%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%B0%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E7%9A%84%E5%85%A8%E6%96%B9%E4%BD%8D%E8%A7%A3%E8%AF%BB/"><i class="far fa-calendar"></i> 2015-02-01</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">随着CoreOS和Kubernetes等项目在开源社区日益火热，它们项目中都用到的etcd组件作为一个高可用、强一致性的服务发现存储仓库，渐渐为开发人员所关注。在云计算时代，如何让服务快速透明地接入到计算集群中，如何让共享配置信息快速被集群中的所有机器发现，更为重要的是，如何构建这样一套高可用、安全、易于部署以及响应快速的服务集群，已经成为了迫切需要解决的问题。etcd为解决这类问题带来了福音，本章将从etcd的应用场景开始，深入解读etcd的实现方式，以供开发者们更为充分地享用etcd所带来的便利。</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/02/01/etcd%E4%BB%8E%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%B0%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E7%9A%84%E5%85%A8%E6%96%B9%E4%BD%8D%E8%A7%A3%E8%AF%BB/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/">
-                                          
-                                          <img src="/img/blogs/508/docker.jpg" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/">Docker源码分析（七）：Docker Container网络 （上）</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">孙宏亮</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/docker/">Docker</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/"><i class="far fa-calendar"></i> 2015-01-26</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">本文为《Docker源码分析》系列第七篇——Docker Container网络（上）。</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/01/26/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B8%83docker-container%E7%BD%91%E7%BB%9C-%E4%B8%8A/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/01/22/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-kube-proxy-%E7%BB%84%E4%BB%B6/">
-                                          
-                                          <img src="/img/blogs/484/k8s_arch.png" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/01/22/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-kube-proxy-%E7%BB%84%E4%BB%B6/">Kubernetes代码走读之Minion Node 组件 kube-proxy</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">杜军</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/01/22/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-kube-proxy-%E7%BB%84%E4%BB%B6/"><i class="far fa-calendar"></i> 2015-01-22</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">Kube-proxy是kubernetes 里运行在minion节点上的一个组件, 它 watch kubernetes 集群里 service 和 endpoints(label是某一特定条件的pods)这两个对象的增加或删除,　并且维护一个service 到 endpoints的映射. 他使用iptables REDIRECT target将对服务的请求流量转接到本地的一个port上,　然后再将流量发到后端,　这样的转发还支持一些策略,　如round robin等，所以我们可以把他看成是一个具有高级功能的反向代理。 本文的内容将分为以下两部分, 源代码来自kubernetes release-0.8.1, 代码有删节，省略的代码或log输出用...表示</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/01/22/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-kube-proxy-%E7%BB%84%E4%BB%B6/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/">
-                                          
-                                          <img src="/img/blogs/444/PIPEWORK1.png" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/">Docker网络详解及pipework源码解读与实践</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">冯明振</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/docker/">Docker</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/"><i class="far fa-calendar"></i> 2015-01-16</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">Docker作为目前最火的轻量级容器技术，有很多令人称道的功能，如Docker的镜像管理。然而，Docker同样有着很多不完善的地方，网络方面就是Docker比较薄弱的部分。因此，我们有必要深入了解Docker的网络知识，以满足更高的网络需求。本文首先介绍了Docker自身的4种网络工作方式，然后通过3个样例 —— 将Docker容器配置到本地网络环境中、单主机Docker容器的VLAN划分、多主机Docker容器的VLAN划分，演示了如何使用pipework帮助我们进行复杂的网络设置，以及pipework是如何工作的。</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/01/16/docker%E7%BD%91%E7%BB%9C%E8%AF%A6%E8%A7%A3%E5%8F%8Apipework%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%E4%B8%8E%E5%AE%9E%E8%B7%B5/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/01/13/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-%E4%B9%8B-kubelet/">
-                                          
-                                          <img src="/img/blogs/417/k8s_arch.png" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/01/13/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-%E4%B9%8B-kubelet/">Kubernetes Minion Node 组件 之 Kubelet</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">陈星宇</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/01/13/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-%E4%B9%8B-kubelet/"><i class="far fa-calendar"></i> 2015-01-13</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">Kubelet是Google Kubernetes 集群minion工作节点上的一个重要组件.本文将作者阅读代码和亲身的使用经验相结合带你深入理解kubelet. 因为kubernetes代码处在火热迭代开发中,版本日新月异, 本文的源代码来自2014年12月22日github上kubernetes的master最新代码, commit id 119fe37f064905d, 由于kubelet代码量大,变量多,所以文中展示的代码有删节,省略的部分用…表示.</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/01/13/kubernetes-minion-node-%E7%BB%84%E4%BB%B6-%E4%B9%8B-kubelet/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/">
-                                          
-                                          <img src="/img/blogs/399/docker.jpg" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/">Docker源码分析（六）：Docker Daemon网络</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">孙宏亮</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/docker/">Docker</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/"><i class="far fa-calendar"></i> 2015-01-05</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">**摘要：**Docker的容器特性和镜像特性已然为Docker实践者带来了诸多效益，然而Docker的网络特性却不能让用户满意。本文从Docker的网络模式入手，分析了Docker Daemon创建网络环境的详细流程，其中着重于分析Docker桥接模式的创建，为之后Docker Container创建网络环境做铺垫。</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/01/05/docker%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E5%85%ADdocker-daemon%E7%BD%91%E7%BB%9C/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/">
-                                          
-                                          <img src="/img/blogs/394/k8s.jpg" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/">Google Kubernetes设计文档之Volumes</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">仇臣</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/"><i class="far fa-calendar"></i> 2015-01-02</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。本文描述了Kubernetes中Volumes的使用情况，Volume是一个能够被容器访问的目录。</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2015/01/02/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8Bvolumes/" class="btn btn-template-main">继续阅读</a>
-                                        
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        <section class="post">
-                            <div class="row">
-                                <div class="col-md-3">
-                                  <div class="image">
-                                      <a href="http://www.sel.zju.edu.cn/blog/2014/12/29/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E7%BD%91%E7%BB%9C%E7%AF%87/">
-                                          
-                                          <img src="/img/blogs/353/k8s.jpg" class="img-responsive" alt="">
-                                          
-                                      </a>
-                                  </div>
-                                </div>
-                                <div class="col-md-9">
-                                    <h2><a href="http://www.sel.zju.edu.cn/blog/2014/12/29/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E7%BD%91%E7%BB%9C%E7%AF%87/">Google Kubernetes设计文档之网络篇</a></h2>
-                                    <div class="clearfix">
-                                        <p class="author-category">
-                                          
-                                           作者：<a href="#">杜军</a>
-                                          
-                                          
-                                          
-                                          | 归档于 <a href="/categories/kubernetes/">Kubernetes</a>
-                                          
-                                          
-
-                                        </p>
-                                        
-                                        <p class="date-comments">
-                                            <a href="http://www.sel.zju.edu.cn/blog/2014/12/29/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E7%BD%91%E7%BB%9C%E7%AF%87/"><i class="far fa-calendar"></i> 2014-12-29</a>
-                                        </p>
-                                        
-                                    </div>
-                                    
-                                    <p class="intro">Kubernetes是Google开源的容器集群管理系统，构建于Docker之上，为容器化的应用提供资源调度、部署运行、服务发现、扩容缩容等功能。其从Docker默认网络模型中独立出来形成了一套自己的网络模型，本文将详细介绍。</p>
-                                    <p class="read-more"><a href="http://www.sel.zju.edu.cn/blog/2014/12/29/google-kubernetes%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3%E4%B9%8B%E7%BD%91%E7%BB%9C%E7%AF%87/" class="btn btn-template-main">继续阅读</a>
                                         
                                     </p>
                                 </div>
@@ -822,11 +822,23 @@
             </li>
             
             <li>
+                <a href="/categories/karmada">karmada (2)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/kubeedge">kubeedge (4)</a>
+            </li>
+            
+            <li>
                 <a href="/categories/kubernetes">kubernetes (14)</a>
             </li>
             
             <li>
                 <a href="/categories/network">network (1)</a>
+            </li>
+            
+            <li>
+                <a href="/categories/openyurt">openyurt (2)</a>
             </li>
             
             <li>
@@ -941,6 +953,10 @@
             </li>
             
             <li>
+                <a href="/tags/karmada"><i class="fas fa-tags"></i> karmada</a>
+            </li>
+            
+            <li>
                 <a href="/tags/kubeedge"><i class="fas fa-tags"></i> kubeedge</a>
             </li>
             
@@ -970,6 +986,10 @@
             
             <li>
                 <a href="/tags/news"><i class="fas fa-tags"></i> news</a>
+            </li>
+            
+            <li>
+                <a href="/tags/openyurt"><i class="fas fa-tags"></i> openyurt</a>
             </li>
             
             <li>
@@ -1054,40 +1074,40 @@
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="http://www.sel.zju.edu.cn/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">
+                        <a href="http://www.sel.zju.edu.cn/blog/2021/09/13/%E4%BB%8Ekarmada-api%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90%E5%A4%9A%E4%BA%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E5%BA%94%E7%94%A8%E8%B5%84%E6%BA%90%E7%BC%96%E6%8E%92%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
                           
-                            <img src="/img/blogs/989/kubeedge_arch.png" class="img-responsive" alt="kubeedge源码分析系列一：总体架构分析">
+                            <img src="/img/blogs/18/karmada.jpg" class="img-responsive" alt="从karmada API角度分析多云环境下的应用资源编排：设计与实现">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="http://www.sel.zju.edu.cn/blog/2018/11/29/kubeedge%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%B8%80%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E5%88%86%E6%9E%90/">kubeedge源码分析系列一：总体架构分析</a></h5>
+                        <h5><a href="http://www.sel.zju.edu.cn/blog/2021/09/13/%E4%BB%8Ekarmada-api%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90%E5%A4%9A%E4%BA%91%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E5%BA%94%E7%94%A8%E8%B5%84%E6%BA%90%E7%BC%96%E6%8E%92%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">从karmada API角度分析多云环境下的应用资源编排：设计与实现</a></h5>
                     </div>
                 </div>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="http://www.sel.zju.edu.cn/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+                        <a href="http://www.sel.zju.edu.cn/blog/2021/08/23/karmada%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">
                           
-                            <img src="/img/blogs/972/knative%20serving.png" class="img-responsive" alt="knative serving开发环境搭建">
+                            <img src="/img/blogs/17/karmada-arch.png" class="img-responsive" alt="karmada上手指南">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="http://www.sel.zju.edu.cn/blog/2018/10/11/knative-serving%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">knative serving开发环境搭建</a></h5>
+                        <h5><a href="http://www.sel.zju.edu.cn/blog/2021/08/23/karmada%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97/">karmada上手指南</a></h5>
                     </div>
                 </div>
                 
                 <div class="item same-height-row clearfix">
                     <div class="image same-height-always">
-                        <a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">
+                        <a href="http://www.sel.zju.edu.cn/blog/2021/05/13/openyurt%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%BA%8Cyurttunnel-serveragent/">
                           
-                            <img src="/img/blogs/921/dockerarchitecture.png" class="img-responsive" alt="从containerd pull镜像流程分析oci distribution spec">
+                            <img src="/img/blogs/16/process.png" class="img-responsive" alt="openyurt源码分析系列（二）：yurttunnel server/agent">
                           
                         </a>
                     </div>
                     <div class="name same-height-always">
-                        <h5><a href="http://www.sel.zju.edu.cn/blog/2018/08/05/%E4%BB%8Econtainerd-pull%E9%95%9C%E5%83%8F%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90oci-distribution-spec/">从containerd pull镜像流程分析oci distribution spec</a></h5>
+                        <h5><a href="http://www.sel.zju.edu.cn/blog/2021/05/13/openyurt%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E4%BA%8Cyurttunnel-serveragent/">openyurt源码分析系列（二）：yurttunnel server/agent</a></h5>
                     </div>
                 </div>
                 

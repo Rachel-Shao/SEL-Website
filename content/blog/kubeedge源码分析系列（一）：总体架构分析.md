@@ -1,7 +1,7 @@
 +++
 id = "989"
 
-title = "kubeedge源码分析系列一：总体架构分析"
+title = "kubeedge源码分析系列（一）：总体架构分析"
 description = "kubeedge是华为在KubeCon CloudNativeCon China 2018上发布的面向边缘环境容器管理平台。kubeedge能够接入云端Kubernetes集群，使得边缘端应用的管理可以跟云端应用的管理一样，采用广为熟知的Kubernetes API。SEL实验室准备用一系列文章分析kubeedge的总体架构和各个模块的内部实现机制，本文为系列文章的第一篇，分析kubeedge的版本为1.1后的commit `31e562bc`。"
 tags = ["cloudnative","edgecomputing","kubeedge"]
 date = "2018-11-29 16:55:37"
